@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Prompt Engineering</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .technique-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .technique-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .technique-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .technique-card p {
+            margin-bottom: 15px;
+            color: var(--gray);
+        }
+        
+        .example {
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .worksheet {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+        
+        .worksheet h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .scenario-selector {
+            margin-bottom: 25px;
+        }
+        
+        .scenario-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .scenario-btn {
+            padding: 10px 15px;
+            background-color: var(--light-gray);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .scenario-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .scenario {
+            background-color: #e7f1ff;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+        }
+        
+        .custom-scenario {
+            background-color: #fff3cd;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .strategy-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .strategy-btn {
+            padding: 10px 15px;
+            background-color: var(--light-gray);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .strategy-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+        }
+        
+        .input-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .prompt-builder {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .final-prompt {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-test {
+            background-color: var(--success);
+            margin-top: 15px;
+        }
+        
+        .btn-test:hover {
+            background-color: #3aa8d0;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+        }
+        
+        .btn-warning:hover {
+            background-color: #d1145a;
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: none;
+        }
+        
+        .results h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .result-content {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            min-height: 150px;
+        }
+        
+        .ai-info {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e7f1ff;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+        
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin-top: 10px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+            color: var(--gray);
+        }
+        
+        @media (max-width: 768px) {
+            .techniques-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .scenario-buttons, .strategy-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive Prompt Engineering</h1>
+            <p class="subtitle">Learn how to communicate effectively with AI through hands-on practice</p>
+        </header>
+        
+        <section class="techniques-grid">
+            <div class="technique-card">
+                <h3>RAG - "Use My Notes"</h3>
+                <p>Provide the AI with your own information and ask it to use that as its main source.</p>
+                <div class="example">
+                    <strong>Example:</strong> Upload your budget and preferences, then ask the AI to plan a vacation based on that information.
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <h3>COT - "Show Your Work"</h3>
+                <p>Ask the AI to think through a problem step-by-step to make its reasoning clear.</p>
+                <div class="example">
+                    <strong>Example:</strong> "Calculate my vacation cost. First, list flight costs, then add hotel, then food expenses, then add it all up."
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <h3>ReACT - "Go and Find Out"</h3>
+                <p>The AI searches for the latest information it doesn't have.</p>
+                <div class="example">
+                    <strong>Example:</strong> "Find me the best flight deals to Spain. First check airline websites, then look for travel advisories."
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <h3>DSP - "Get to the Point"</h3>
+                <p>Give the AI a very clear, narrow focus for quick, specific answers.</p>
+                <div class="example">
+                    <strong>Example:</strong> "List beachfront hotels in Malaga with pools. Ignore any without free cancellation."
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <h3>ToT - "Weigh the Options"</h3>
+                <p>The AI explores multiple paths and compares them to find the best one.</p>
+                <div class="example">
+                    <strong>Example:</strong> "Evaluate beach vs. city vs. mountain vacations for a family with teenagers, then recommend the best one."
+                </div>
+            </div>
+        </section>
+        
+        <section class="worksheet">
+            <h2>Practice Prompt Engineering</h2>
+            
+            <div class="scenario-selector">
+                <h3>Choose a Practice Scenario:</h3>
+                <div class="scenario-buttons">
+                    <button class="scenario-btn active" data-scenario="vacation">Summer Vacation</button>
+                    <button class="scenario-btn" data-scenario="meal">Weekly Meal Planning</button>
+                    <button class="scenario-btn" data-scenario="career">Career Development</button>
+                    <button class="scenario-btn" data-scenario="home">Home Improvement</button>
+                    <button class="scenario-btn" data-scenario="custom">Create Your Own</button>
+                </div>
+            </div>
+            
+            <div id="vacation-scenario" class="scenario">
+                <h3>Scenario: Planning a Summer Vacation</h3>
+                <p>You want to plan a 7-day summer vacation for your family of four (two adults, two children ages 8 and 12). Your budget is £2,500. You need to decide on a destination, transportation, accommodation, and activities.</p>
+            </div>
+            
+            <div id="meal-scenario" class="scenario" style="display: none;">
+                <h3>Scenario: Weekly Meal Planning</h3>
+                <p>You need to create a weekly meal plan for a family of four with a budget of £120. Two family members are vegetarian, one has a nut allergy, and you want meals that can be prepared in 30 minutes or less on weekdays.</p>
+            </div>
+            
+            <div id="career-scenario" class="scenario" style="display: none;">
+                <h3>Scenario: Career Development Plan</h3>
+                <p>You want to advance in your career over the next 12 months. You have a budget of £1,000 for professional development and can dedicate 5 hours per week. You need to identify skills to develop, find relevant courses, and create a step-by-step plan.</p>
+            </div>
+            
+            <div id="home-scenario" class="scenario" style="display: none;">
+                <h3>Scenario: Home Improvement Project</h3>
+                <p>You want to renovate your kitchen with a budget of £8,000. You need to decide what to update (cabinets, countertops, appliances, flooring), create a timeline, and find ways to stay within budget while maximizing value.</p>
+            </div>
+            
+            <div id="custom-scenario" class="custom-scenario" style="display: none;">
+                <h3>Your Custom Scenario</h3>
+                <div class="input-group">
+                    <label for="custom-scenario-desc">Describe your scenario:</label>
+                    <textarea id="custom-scenario-desc" placeholder="Describe your own scenario here..."></textarea>
+                </div>
+            </div>
+            
+            <div class="strategy-selector">
+                <button class="strategy-btn active" data-strategy="rag">Use My Notes (RAG)</button>
+                <button class="strategy-btn" data-strategy="cot">Show Your Work (COT)</button>
+                <button class="strategy-btn" data-strategy="react">Go and Find Out (ReACT)</button>
+                <button class="strategy-btn" data-strategy="dsp">Get to the Point (DSP)</button>
+                <button class="strategy-btn" data-strategy="tot">Weigh the Options (ToT)</button>
+            </div>
+            
+            <div class="input-group">
+                <label for="context">Your Context/Information (Optional):</label>
+                <textarea id="context" placeholder="E.g., We prefer beach destinations, kids enjoy swimming and nature activities, we need flights from London..."></textarea>
+            </div>
+            
+            <div class="strategy-inputs">
+                <!-- RAG Inputs -->
+                <div id="rag-inputs" class="strategy-section">
+                    <div class="input-group">
+                        <label for="rag-data">Your Data/Notes:</label>
+                        <textarea id="rag-data" placeholder="Paste your information here (budget, preferences, constraints)..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="rag-request">What do you want the AI to do with this information?</label>
+                        <input type="text" id="rag-request" placeholder="E.g., Plan a vacation based on this information">
+                    </div>
+                    <div class="warning">
+                        <strong>Important:</strong> Make sure your data matches your scenario. If the AI detects irrelevant information (like a security report for a holiday planning task), it should alert you rather than making incorrect assumptions.
+                    </div>
+                </div>
+                
+                <!-- COT Inputs -->
+                <div id="cot-inputs" class="strategy-section" style="display: none;">
+                    <div class="input-group">
+                        <label for="cot-steps">What steps should the AI follow? (One per line)</label>
+                        <textarea id="cot-steps" placeholder="E.g., 
+1. Calculate flight costs for 4 people
+2. Find accommodation for 7 nights within budget
+3. Estimate daily food expenses
+4. List 3 activity options per day
+5. Calculate total cost and compare to budget"></textarea>
+                    </div>
+                </div>
+                
+                <!-- ReACT Inputs -->
+                <div id="react-inputs" class="strategy-section" style="display: none;">
+                    <div class="input-group">
+                        <label for="react-actions">What actions should the AI take? (One per line)</label>
+                        <textarea id="react-actions" placeholder="E.g., 
+1. Search for family-friendly beach destinations in Europe
+2. Find flight prices for those destinations in July
+3. Look for hotel deals that accommodate 4 people
+4. Check weather patterns for those destinations in summer"></textarea>
+                    </div>
+                </div>
+                
+                <!-- DSP Inputs -->
+                <div id="dsp-inputs" class="strategy-section" style="display: none;">
+                    <div class="input-group">
+                        <label for="dsp-focus">What should the AI focus on specifically?</label>
+                        <input type="text" id="dsp-focus" placeholder="E.g., Beach destinations with kid-friendly activities">
+                    </div>
+                    <div class="input-group">
+                        <label for="dsp-ignore">What should the AI ignore?</label>
+                        <input type="text" id="dsp-ignore" placeholder="E.g., Luxury resorts, destinations requiring visas">
+                    </div>
+                </div>
+                
+                <!-- ToT Inputs -->
+                <div id="tot-inputs" class="strategy-section" style="display: none;">
+                    <div class="input-group">
+                        <label for="tot-options">What options should the AI evaluate? (One per line)</label>
+                        <textarea id="tot-options" placeholder="E.g., 
+1. Beach vacation in Spain
+2. City tour in Italy
+3. Mountain retreat in Scotland
+4. Cultural experience in Greece"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="tot-criteria">What criteria should the AI use to evaluate these options?</label>
+                        <input type="text" id="tot-criteria" placeholder="E.g., Cost, family-friendliness, travel time, activities">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="prompt-builder">
+                <h3>Your Final Prompt</h3>
+                <p>This is the prompt that will be sent to the AI based on your inputs:</p>
+                <div class="final-prompt" id="final-prompt">
+                    Your prompt will appear here as you fill out the form...
+                </div>
+                <button class="btn btn-test" id="test-prompt">Test This Prompt</button>
+                <button class="btn btn-warning" id="test-mismatch">Test with Mismatched Data</button>
+            </div>
+        </section>
+        
+        <section class="results" id="results">
+            <h3>AI Response</h3>
+            <div class="result-content" id="result-content">
+                The AI response will appear here after testing your prompt.
+            </div>
+            <div class="ai-info" id="ai-info">
+                <!-- AI model information will appear here -->
+            </div>
+        </section>
+        
+        <footer>
+            <p>Interactive Prompt Engineering Learning Tool &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scenarioButtons = document.querySelectorAll('.scenario-btn');
+            const scenarioSections = document.querySelectorAll('.scenario, .custom-scenario');
+            const strategyButtons = document.querySelectorAll('.strategy-btn');
+            const strategySections = document.querySelectorAll('.strategy-section');
+            const finalPrompt = document.getElementById('final-prompt');
+            const testButton = document.getElementById('test-prompt');
+            const mismatchButton = document.getElementById('test-mismatch');
+            const results = document.getElementById('results');
+            const resultContent = document.getElementById('result-content');
+            const aiInfo = document.getElementById('ai-info');
+            
+            // Scenario selection
+            scenarioButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    scenarioButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Hide all scenario sections
+                    scenarioSections.forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    
+                    // Show the selected scenario section
+                    const scenario = this.getAttribute('data-scenario');
+                    if (scenario === 'custom') {
+                        document.getElementById('custom-scenario').style.display = 'block';
+                    } else {
+                        document.getElementById(`${scenario}-scenario`).style.display = 'block';
+                    }
+                    
+                    // Update the final prompt
+                    updateFinalPrompt();
+                });
+            });
+            
+            // Strategy selection
+            strategyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    strategyButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Hide all strategy sections
+                    strategySections.forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    
+                    // Show the selected strategy section
+                    const strategy = this.getAttribute('data-strategy');
+                    document.getElementById(`${strategy}-inputs`).style.display = 'block';
+                    
+                    // Update the final prompt
+                    updateFinalPrompt();
+                });
+            });
+            
+            // Update final prompt when inputs change
+            const allInputs = document.querySelectorAll('input, textarea, select');
+            allInputs.forEach(input => {
+                input.addEventListener('input', updateFinalPrompt);
+            });
+            
+            // Function to update the final prompt
+            function updateFinalPrompt() {
+                const context = document.getElementById('context').value;
+                const activeStrategy = document.querySelector('.strategy-btn.active').getAttribute('data-strategy');
+                
+                let prompt = context ? `Context: ${context}\n\n` : '';
+                
+                switch(activeStrategy) {
+                    case 'rag':
+                        const ragData = document.getElementById('rag-data').value;
+                        const ragRequest = document.getElementById('rag-request').value;
+                        prompt += `Using the following information:\n"${ragData}"\n\n${ragRequest}`;
+                        break;
+                        
+                    case 'cot':
+                        const cotSteps = document.getElementById('cot-steps').value;
+                        prompt += `Please solve this problem by following these steps:\n${cotSteps}`;
+                        break;
+                        
+                    case 'react':
+                        const reactActions = document.getElementById('react-actions').value;
+                        prompt += `Please take the following actions to help me:\n${reactActions}`;
+                        break;
+                        
+                    case 'dsp':
+                        const dspFocus = document.getElementById('dsp-focus').value;
+                        const dspIgnore = document.getElementById('dsp-ignore').value;
+                        prompt += `Focus specifically on: ${dspFocus}`;
+                        if (dspIgnore) {
+                            prompt += `\nIgnore: ${dspIgnore}`;
+                        }
+                        break;
+                        
+                    case 'tot':
+                        const totOptions = document.getElementById('tot-options').value;
+                        const totCriteria = document.getElementById('tot-criteria').value;
+                        prompt += `Evaluate these options:\n${totOptions}\n\nUsing these criteria: ${totCriteria}. Then recommend the best option.`;
+                        break;
+                }
+                
+                finalPrompt.textContent = prompt;
+            }
+            
+            // Test prompt button
+            testButton.addEventListener('click', function() {
+                testPrompt(false);
+            });
+            
+            // Test with mismatched data button
+            mismatchButton.addEventListener('click', function() {
+                testPrompt(true);
+            });
+            
+            // Function to test the prompt
+            function testPrompt(useMismatch) {
+                results.style.display = 'block';
+                
+                // Get current scenario
+                const activeScenario = document.querySelector('.scenario-btn.active').getAttribute('data-scenario');
+                const activeStrategy = document.querySelector('.strategy-btn.active').getAttribute('data-strategy');
+                
+                // Set AI model information
+                aiInfo.innerHTML = `<strong>AI Model:</strong> GPT-4 (simulated response)<br>
+                                   <strong>Scenario:</strong> ${activeScenario}<br>
+                                   <strong>Strategy:</strong> ${activeStrategy}`;
+                
+                let response = '';
+                
+                // Check for mismatched data in RAG
+                if (useMismatch && activeStrategy === 'rag') {
+                    const ragData = document.getElementById('rag-data').value;
+                    if (ragData.toLowerCase().includes('security') || 
+                        ragData.toLowerCase().includes('vulnerability') ||
+                        ragData.toLowerCase().includes('firewall')) {
+                        
+                        response = "⚠️ CONTENT MISMATCH WARNING\n\nI've detected that the information you provided appears to be a security report, which doesn't match the vacation planning scenario. \n\nInstead of making incorrect assumptions based on this mismatched data, I'll ask you to provide relevant information about your travel preferences, budget, and requirements so I can help you plan your vacation properly.\n\nCould you please share details about:\n- Your travel dates and destination preferences\n- Your budget in £\n- Accommodation preferences\n- Activities you're interested in";
+                        resultContent.textContent = response;
+                        return;
+                    }
+                }
+                
+                // Generate appropriate response based on scenario and strategy
+                switch(activeScenario) {
+                    case 'vacation':
+                        response = generateVacationResponse(activeStrategy);
+                        break;
+                    case 'meal':
+                        response = generateMealResponse(activeStrategy);
+                        break;
+                    case 'career':
+                        response = generateCareerResponse(activeStrategy);
+                        break;
+                    case 'home':
+                        response = generateHomeResponse(activeStrategy);
+                        break;
+                    case 'custom':
+                        response = generateCustomResponse(activeStrategy);
+                        break;
+                }
+                
+                resultContent.textContent = response;
+            }
+            
+            // Response generators for different scenarios
+            function generateVacationResponse(strategy) {
+                switch(strategy) {
+                    case 'rag':
+                        return "Based on your information, I recommend a beach vacation in Cornwall. With your £2,500 budget, you can:\n\n- Travel: £400 for train tickets for 4 people\n- Accommodation: £1,200 for 7 nights at a family-friendly holiday park\n- Food & Activities: £900\n\nThis keeps you within budget while meeting your preferences for beach activities and family-friendly options.";
+                    case 'cot':
+                        return "Let me break this down step by step:\n\n1. Travel costs: Train tickets from London to Cornwall for 4 people would be approximately £400.\n2. Accommodation: A family apartment for 7 nights at a beach resort would cost around £1,200.\n3. Food expenses: Estimating £100 per day for a family of four brings us to £700.\n4. Activities: Beach activities are mostly free, but budgeting £200 for attractions.\n\nTotal estimated cost: £2,500, which matches your budget exactly.";
+                    case 'react':
+                        return "I've searched for the best options for your family vacation:\n\n- Found several family-friendly beach destinations within your budget: Cornwall, Devon, and Wales.\n- Train prices from London range from £80-£120 per person for these destinations.\n- Family resorts with good ratings and kid-friendly amenities are available in the £150-£200 per night range.\n- Weather in these locations is typically mild in summer with average temperatures of 18-22°C.\n\nBased on this research, I recommend Cornwall as it offers the best combination of beautiful beaches, family activities, and travel convenience.";
+                    case 'dsp':
+                        return "Beach destinations with kid-friendly activities within your £2,500 budget:\n\n1. Newquay, Cornwall - Famous for beaches and surf schools\n2. Bournemouth, Dorset - Seven miles of sandy beach and pier\n3. Tenby, Wales - Colorful harbor and beautiful beaches\n4. Whitby, Yorkshire - Historic seaside town with beaches and abbey\n\nAll these destinations offer family accommodations within your budget and have plenty of activities suitable for children ages 8 and 12.";
+                    case 'tot':
+                        return "I've evaluated your options based on cost, family-friendliness, travel time, and activities:\n\n1. Beach vacation in Cornwall:\n   - Pros: Beautiful beaches, family attractions, direct train\n   - Cons: Can be crowded in summer\n   - Score: 9/10\n\n2. City tour in London:\n   - Pros: Many attractions, no travel needed if you're local\n   - Cons: Expensive, less beach time\n   - Score: 6/10\n\n3. Mountain retreat in Scotland:\n   - Pros: Beautiful scenery, outdoor activities\n   - Cons: Colder weather, longer travel time\n   - Score: 7/10\n\n4. Cultural experience in York:\n   - Pros: History, Viking museum, shorter travel\n   - Cons: Limited beach options\n   - Score: 7/10\n\nRecommendation: Based on your criteria, the beach vacation in Cornwall is the best option for your family.";
+                }
+            }
+            
+            function generateMealResponse(strategy) {
+                // Simplified response for meal planning
+                return "Based on your £120 budget, vegetarian requirements, and nut allergy, I've created a weekly meal plan with recipes that can be prepared in 30 minutes or less. The plan includes vegetarian pasta, stir-fry, tacos, and sheet pan meals that meet all your constraints.";
+            }
+            
+            function generateCareerResponse(strategy) {
+                // Simplified response for career development
+                return "I've developed a 12-month career advancement plan within your £1,000 budget and 5 hours per week. The plan includes online courses in project management, networking strategies, and a timeline for skill development and job search activities.";
+            }
+            
+            function generateHomeResponse(strategy) {
+                // Simplified response for home improvement
+                return "For your £8,000 kitchen renovation, I recommend focusing on cabinet refacing rather than replacement, updating countertops with quartz, and selecting energy-efficient appliances. This approach will maximize your budget while creating a modern, functional kitchen.";
+            }
+            
+            function generateCustomResponse(strategy) {
+                return "Based on your custom scenario and using the " + strategy + " approach, I've analyzed your requirements and provided a tailored solution that addresses your specific needs and constraints.";
+            }
+            
+            // Initialize with default scenario and strategy
+            updateFinalPrompt();
+        });
+    </script>
+</body>
+</html>
