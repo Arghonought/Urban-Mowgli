@@ -3,66 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Making AI Accessible for All</title>
+    <title>MoE – Mixture of Experts | AI for Everyone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #f8fdff;
+            --text: #1a1a2e;
+            --accent: #5e60ce;
+            --accent-light: #8b8df1;
+            --success: #48cae4;
+            --warning: #ff9e00;
+            --card: #ffffff;
+            --shadow: 0 10px 30px rgba(94, 96, 206, 0.15);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            background-color: white;
-            color: blue;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #fff8e1);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
         }
 
-        button {
-            background-color: darkblue;
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: var(--card);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
             color: white;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.95;
+        }
+
+        section {
+            padding: 50px 40px;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 5px;
+            background: var(--success);
+            bottom: -10px;
+            left: 0;
+            border-radius: 3px;
+        }
+
+        p { font-size: 1.15rem; margin-bottom: 20px; }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 16px 32px;
+            font-size: 1.2rem;
+            font-weight: 600;
             border: none;
-            padding: 15px 30px;
-            margin: 10px;
-            font-size: 1.2em;
+            border-radius: 50px;
             cursor: pointer;
-            border-radius: 5px;
-            text-transform: uppercase;
+            margin: 10px;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 6px 15px rgba(94,96,206,0.3);
         }
 
-        button:hover {
-            background-color: #00509E; /* A darker shade of blue for better visibility */
+        .btn:hover {
+            transform: translateY(-4px);
+            background: var(--accent-light);
+            box-shadow: 0 12px 25px rgba(94,96,206,0.4);
         }
 
-        img {
-            max-width: 100%;
-            height: auto;
+        .btn-secondary {
+            background: var(--success);
         }
 
-        .content-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
+        .btn-secondary:hover {
+            background: #0096c7;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .card {
+            background: var(--bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border-left: 6px solid var(--accent);
+        }
+
+        .img-full {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin: 30px 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 1.1rem;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th {
+            background: var(--accent);
+            color: white;
+            padding: 20px;
+            text-align: left;
+        }
+
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) { background: #f0f8ff; }
+
+        /* Prompt Builder */
+        .prompt-builder {
+            background: linear-gradient(135deg, #a0d8ef, #f4e04d33);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-family: inherit;
+        }
+
+        .prompt-output {
+            background: #2b2d42;
+            color: #a6e9d5;
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 30px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: var(--accent);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.4rem; }
+            section { padding: 40px 20px; }
+            .btn { padding: 14px 24px; font-size: 1.1rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="content-wrapper">
-        <img src="https://cdn-images-1.medium.com/v2/resize:fit:800/1*abGBnMxxQrImGWNnR79_ww.png" alt="AI Image depicting artificial intelligence interacting with humans">
-        <h1>Making AI Accessible for All</h1>
-        <p></p><p></p>
-        <h4>This site is to learn and make AI accessible to all. </h4> 
-        <h4>AI is not about how much you "know" but about how much you "understand". </h4>
-        <h4>To learn how to take advantage of AI, one needs to use reasoning and imagination. </h4>
-<h3>A machine can be used to our advantage through AI but it will never be mightier than the creator.</h3>
-<p></p><p></p>
-        
-        <!-- Link wrapped around the MoE button -->
-         <a href="https://arghonought.github.io/Urban-Mowgli/MoE.html" target="_blank" rel="noopener noreferrer">
-  <button aria-label="Go to MoE">MoE</button>
-</a>
-<a href="https://arghonought.github.io/Urban-Mowgli/prompting-strategies-COT-TOT-ReAct-DPS-RAG.html" target="_blank" rel="noopener noreferrer">
-  <button aria-label="Learn accessible prompting strategies">Accessible Prompting Strategies</button>
-</a>
-Tips
-        <button aria-label="More content coming soon">More to Come</button>
+    <div class="container">
+
+        <header>
+            <h1>Mixture of Experts (MoE)</h1>
+            <p class="subtitle">You don’t need to know everything.<br>You just need to know how to ask the right people.</p>
+        </header>
+
+        <section>
+            <h2>What is MoE?</h2>
+            <p>MoE is like having a team of specialists in your pocket. Instead of asking the AI one big hard question, you break the problem into pieces and let different “experts” help with each piece.</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="color:var(--accent); margin-bottom:15px;">Old Way</h3>
+                    <p>“Tell me how to save money.”</p>
+                    <p>→ You get a long list that’s hard to follow.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color:var(--success); margin-bottom:15px;">MoE Way</h3>
+                    <p>“Act as a budget coach → then as a cheap chef → then as a psychologist who understands why I spend too much.”</p>
+                    <p>→ You get a plan that actually works for real life.</p>
+                </div>
+            </div>
+
+            <img src="https://cdn-images-1.medium.com/v2/resize:fit:1200/1*O0w8LZiJ0A77pvxJ96r1Yw.png" alt="People working together with AI" class="img-full">
+        </section>
+
+        <section>
+            <h2>Real-Life Examples</h2>
+
+            <table>
+                <tr>
+                    <th>Your Goal</th>
+                    <th>Experts You Can Call</th>
+                </tr>
+                <tr>
+                    <td>Get a better job</td>
+                    <td>Career Coach • Resume Writer • Interview Trainer • Industry Expert</td>
+                </tr>
+                <tr>
+                    <td>Save money every month</td>
+                    <td>Budget Planner • Frugal Shopper • Cheap Chef • Money Psychologist</td>
+                </tr>
+                <tr>
+                    <td>Learn to draw</td>
+                    <td>Art Teacher • Daily Practice Coach • Motivation Expert • Supply Buyer</td>
+                </tr>
+            </table>
+
+            <p style="text-align:center; margin-top:40px;">
+                <a href="index.html" class="btn">← Back to Home</a>
+                <a href="#" class="btn btn-secondary">Try MoE Now ↓</a>
+            </p>
+        </section>
+
+        <section id="builder">
+            <div class="prompt-builder">
+                <h2 style="color:white; text-align:center; margin-bottom:30px;">Build Your Own MoE Team</h2>
+
+                <div class="form-group">
+                    <label>My big goal or problem:</label>
+                    <input type="text" id="goal" placeholder="Example: Plan healthy meals for my family on £50 a week">
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Expert 1</label>
+                        <input type="text" id="e1" placeholder="Example: Nutritionist">
+                        <textarea id="q1" placeholder="What should this expert do or answer?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Expert 2</label>
+                        <input type="text" id="e2" placeholder="Example: Budget Chef">
+                        <textarea id="q2" placeholder="What should this expert do or answer?"></textarea>
+                    </div>
+                </div>
+
+                <p style="text-align:center;">
+                    <button class="btn btn-secondary" id="generate">Generate My MoE Prompt</button>
+                </p>
+
+                <div class="prompt-output" id="output"></div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Made with curiosity and colour ❤️ | You don’t need to be a tech expert — just bring your questions.</p>
+        </footer>
     </div>
 
+    <script>
+        document.getElementById('generate').addEventListener('click', () => {
+            const goal = document.getElementById('goal').value.trim();
+            const e1 = document.getElementById('e1').value.trim();
+            const q1 = document.getElementById('q1').value.trim();
+            const e2 = document.getElementById('e2').value.trim();
+            const q2 = document.getElementById('q2').value.trim();
+
+            if (!goal || !e1 || !q1 || !e2 || !q2) {
+                alert('Please fill in your goal and at least two experts!');
+                return;
+            }
+
+            const prompt = `Goal: ${goal}
+
+Use a Mixture of Experts (MoE) approach:
+
+1. You: Act as a ${e1}.
+   Task: ${q1}
+
+2. Now act as a ${e2}.
+   Task: ${q2}
+
+Finally, combine both answers into one clear, practical plan that anyone can follow.`;
+
+            const out = document.getElementById('output');
+            out.textContent = prompt;
+            out.style.display = 'block';
+            out.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
 </body>
 </html>
-
