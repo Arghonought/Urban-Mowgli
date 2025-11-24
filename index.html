@@ -4,59 +4,250 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Making AI Accessible for All</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #f8fdff;
+            --text: #1a1a2e;
+            --accent: #5e60ce;
+            --accent-light: #8b8df1;
+            --success: #48cae4;
+            --warning: #ff9e00;
+            --card: #ffffff;
+            --shadow: 0 10px 30px rgba(94, 96, 206, 0.15);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            background-color: white;
-            color: blue;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #fff8e1);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            background: var(--card);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.95;
+        }
+
+        main { padding: 60px 40px; }
+
+        h2 {
+            font-size: 2.4rem;
+            color: var(--accent);
+            margin: 50px 0 30px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 6px;
+            background: var(--success);
+            bottom: -12px;
+            left: 0;
+            border-radius: 3px;
+        }
+
+        p { font-size: 1.25rem; margin-bottom: 25px; }
+
+        .highlight { 
+            background: linear-gradient(120deg, #fdf2a0, #ff9e80); 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 18th 38px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 15px;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(94,96,206,0.35);
+            min-width: 240px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            background: var(--accent-light);
+            box-shadow: 0 15px 30px rgba(94,96,206,0.45);
+        }
+
+        .btn-success { background: var(--success); }
+        .btn-success:hover { background: #0096c7; }
+
+        /* Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 40px;
+            margin: 50px 0;
+        }
+
+        .card {
+            background: var(--bg);
+            padding: 35px;
+            border-radius: 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .card h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+        }
+
+        img.hero {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 24px;
+            margin: 40px auto;
+            display: block;
+            box-shadow: var(--shadow);
+        }
+
+        table {
+            width: 100%;
+            max-width: 700px;
+            margin: 50px auto;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th {
+            background: var(--accent);
+            color: white;
+            padding: 25px;
+            font-size: 1.4rem;
+        }
+
+        td {
+            padding: 25px;
+            text-align: center;
+            font-size: 1.3rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) td { background: #f0f8ff; }
+
+        footer {
             text-align: center;
             padding: 50px;
-        }
-
-        button {
-            background-color: darkblue;
+            background: var(--accent);
             color: white;
-            border: none;
-            padding: 15px 30px;
-            margin: 10px;
-            font-size: 1.2em;
-            cursor: pointer;
-            border-radius: 5px;
-            text-transform: uppercase;
+            font-size: 1.3rem;
         }
 
-        button:hover {
-            background-color: #00509E; /* A darker shade of blue for better visibility */
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .content-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
+        @media (max-width: 768px) {
+            h1 { font-size: 2.6rem; }
+            .btn { font-size: 1.2rem; padding: 16px 30px; min-width: 200px; }
+            main { padding: 40px 20px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="content-wrapper">
-        <h1>Making AI Accessible for All</h1>
-        <img src="https://cdn-images-1.medium.com/v2/resize:fit:800/1*abGBnMxxQrImGWNnR79_ww.png" alt="AI Image depicting artificial intelligence interacting with humans">
-        <h3>AI is not about how much you "know" but about how much you "understand". </h3>
-        <h4>To learn how to take advantage of AI, one needs to use reasoning and imagination. </h4>
-        <h2>A machine can be used to our advantage through AI but it will never be mightier than the creator.</h2>
+    <div class="container">
 
-        <!-- Link wrapped around the MoE button -->
-      <a href="MoE.html" target="_blank" rel="noopener noreferrer">
-        <button aria-label="Go to MoE">MoE</button>
-        </a>
-        <a href="prompting-strategies-COT-TOT-ReAct-DPS-RAG.html" target="_blank" rel="noopener noreferrer">
-        <button aria-label="Learn accessible prompting strategies">Accessible Prompting Strategies</button>
-        </a>
-<button aria-label="More content coming soon">More to Come</button>
+        <header>
+            <h1>Making AI Accessible<br><span style="font-size:2.8rem;">for All</span></h1>
+            <p class="subtitle">Learn & Understand by Doing.<br>
+            You only need curiosity, your life experience, and imagination.</p>
+        </header>
+
+        <main>
+
+            <img src="https://cdn-images-1.medium.com/v2/resize:fit:800/1*abGBnMxxQrImGWNnR79_ww.png" 
+                 alt="Friendly person smiling with glowing AI ideas around them" class="hero">
+
+            <h2>You Already Have Everything You Need</h2>
+            <p> One could say, the machine functions are based on human reasoning and mathematics. You can leave the mathematics to AI, but keep the reasoning for yourself (deeper and containing many more layers than what a machine can do in this respect). Knowing how to reason systematically is a great advantage.</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>1×1 Picture of Truth</h3>
+                    <p><strong>AI is just a mirror for your own thinking.</strong><br>
+                    The smarter you structure your prompts, the smarter the outcomes.</p>
+                </div>
+                <div class="card">
+                    <h3>1×2 Simple Rule</h3>
+                    <p>Good question → Good answer<br>
+                    Vague question → Vague answer</p>
+                </div>
+            </div>
+
+            <h2>What Really Matters (2×2 Table)</h2>
+
+            <table>
+                <tr>
+                    <th>You Bring</th>
+                    <th>AI Brings</th>
+                </tr>
+                <tr>
+                    <td>Your curiosity<br>& life experience</td>
+                    <td>Fast research & ideas</td>
+                </tr>
+                <tr>
+                    <td>Your common sense<br>& imagination</td>
+                    <td>Millions of examples<br>& possibilities</td>
+                </tr>
+            </table>
+
+            <h2>Ready to Start?</h2>
+            <p style="text-align:center; font-size:1.4rem; max-width:800px; margin:0 auto 40px;">                Click any button below and explore/apply advanced AI concepts and prompting strategies. <br>
+                  You only need wits, imagination, curiosity and overall persistance.  </p>
+
+            <div style="text-align:center;">
+                <a href="MoE.html" class="btn">MoE<br><small>Mixture of Experts</small></a>
+                <a href="prompting-strategies-COT-TOT-ReAct-DPS-RAG.html" class="btn btn-success">
+                    Prompting Basics</a>
+            </div>
+
+        </main>
+
+        <footer>
+            <p>No computer skills needed • No money needed • Just bring yourself ❤️</p>
+        </footer>
+
     </div>
 </body>
 </html>
