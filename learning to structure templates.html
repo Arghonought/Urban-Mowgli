@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Learning and Practicing crafting Prompting Templates</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --primary: #0066cc;
+    --primary-dark: #004999;
+    --bg: #f9f9fb;
+    --text: #222;
+    --border: #ccc;
+    --success: #2e7d32;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1e1e;
+      --text: #e0e0e0;
+      --border: #444;
+      --primary-dark: #66a3ff;
+    }
+  }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 1rem;
+    line-height: 1.5;
+  }
+  .container { max-width: 800px; margin: 0 auto; }
+
+  h1 { text-align: center; color: var(--primary); }
+  .prompt-builder { background: #fff; border: 1px solid var(--border); border-radius: .5rem; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+  @media (prefers-color-scheme: dark) { .prompt-builder { background:#2d2d2d; } }
+
+  .section { margin-bottom: 1.5rem; }
+  label { display: block; font-weight: 600; margin-bottom: .25rem; }
+  input, select, textarea {
+    width: 100%; padding: .5rem; border: 1px solid var(--border); border-radius: .25rem; font: inherit;
+  }
+  textarea { min-height: 80px; resize: vertical; }
+  .input-group { margin-bottom: .75rem; }
+  small { display: block; color: #666; margin-top: .25rem; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+  button {
+    background: var(--primary); color:#fff; border:none; border-radius:.25rem; padding:.5rem 1rem;
+    cursor:pointer; font:inherit; font-weight:600;
+  }
+  button:hover { background: var(--primary-dark); }
+  button.success { background: var(--success); }
+
+  .prompt-box {
+    background: #f0f4f8; padding:1rem; border-radius:.25rem; margin-top:.5rem;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  @media (prefers-color-scheme: dark) { .prompt-box { background:#333; } }
+
+  .hidden { display:none; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Prompt Template Builder</h1>
+ <h3>This is a template to craft prompts.</h3>
+    <p>Considering the following elements of a prompt, will enhance the alignment between AI outcomes and your requests.<p>
+  <section class="prompt-builder" role="form" aria-labelledby="builder-title">
+    <h2 id="builder-title" class="sr-only">Prompt Builder Form</h2>
+   
+    <!-- ====================== 1. Goal ====================== -->
+    <div class="section">
+      <label for="goal">Goal <span class="sr-only">(what you want the AI to achieve)</span></label>
+      <textarea id="goal" placeholder="Hint: What is the main objective of the prompt? (What, Why, where, how, step  by step instructions, a quiz, information)"></textarea>
+      <small>Example: Why the clock has 360 degrees and 12 sections.</small>
+    </div>
+
+    <!-- ====================== 2. Context ====================== -->
+    <div class="section">
+      <label for="context">Context <span class="sr-only">(background information)</span></label>
+      <textarea id="context" placeholder="Hint: Background information to frame an AI outcome"></textarea>
+      <small>Example: The company sells eco‑friendly shoes to millennials"</small>
+    </div>
+
+    <!-- ====================== 3. Audience ====================== -->
+    <div class="section">
+      <label for="audience">Audience</label>
+      <input type="text" id="audience" placeholder="Hint: Describe who are the intended recipients (i.e Who will be reading the output?) ">
+      <small>Example: i.e people living in Hackney</small>
+    </div>
+
+    <!-- ====================== 4. Tone ====================== -->
+    <div class="section">
+      <label for="tone">Tone</label>
+      <select id="tone">
+        <option value="">-- Choose --</option>
+        <option>Formal</option><option>Professional</option><option>Educative</option>
+        <option>Persuasive</option>
+        <option>Empathetic</option>
+        <option>Authoritative</option>
+        <option>Casual</option>
+        <option>Friendly</option>
+        <option>Humorous</option>
+        <option>Sarcastic</option>
+      </select>
+      <small>Desired voice of the response.</small>
+    </div>
+
+    <!-- ====================== 5. Style ====================== -->
+    <div class="section">
+      <label for="style">Style (visual/textual)</label>
+      <select id="style">
+        <option value="">-- Choose --</option>
+        <option>Illustration</option>
+        <option>UML diagram</option>
+        <option>Cartoon</option>
+        <option>Realistic</option>
+        <option>Oil Painting</option>
+        <option>Watercolor</option>
+        <option>3D Render</option>
+        <option>Minimalist</option>
+        <option>Cyberpunk</option>
+        <option>Vintage</option>
+      </select>
+      <small>Artistic or writing style.</small>
+    </div>
+
+    <!-- ====================== 6. Temperature ====================== -->
+    <div class="section">
+      <label for="temperature">Creativity (Temperature) <span class="sr-only">0‑1, higher = more creative</span></label>
+      <input type="range" id="temperature" min="0" max="1" step="0.05" value="0.7">
+      <output id="tempValue" style="margin-left:.5rem;">0.70</output>
+      <small>0 = Precision and accuracy, 1 = Creative.</small>
+    </div>
+
+    <!-- ====================== 7. Constraints ====================== -->
+    <div class="section">
+      <label for="constraints">Constraints</label>
+      <textarea id="constraints" placeholder="Hint: mandatory instructions/requests"></textarea>
+      <small>Example: Under 200 words, no brand names, avoid emotional remarks, consider only facts.</small>
+    </div>
+
+    <!-- ====================== 8. Specifications ====================== -->
+    <div class="section">
+      <label for="specs">Specifications</label>
+      <textarea id="specs" placeholder="Hint: Exact format or details required."></textarea>
+      <small>Example: Include 3 bullet points, use active voice, display on a table, email, poem, HTML code </small>
+    </div>
+
+    <!-- ====================== 9. Descriptions ====================== -->
+    <div class="section">
+      <label for="descriptions">Descriptions / Details</label>
+      <textarea id="descriptions" placeholder="Hint: Specific details to be added to enhance the outcome's alignments"></textarea>
+      <small>Example: A red sports car parked on a rainy city street at night</small>
+    </div>
+    
+    <!-- ====================== Generated Prompt ====================== -->
+   
+    <div class="section">
+      <h3>Generated Prompt</h3>
+      <div id="generatedPrompt" class="prompt-box" aria-live="polite">[Your prompt will appear here]</div>
+      <div class="actions">
+        <button id="copyBtn">Copy Prompt</button>
+        <button id="resetBtn">Reset Form</button>
+        <button id="newBtn" class="success">Start New Prompt</button>
+      </div>
+    </div>
+    
+    <!-- ====================== Save / Load ====================== -->
+    <div class="section">
+      <button id="saveBtn">Save Template (browser)</button>
+      <details id="savedList">
+        <summary>Saved Templates</summary>
+        <ul id="savedUl" style="margin:0;padding-left:1.2rem;"></ul>
+      </details>
+    </div>
+    <h3> Instructions: verifying/testing prompt </h3>
+          <p>1. Copy prompt generated by the template</p>
+          <p>2. Paste prompt on an AI Chat-bot</p>
+          <p>3. Adjust prompt by changing the elements on the template and EXPERIMENT</p>
+          <h2> LINKS</h2>
+<ul>
+    <li><a href="https://duck.ai" target="_blank" rel="noopener noreferrer"> Duck.ai</a></li>
+    <li><a href="https://goblin.tools" target="_blank" rel="noopener noreferrer"> Goblin Tools</a></li>
+    <li><a href="https://duckduckgo.com/" target="_blank" rel="noopener noreferrer"> DuckDuckGo </a></li>
+    <li><a href="https://www.reddit.com/" target="_blank" rel="noopener noreferrer"> Reddit</a></li>
+    <li><a href="https://www.w3schools.com/" target="_blank" rel="noopener noreferrer">  W3 School </a></li>
+     <li><a href="https://itwithoutfear.wordpress.com/artificial-intelligence/" target="_blank" rel="noopener noreferrer"> Class Web Page-Resorces</a></li>
+   <li><a href="https://pia.ai/" target="_blank" rel="noopener noreferrer"> Pi.ai</a></li> 
+   <li><a href="https://huggingface.com/" target="_blank" rel="noopener noreferrer"> Hugging face</a></li> 
+</ul>  
+<h2> More Practice </h2>
+<ul> 
+<li><a href="https://app.edcafe.ai/chatbots/68e973c3c4dd4be51dfe1543?sessionId=6914db15b5df8ca4309e6998" target="_blank" rel="noopener noreferrer"> Prompting Practice</a></li>
+<li><a href="https://agent.jotform.com/019a175b83ea7e4dbf4dfdfe373d60e80604"> Squared-Grapes Prompting Tutor</a></li>
+
+  </section>
+</div>
+ 
+<script>
+/* ==================== Helper Functions ==================== */
+const $ = id => document.getElementById(id);
+const els = {
+  goal: $('goal'), context: $('context'), audience: $('audience'),
+  tone: $('tone'), style: $('style'), temperature: $('temperature'),
+  tempValue: $('tempValue'), constraints: $('constraints'),
+  specs: $('specs'), descriptions: $('descriptions'),
+  generated: $('generatedPrompt'), copyBtn: $('copyBtn'),
+  resetBtn: $('resetBtn'), newBtn: $('newBtn'), saveBtn: $('saveBtn'),
+  savedUl: $('savedUl')
+};
+
+function buildPrompt() {
+  const parts = [];
+  if (els.goal.value.trim()) parts.push(`Goal: ${els.goal.value.trim()}`);
+  if (els.context.value.trim()) parts.push(`Context: ${els.context.value.trim()}`);
+  if (els.audience.value.trim()) parts.push(`Audience: ${els.audience.value.trim()}`);
+  if (els.tone.value) parts.push(`Tone: ${els.tone.value}`);
+  if (els.style.value) parts.push(`Style: ${els.style.value}`);
+  if (els.temperature.value) parts.push(`Temperature: ${els.temperature.value}`);
+  if (els.constraints.value.trim()) parts.push(`Constraints: ${els.constraints.value.trim()}`);
+  if (els.specs.value.trim()) parts.push(`Specifications: ${els.specs.value.trim()}`);
+  if (els.descriptions.value.trim()) parts.push(`Details: ${els.descriptions.value.trim()}`);
+
+  return parts.length ? parts.join('\n\n') : '[Start filling the fields above]';
+}
+
+/* ==================== Real‑time Update ==================== */
+const inputs = [els.goal, els.context, els.audience, els.tone, els.style,
+                els.temperature, els.constraints, els.specs, els.descriptions];
+
+inputs.forEach(el => el.addEventListener('input', () => els.generated.textContent = buildPrompt()));
+
+els.temperature.addEventListener('input', () => els.tempValue.textContent = els.temperature.value);
+
+/* ==================== Buttons ==================== */
+els.copyBtn.addEventListener('click', async () => {
+  const text = els.generated.textContent;
+  try {
+    await navigator.clipboard.writeText(text);
+    els.copyBtn.textContent = 'Copied!';
+    setTimeout(() => els.copyBtn.textContent = 'Copy Prompt', 1500);
+  } catch (e) { alert('Copy failed – your browser may block clipboard access.'); }
+});
+
+els.resetBtn.addEventListener('click', () => {
+  if (confirm('Clear all fields?')) {
+    inputs.forEach(i => i.value = (i.tagName === 'SELECT') ? '' : '');
+    els.temperature.value = 0.7;
+    els.tempValue.textContent = '0.70';
+    els.generated.textContent = '[Your prompt will appear here]';
+  }
+});
+
+els.newBtn.addEventListener('click', () => {
+  if (confirm('Start a fresh prompt? Current data will be lost unless saved.')) {
+    els.resetBtn.click();
+  }
+});
+
+/* ==================== Save / Load ==================== */
+function saveTemplate() {
+  const data = {
+    goal: els.goal.value, context: els.context.value, audience: els.audience.value,
+    tone: els.tone.value, style: els.style.value, temperature: els.temperature.value,
+    constraints: els.constraints.value, specs: els.specs.value, descriptions: els.descriptions.value,
+    timestamp: new Date().toISOString()
+  };
+  const key = `prompt_${Date.now()}`;
+  localStorage.setItem(key, JSON.stringify(data));
+  alert('Template saved! Reload the page to see it under “Saved Templates”.');
+  loadSavedList();
+}
+els.saveBtn.addEventListener('click', saveTemplate);
+
+function loadSavedList() {
+  const ul = els.savedUl;
+  ul.innerHTML = '';
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('prompt_')).sort().reverse();
+  if (!keys.length) {
+    ul.innerHTML = '<li><em>No saved templates yet.</em></li>';
+    return;
+  }
+  keys.forEach(k => {
+    const data = JSON.parse(localStorage.getItem(k));
+    const li = document.createElement('li');
+    li.style.marginBottom = '.5rem';
+    const btn = document.createElement('button');
+    btn.textContent = `Load – ${new Date(data.timestamp).toLocaleString()}`;
+    btn.style.marginRight = '.5rem';
+    btn.onclick = () => {
+      els.goal.value = data.goal || '';
+      els.context.value = data.context || '';
+      els.audience.value = data.audience || '';
+      els.tone.value = data.tone || '';
+      els.style.value = data.style || '';
+      els.temperature.value = data.temperature || 0.7;
+      els.tempValue.textContent = els.temperature.value;
+      els.constraints.value = data.constraints || '';
+      els.specs.value = data.specs || '';
+      els.descriptions.value = data.descriptions || '';
+      els.generated.textContent = buildPrompt();
+    };
+    const del = document.createElement('button');
+    del.textContent = 'Delete';
+    del.style.background = '#c62828';
+    del.onclick = () => {
+      if (confirm('Delete this saved template?')) {
+        localStorage.removeItem(k);
+        loadSavedList();
+      }
+    };
+    li.appendChild(btn);
+    li.appendChild(del);
+    ul.appendChild(li);
+  });
+}
+loadSavedList();   // initial load
+
+</script>
+</body>
+</html>
