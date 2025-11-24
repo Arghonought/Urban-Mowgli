@@ -2,11 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Making AI Accessible for All</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
+    <title>Making AI Accessible for All</title>
+
+<style>
+
+/*  Page colours' variables */
+
+      :root {
             --bg: #f8fdff;
             --text: #1a1a2e;
             --accent: #5e60ce;
@@ -18,7 +22,10 @@
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
-        body {
+
+/* Body elements' style */
+
+       body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #e0f7fa, #fff8e1);
             color: var(--text);
@@ -35,7 +42,8 @@
             overflow: hidden;
             box-shadow: var(--shadow);
         }
-
+/* Headings/main content styles */
+        
         header {
             background: linear-gradient(135deg, var(--accent), var(--accent-light));
             color: white;
@@ -52,10 +60,8 @@
             font-size: 1.5rem;
             opacity: 0.95;
         }
-
-        main { padding: 60px 40px; }
-
-        h2 {
+     
+      h2 {
             font-size: 2.4rem;
             color: var(--accent);
             margin: 50px 0 30px;
@@ -73,7 +79,8 @@
             left: 0;
             border-radius: 3px;
         }
-
+        
+      /*paragraph styles*/
         p { font-size: 1.25rem; margin-bottom: 25px; }
 
         .highlight { 
@@ -81,9 +88,28 @@
             padding: 4px 10px; 
             border-radius: 8px; 
             font-weight: 600;
+        }   
+        
+/* Main content style */
+      
+      main { padding: 60px 40px; }
+       /* Section styles with different background colors for contrast */
+
+/* Section style */
+
+     section {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #ffffff; /* Default white background */
         }
 
-        /* Buttons */
+        /* Different background for contrast sections */
+        .contrast {
+            background-color: #ffe0b2; /* Light orange for contrast */
+        }
+
+/* Buttons Styles */
         .btn {
             display: inline-block;
             background: var(--accent);
@@ -111,20 +137,20 @@
         .btn-success { background: var(--success); }
         .btn-success:hover { background: #0096c7; }
 
-        /* Layouts */
+        /* Layout elements'styles/specifications */
         .grid-2 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 40px;
             margin: 50px 0;
         }
-
+/* Card style */
         .card {
             background: var(--bg);
             padding: 35px;
             border-radius: 24px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            text-align: center;
+            text-align: left;
         }
 
         .card h3 {
@@ -132,7 +158,7 @@
             margin-bottom: 15px;
             font-size: 1.6rem;
         }
-
+/* image display style */
         img.hero {
             width: 100%;
             max-width: 800px;
@@ -141,7 +167,7 @@
             display: block;
             box-shadow: var(--shadow);
         }
-
+/* Table style */
         table {
             width: 100%;
             max-width: 700px;
@@ -151,24 +177,30 @@
             border-radius: 20px;
             overflow: hidden;
             box-shadow: var(--shadow);
+            .centered-text {text-align: center;}
+            .left-aligned-buttons {text-align: left;}
+            .button-container {
+            display: flex; /* Use Flexbox for layout */
+            justify-content: flex-start; /* Align buttons to the left */}
         }
 
         th {
             background: var(--accent);
             color: white;
             padding: 25px;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
         }
 
         td {
             padding: 25px;
-            text-align: center;
-            font-size: 1.3rem;
+            text-align: left;
+            font-size: 1.2rem;
             border-bottom: 1px solid #eee;
         }
 
         tr:nth-child(even) td { background: #f0f8ff; }
 
+/* Footer style */
         footer {
             text-align: center;
             padding: 50px;
@@ -182,73 +214,131 @@
             .btn { font-size: 1.2rem; padding: 16px 30px; min-width: 200px; }
             main { padding: 40px 20px; }
         }
-    </style>
-</head>
-<body>
+  /* Navigation styles */
+  
+        nav {
+            margin-top: 10px;
+        }
 
+        nav a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: #ff5722; /* Bright orange */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #e64a19; /* Darker shade on hover */
+        }
+  </style>
+</head>
+
+<body>
     <div class="container">
 
         <header>
             <h1>Making AI Accessible<br><span style="font-size:2.8rem;">for All</span></h1>
-            <p class="subtitle">Learn & Understand by Doing.<br>
-            You only need curiosity, your life experience, and imagination.</p>
+            <p class="subtitle">Learn & Understand by Doing.<br> You only need curiosity, your life experience, and imagination.</p>
+        <nav>
+            <a href="#basics" class="btn btn-success"> Introduction to AI</a>
+            <a href="#prompting" class="btn btn-success">Prompting</a>
+        </nav>
+        <nav>
+            <a href="#templates" class="btn btn-success">Using Templates</a>
+            <a href="#links" class="btn btn-success">LINKS</a>
+        </nav>
         </header>
 
         <main>
-
+        
             <img src="https://raw.githubusercontent.com/Arghonought/Urban-Mowgli/refs/heads/main/What-is-Prompt-Engineering.png"
                  alt="" class="hero">
 
-            <h2>You Already Have Everything You Need</h2>
-            <p> One could say, the machine functions are based on human reasoning and mathematics. You can leave the mathematics to AI, but keep the reasoning for yourself (deeper and containing many more layers than what a machine can do in this respect). Knowing how to reason systematically is a great advantage.</p>
+<section id="basics">
+    <h2>You Already Have Everything You Need</h2>
+    <p> AI functions and capabilities are based upon human reasoning and mathematics. <br>We can leave the mathematics to AI, and keep the reasoning for ourselves (human reasoning is deeper and contains many more layers than a machine in this respect). <br> Knowing how to reason systematically (i.e when solving problems), will be a great advantage to understand how AI works.</p>
 
-            <div class="grid-2">
-                <div class="card">
-                    <h3>1×1 Picture of Truth</h3>
-                    <p><strong>AI is just a mirror for your own thinking.</strong><br>
-                    The smarter you structure your prompts, the smarter the outcomes.</p>
-                </div>
-                <div class="card">
-                    <h3>1×2 Simple Rule</h3>
-                    <p>Good question → Good answer<br>
-                    Vague question → Vague answer</p>
-                </div>
-            </div>
+<div class="grid-2">
+    <div class="card">
+    <h3>Does AI reason like a human being?</h3>
+    <p><strong> AI is a model/simulation of the way humans learn and think.</strong><br><br> AI is a mirror for human reason, for the way humans/animals learn from experience, solve problems, verify or critically analyse/synthesise information.<br><br> Yes, AI "reasons" and much faster than humans, but at a lower level.<br>AI lacks freedom, imagination and real integration given by the living and breathing brain (i.e humans perception v/s sensation).<br><br>AI reasons by following instructions (algorithms), which have been designed by a human using reasoning as you experience it every day.<br>AI does not know neither understands, it predicts instead. <br></p>
+    </div>
+    <div class="card">
+    <h3>Does AI knows and Understand?</h3>
+    <p><strong>AI does not know, neither understands.</strong><br> The quality of AI's outcomes is directly related to the quality of your prompts (i.e. questions, instructions and/or requests). <br><br><strong>You are the one who makes AI to align to your goals by prompting</strong><br>
+<br> AI can store and retrieve information, can search for patterns (sound, text and images), can predict the likelihood that its generated answer is correct (by using statistics and probabilities)<br></p>
+    <p> <br>Good question → Good answer<br> <br>Vague question → Vague answer</p>
+    </div>
+</div>
 
-            <h2>What Really Matters (2×2 Table)</h2>
+<table>
+  <h2>What does Really Matter?</h2><br>
+  <tr>
+    <th>What you Bring</th>
+    <th>What AI Brings</th>
+  </tr>
+  
+  <tr>
+    <td>Your curiosity, your persistence and tools such as your ability to use reasoning and imagination to solve problems. <br>Your life experience, your unanswered questions, your understanding</td>
+    <td>Can reason (by complex calculations formulated/embedded on specific algorithms), can search for patterns with data which has been numerically codified, can predict the likelihood a generated answer is correct by using statistics and probabilities</td>
+  </tr>
+  <tr>
+    <td>Your common sense and Critical Thinking</td>
+    <td>AI calculates the outcomes and does not always aligned to the truth, the format you requested the information to be presented (i.e. a table) and/or the facts and the truth (AI hallucinates )<br>AI is good at what it does, but it not an entity as such. It does exist only when it is answering your questions or executing your instructions. AI is an advanced software which is able to simulate at a very high speed the lowest level of the human cognition's  tools (Memory/storage, retrieval of data, calculations (arithmetic, statistics, functions, probabilities, logic)<br></td>
+  </tr>
+</table>
 
-            <table>
-                <tr>
-                    <th>You Bring</th>
-                    <th>AI Brings</th>
-                </tr>
-                <tr>
-                    <td>Your curiosity<br>& life experience</td>
-                    <td>Fast research & ideas</td>
-                </tr>
-                <tr>
-                    <td>Your common sense<br>& imagination</td>
-                    <td>Millions of examples<br>& possibilities</td>
-                </tr>
-            </table>
+<h2> LINKS </h2><br>
+  <table>
+    <tr>
+    <td> <a href="https://www.w3schools.com/"class="btn" target="_blank" rel="noopener noreferrer"> Learn coding.</a></td>       
+    <td> <a href="https://promptengineering.org/what-is-prompt-engineering/" class="btn" target="_blank" rel="noopener noreferrer">	What is Prompting Engineering?</a></td>
+    </tr>
+  </table>
 
+<section id="prompting">
             <h2>Ready to Start?</h2>
-            <p style="text-align:center; font-size:1.4rem; max-width:800px; margin:0 auto 40px;"> Click any button below and explore/apply advanced AI concepts and prompting strategies. <br>
-                  You only need wits, imagination, curiosity and overall persistance.  </p>
+            <p style="text-align:left; font-size:1.4rem; max-width:800px; margin:0 auto 40px;"> Click any button below and explore/apply advanced AI concepts and prompting strategies. <br> You only need wits, imagination, curiosity and overall persistence.  </p>
 
-            <div style="text-align:center;">
-                <a href="A-4ALL.html"   target="_blank" rel="noopener noreferrer" class="btn"><small>Mixture of Experts<br>MoE Basics</small></a>
-                <a href="MoE.html"  target="_blank" rel="noopener noreferrer"  class="btn">MoE <br><small>Template</small></a>
-                <a href="prompting-strategies-COT-TOT-ReAct-DPS-RAG.html" target="_blank" rel="noopener noreferrer" class="btn">Prompting<br><small>Five Ways</small></a>
-            </a>
+            <div style="text-align:left;">
+            <a href="MoE.html" class="btn"> Mixture of Experts</a>
+            <a href="prompting-strategies-COT-TOT-ReAct-DPS-RAG.html" class="btn">Prompting Basics</a>
             </div>
+</section>
 
+<section id="links">
+<h2> LINKS </h2>
+<p style="text-align:left; font-size:1.4rem; max-width:800px; margin:0 auto 40px;"> Click on the links below for more learning<br></p>
+<table>
+<tr>
+  <td><a href="https://pi.ai"class="btn" target="_blank" rel="noopener noreferrer"> Pi.ai</a></td>       
+  <td><a href="https://goblin.tools" class="btn" target="_blank" rel="noopener noreferrer">	Goblin Tools</a></td>
+</tr>
+<tr>
+  <td><a href="https://duck.ai" class="btn" target="_blank" rel="noopener noreferrer">	Duck.ai</a></td>
+  <td><a href="https://perplexity.ai" class="btn" target="_blank" rel="noopener noreferrer"> Perplexity.ai</a></td>
+</tr>
+  <tr>
+<td><a href="https://grok.com/" class="btn" target="_blank" rel="noopener noreferrer">	Grok.com</a></td>
+  <td><a href="https://toolbook.ai/ai-tool-categories/i" class="btn" target="_blank" rel="noopener noreferrer">Toolbook.ai</a></td>
+</tr>  <td><a href="https://websim.com" class="btn" target="_blank" rel="noopener noreferrer">	Websim</a></td>
+  <td><a href="https://baseai.dev/" class="btn" target="_blank" rel="noopener noreferrer"> Base AI</a></td>
+</tr>
+</table>
+</section>
         </main>
+         <img src=" https://cdn-images-1.medium.com/v2/resize:fit:800/1*abGBnMxxQrImGWNnR79_ww.png" alt="" class="hero">
+    </div>
 
         <footer>
             <p>No computer skills needed • No money needed • Just bring yourself ❤️</p>
         </footer>
- <img src=" https://cdn-images-1.medium.com/v2/resize:fit:800/1*abGBnMxxQrImGWNnR79_ww.png" alt="" class="hero">
+
     </div>
+    
 </body>
 </html>
