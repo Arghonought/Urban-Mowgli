@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,7 +49,7 @@
         p { font-size: 1.1rem; margin-bottom: 18px; }
 
         .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin: 40px 0; }
-        .card { background: #f8fdff; padding: 25px;关注的 border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.07); border-left: 5px solid var(--accent); }
+        .card { background: #f8fdff; padding: 25px; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,0.07); border-left: 5px solid var(--accent); }
         .card h3 { color: var(--accent); margin-bottom: 14px; font-size: 1.35rem; }
 
         img.hero { width: 100%; max-width: 750px; border-radius: 18px; margin: 35px auto; display: block; box-shadow: var(--shadow); }
@@ -70,6 +72,35 @@
         .button-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 30px 0; }
         footer { text-align: center; padding: 40px 20px; background: var(--accent); color: white; font-size: 1.15rem; }
         footer span { font-size: 2rem; }
+
+        /* Back-to-Top Button Styles */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            z-index: 99;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(94,96,206,0.4);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        #backToTop:hover {
+            background: var(--accent-light);
+            transform: translateY(-4px);
+        }
+        @media (max-width: 480px) {
+            #backToTop { width: 48px; height: 48px; font-size: 24px; bottom: 20px; right: 15px; }
+        }
 
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
@@ -181,67 +212,30 @@
 
             <img src="https://cdn-images-1.medium.com/v2/resize:fit:800/1*abGBnMxxQrImGWNnR79_ww.png" alt="Friendly AI illustration" class="hero">
         </main>
-<footer>
-    <p>
-        No computer skills needed • <strong>No money needed</strong> • Just bring yourself 
-        <img src="https://raw.githubusercontent.com/Arghonought/Urban-Mowgli/main/monkey-spark.png" 
-             alt="cheeky monkey" 
-             width="40" 
-             style="vertical-align:middle; margin-left:10px;">
-    </p>
-</footer>
+
+        <footer>
+            <p>No computer skills needed • <strong>No money needed</strong> • Just bring yourself <span>🐒</span> <!-- Cheeky monkey emoji --></p>
+        </footer>
     </div>
+
     <!-- Back-to-Top Button -->
-<button onclick="scrollToTop()" id="backToTop" title="Back to top">
-    Top
-</button>
+    <button onclick="scrollToTop()" id="backToTop" title="Back to top">↑</button>
 
-<style>
-    #backToTop {
-        position: fixed;
-        bottom: 30px;
-        right: 20px;
-        z-index: 99;
-        background: var(--accent);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 56px;
-        height: 56px;
-        font-size: 28px;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(94,96,206,0.4);
-        cursor: pointer;
-        display: none;               /* hidden by default */
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s;
-    }
-    #backToTop:hover {
-        background: var(--accent-light);
-        transform: translateY(-4px);
-    }
-    /* Optional: make it a bit smaller on very small phones */
-    @media (max-width: 480px) {
-        #backToTop { width: 48px; height: 48px; font-size: 24px; bottom: 20px; right: 15px; }
-    }
-</style>
+    <script>
+        // Show button when scrolling down
+        window.onscroll = function() {
+            const btn = document.getElementById("backToTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                btn.style.display = "flex";
+            } else {
+                btn.style.display = "none";
+            }
+        };
 
-<script>
-    // Show button when scrolling down
-    window.onscroll = function() {
-        const btn = document.getElementById("backToTop");
-        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-            btn.style.display = "flex";
-        } else {
-            btn.style.display = "none";
+        // Smooth scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    };
-
-    // Smooth scroll to top
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-</script>
+    </script>
 </body>
 </html>
