@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering Workshop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #b0b0b0;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: #2d2d44;
+            border: 1px solid #00d4ff;
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .section h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .element {
+            margin-bottom: 25px;
+        }
+
+        .element-label {
+            color: #00d4ff;
+            font-weight: 600;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .element-description {
+            background: #1e1e2e;
+            border-left: 3px solid #00d4ff;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+            color: #c0c0c0;
+            border-radius: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            background: #1e1e2e;
+            border: 1px solid #00d4ff;
+            color: #e0e0e0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+        }
+
+        .example {
+            background: #1a1a2e;
+            border: 1px solid #444;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #a0a0a0;
+        }
+
+        .example-title {
+            color: #00ff88;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .output-section {
+            background: #2d2d44;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+
+        .output-section h2 {
+            color: #00ff88;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .prompt-output {
+            background: #1e1e2e;
+            border: 1px solid #00ff88;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            min-height: 150px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #e0e0e0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-generate {
+            background: #00d4ff;
+            color: #1e1e2e;
+            flex: 1;
+        }
+
+        .btn-generate:hover {
+            background: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        .btn-copy {
+            background: #00ff88;
+            color: #1e1e2e;
+            flex: 1;
+        }
+
+        .btn-copy:hover {
+            background: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-reset {
+            background: #666;
+            color: #e0e0e0;
+            flex: 1;
+        }
+
+        .btn-reset:hover {
+            background: #888;
+        }
+
+        .copy-feedback {
+            color: #00ff88;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .copy-feedback.show {
+            display: block;
+        }
+
+        .progress-bar {
+            background: #1e1e2e;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid #444;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .instructions {
+            background: #1a1a2e;
+            border: 1px solid #00d4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            color: #c0c0c0;
+        }
+
+        .instructions h3 {
+            color: #00d4ff;
+            margin-bottom: 12px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .element-counter {
+            color: #00ff88;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Prompt Engineering Workshop</h1>
+            <p class="subtitle">Build effective AI prompts step by step</p>
+        </header>
+
+        <div class="instructions">
+            <h3>How This Works</h3>
+            <ol>
+                <li>Fill each element field below with your specific requirements</li>
+                <li>Each field builds on the previous—be precise</li>
+                <li>Click "Generate Final Prompt" to synthesize your inputs</li>
+                <li>Copy and paste the result directly into any AI chatbot</li>
+                <li>All fields are optional; use what's relevant to your task</li>
+            </ol>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Input Section -->
+            <div>
+                <div class="section">
+                    <h2>Goal <span class="element-counter">1/8</span></h2>
+                    <div class="element">
+                        <div class="element-description">
+                            Define the primary aim: determining an object, explaining an event, identifying a place, instructing a skill, creating a quiz, or providing information.
+                        </div>
+                        <textarea id="goal" placeholder="Example: Explain why a clock has 360 degrees and 12 sections."></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Context <span class="element-counter">2/8</span></h2>
+                    <div class="element">
+                        <div class="element-description">
+                            Provide background information and details that frame the outcome relative to a specific topic, subject, or population.
+                        </div>
+                        <textarea id="context" placeholder="Example: The company sells eco-friendly shoes to millennials."></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Audience <span class="element-counter">3/8</span></h2>
+                    <div class="element">
+                        <div class="element-description">
+                            Identify intended recipients: age, experience level, ability, life circumstances, or expertise.
+                        </div>
+                        <textarea id="audience" placeholder="Example: Adults aged 25-40 with intermediate Excel skills."></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Tone <span class="element-counter">4/8</span></h2>
+                    <div class="element">
+                        <div class="element-description">
+                            Specify emotional tone: formal, casual, funny, sarcastic, empathetic, technical, etc.
+                        </div>
+                        <textarea id="tone" placeholder="Example: Formal, polite, and empathetic."></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Style <span class="element-counter">5/8</span></h2>
+                    <div class="element">
+                        <div class="element-description">
+                            Describe output format: table, email, report, poem, code, list, diagram, slide, etc.
+                        </div>
+                        <textarea id="style" placeholder="Example: Display as a numbered list with code examples."></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Creativity Level <span class="element-counter">6/8</span></h2>
+                    <div class="element">
+                        <div class="element-description">
+                            Set creativity from 0 (factual only) to 1 (highly imaginative). Affects response originality and risk.
+                        </div>
+                        <textarea id="creativity" placeholder="Example: 0.3 (factual, minimal interpretation)"></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Constraints <span class="element-counter">7/8</span></h2>
+                    <div class="element">
+                        <div class="element-description">
+                            List mandatory rules: word limits, excluded content, required accuracy, style restrictions, etc.
+                        </div>
+                        <textarea id="constraints" placeholder="Example: Keep under 200 words, avoid brand names, factual only."></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Outcome Specifications <span class="element-counter">8/8</span></h2>
+                    <div class="element">
+                        <div class="element-description">
+                            Define exact format details: number of bullet points, voice (active/passive), structure, technical requirements.
+                        </div>
+                        <textarea id="outcome" placeholder="Example: Include three bullet points, use active voice, display in a table."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reference Section -->
+            <div>
+                <div class="section">
+                    <h2>Element Reference</h2>
+                    
+                    <div class="element">
+                        <div class="element-label">Goal</div>
+                        <div class="example">
+                            <div class="example-title">What it does:</div>
+                            Anchors the entire prompt. Vague goals produce vague outputs.
+                        </div>
+                        <div class="example">
+                            <div class="example-title">Strong example:</div>
+                            "Explain the evolutionary advantage of bilateral symmetry in early vertebrates" (specific, bounded)
+                        </div>
+                    </div>
+
+                    <div class="element">
+                        <div class="element-label">Context</div>
+                        <div class="example">
+                            <div class="example-title">What it does:</div>
+                            Constrains the answer to relevant domain and prevents tangents.
+                        </div>
+                        <div class="example">
+                            <div class="example-title">Strong example:</div>
+                            "For a biology course on evolutionary developmental biology, assuming students know basic genetics"
+                        </div>
+                    </div>
+
+                    <div class="element">
+                        <div class="element-label">Audience</div>
+                        <div class="example">
+                            <div class="example-title">What it does:</div>
+                            Controls complexity, terminology, and depth of explanation.
+                        </div>
+                        <div class="example">
+                            <div class="example-title">Strong example:</div>
+                            "Third-year biology majors with experience in molecular genetics but no prior knowledge of evo-devo"
+                        </div>
+                    </div>
+
+                    <div class="element">
+                        <div class="element-label">Tone</div>
+                        <div class="example">
+                            <div class="example-title">What it does:</div>
+                            Sets voice and emotional register. Affects readability and engagement.
+                        </div>
+                        <div class="example">
+                            <div class="example-title">Strong example:</div>
+                            "Direct, technical, no padding. Assume reader values precision over comfort."
+                        </div>
+                    </div>
+
+                    <div class="element">
+                        <div class="element-label">Style</div>
+                        <div class="example">
+                            <div class="example-title">What it does:</div>
+                            Determines how information is organized and presented.
+                        </div>
+                        <div class="example">
+                            <div class="example-title">Strong example:</div>
+                            "Numbered steps with code blocks; include visual ASCII diagram of process"
+                        </div>
+                    </div>
+
+                    <div class="element">
+                        <div class="element-label">Creativity</div>
+                        <div class="example">
+                            <div class="example-title">What it does:</div>
+                            Balances factual accuracy with imaginative synthesis. Higher = more risk of hallucination.
+                        </div>
+                        <div class="example">
+                            <div class="example-title">Safe range:</div>
+                            0.0–0.3 (factual), 0.4–0.6 (balanced), 0.7–1.0 (creative)
+                        </div>
+                    </div>
+
+                    <div class="element">
+                        <div class="element-label">Constraints</div>
+                        <div class="example">
+                            <div class="example-title">What it does:</div>
+                            Hard limits that prevent unwanted outputs. These are non-negotiable.
+                        </div>
+                        <div class="example">
+                            <div class="example-title">Strong example:</div>
+                            "No speculation, no brand names, cite sources, max 500 words, active voice only"
+                        </div>
+                    </div>
+
+                    <div class="element">
+                        <div class="element-label">Outcome Specifications</div>
+                        <div class="example">
+                            <div class="example-title">What it does:</div>
+                            Defines exact structural requirements to ensure usable output.
+                        </div>
+                        <div class="example">
+                            <div class="example-title">Strong example:</div>
+                            "Deliver as 5 bullet points, each under 30 words, in order of importance"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="output-section">
+            <h2>Your Final Prompt</h2>
+            <div class="prompt-output" id="promptOutput">
+                [Your synthesized prompt will appear here. Fill in the elements above and click "Generate Final Prompt".]
+            </div>
+            <div class="button-group">
+                <button class="btn-generate" onclick="generatePrompt()">Generate Final Prompt</button>
+                <button class="btn-copy" onclick="copyPrompt()">Copy to Clipboard</button>
+                <button class="btn-reset" onclick="resetForm()">Reset All</button>
+            </div>
+            <div class="copy-feedback" id="copyFeedback">✓ Prompt copied to clipboard</div>
+        </div>
+    </div>
+
+    <script>
+        const elements = ['goal', 'context', 'audience', 'tone', 'style', 'creativity', 'constraints', 'outcome'];
+
+        function updateProgress() {
+            const filledCount = elements.filter(id => document.getElementById(id).value.trim() !== '').length;
+            const percentage = (filledCount / elements.length) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
+        function generatePrompt() {
+            const goal = document.getElementById('goal').value.trim();
+            const context = document.getElementById('context').value.trim();
+            const audience = document.getElementById('audience').value.trim();
+            const tone = document.getElementById('tone').value.trim();
+            const style = document.getElementById('style').value.trim();
+            const creativity = document.getElementById('creativity').value.trim();
+            const constraints = document.getElementById('constraints').value.trim();
+            const outcome = document.getElementById('outcome').value.trim();
+
+            let prompt = '';
+
+            if (goal) {
+                prompt += `GOAL:\n${goal}\n\n`;
+            }
+            if (context) {
+                prompt += `CONTEXT:\n${context}\n\n`;
+            }
+            if (audience) {
+                prompt += `AUDIENCE:\n${audience}\n\n`;
+            }
+            if (tone) {
+                prompt += `TONE:\n${tone}\n\n`;
+            }
+            if (style) {
+                prompt += `STYLE:\n${style}\n\n`;
+            }
+            if (creativity) {
+                prompt += `CREATIVITY LEVEL:\n${creativity}\n\n`;
+            }
+            if (constraints) {
+                prompt += `CONSTRAINTS:\n${constraints}\n\n`;
+            }
+            if (outcome) {
+                prompt += `OUTCOME SPECIFICATIONS:\n${outcome}\n\n`;
+            }
+
+            if (prompt === '') {
+                prompt = '[No elements filled. Add at least one element above.]';
+            }
+
+            document.getElementById('promptOutput').textContent = prompt.trim();
+        }
+
+        function copyPrompt() {
+            const promptText = document.getElementById('promptOutput').textContent;
+            
+            if (promptText.includes('[No elements filled')) {
+                alert('Generate a prompt first by clicking "Generate Final Prompt"');
+                return;
+            }
+
+            navigator.clipboard.writeText(promptText).then(() => {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.classList.add('show');
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+
+        function resetForm() {
+            elements.forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('promptOutput').textContent = '[Your synthesized prompt will appear here. Fill in the elements above and click "Generate Final Prompt".]';
+            updateProgress();
+        }
+
+        // Update progress as user types
+        elements.forEach(id => {
+            document.getElementById(id).addEventListener('input', updateProgress);
+        });
+
+        // Initialize progress
+        updateProgress();
+    </script>
+</body>
+</html>
