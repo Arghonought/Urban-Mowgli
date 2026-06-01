@@ -1,12 +1,373 @@
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=5,IE=9" ><![endif]-->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>MAIN-INDEX-MOWGLI-GITHUB.html</title>
-<meta charset="utf-8"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Mowgli - AI, Internet & Digital Devices Learning Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fdff;
+            --text: #1a1a2e;
+            --accent: #5e60ce;
+            --accent-light: #8b8df1;
+            --success: #48cae4;
+            --card: #ffffff;
+            --shadow: 0 10px 30px rgba(94,96,206,0.12);
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #fffce8);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            background: var(--card);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            text-align: center;
+            padding: 50px 20px 40px;
+        }
+        
+        h1 { 
+            font-size: 2.6rem; 
+            margin-bottom: 12px; 
+            line-height: 1.2; 
+        }
+        
+        .subtitle { 
+            font-size: 1.25rem; 
+            opacity: 0.95; 
+            margin-bottom: 20px; 
+        }
+        
+        .nav-buttons { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 12px; 
+            justify-content: center; 
+            margin-top: 20px; 
+        }
+
+        main { 
+            padding: 40px 25px; 
+        }
+        
+        h2 { 
+            font-size: 2rem; 
+            color: var(--accent); 
+            margin: 45px 0 20px; 
+            position: relative; 
+            padding-bottom: 10px; 
+        }
+        
+        h2::after { 
+            content: ''; 
+            position: absolute; 
+            width: 70px; 
+            height: 4px; 
+            background: var(--success); 
+            bottom: 0; 
+            left: 0; 
+            border-radius: 2px; 
+        }
+        
+        p { 
+            font-size: 1.1rem; 
+            margin-bottom: 18px; 
+        }
+
+        .grid-3 { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 25px; 
+            margin: 40px 0; 
+        }
+        
+        .card { 
+            background: #f8fdff; 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 6px 18px rgba(0,0,0,0.07); 
+            border-left: 5px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(94,96,206,0.2);
+        }
+        
+        .card h3 { 
+            color: var(--accent); 
+            margin-bottom: 14px; 
+            font-size: 1.35rem; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-icon {
+            font-size: 1.8em;
+        }
+        
+        .card p{
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: inline-block; 
+            background: var(--accent); 
+            color: white; 
+            padding: 14px 28px;
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            border: none; 
+            border-radius: 50px; 
+            text-decoration: none;
+            box-shadow: 0 6px 16px rgba(94,96,206,0.25); 
+            transition: all 0.3s; 
+            margin: 8px 6px;
+            min-width: 200px; 
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .btn:hover { 
+            transform: translateY(-3px); 
+            background: var(--accent-light); 
+            box-shadow: 0 10px 22px rgba(94,96,206,0.35); 
+        }
+        
+        .btn-success { 
+            background: var(--success); 
+        }
+        
+        .btn-success:hover { 
+            background: #0096c7; 
+        }
+
+        .button-row { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 12px; 
+            justify-content: center; 
+            margin: 30px 0; 
+        }
+        
+        footer { 
+            text-align: center; 
+            padding: 40px 20px; 
+            background: var(--accent); 
+            color: white; 
+            font-size: 1.15rem; 
+        }
+        
+        footer span { 
+            font-size: 2rem; 
+        }
+
+        /* Back-to-Top Button Styles */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            z-index: 99;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(94,96,206,0.4);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        #backToTop:hover {
+            background: var(--accent-light);
+            transform: translateY(-4px);
+        }
+        
+        @media (max-width: 480px) {
+            #backToTop { 
+                width: 48px; 
+                height: 48px; 
+                font-size: 24px; 
+                bottom: 20px; 
+                right: 15px; 
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 { 
+                font-size: 2.2rem; 
+            }
+            
+            h2 { 
+                font-size: 1.8rem; 
+            }
+            
+            .btn { 
+                padding: 12px 22px; 
+                font-size: 1rem; 
+                min-width: 180px; 
+            }
+            
+            main { 
+                padding: 30px 20px; 
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="mxgraph" style="max-width:100%;border:1px solid transparent;" data-mxgraph="{&quot;highlight&quot;:&quot;#0000ff&quot;,&quot;nav&quot;:true,&quot;resize&quot;:true,&quot;xml&quot;:&quot;&lt;mxfile host=\&quot;Electron\&quot; agent=\&quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.5 Chrome/138.0.7204.251 Electron/37.6.1 Safari/537.36\&quot; version=\&quot;28.2.5\&quot;&gt;&lt;diagram name=\&quot;Page-1\&quot; id=\&quot;kwhJLHDiAXJwlrEYg__S\&quot;&gt;&lt;mxGraphModel dx=\&quot;1356\&quot; dy=\&quot;863\&quot; grid=\&quot;1\&quot; gridSize=\&quot;10\&quot; guides=\&quot;1\&quot; tooltips=\&quot;1\&quot; connect=\&quot;1\&quot; arrows=\&quot;1\&quot; fold=\&quot;1\&quot; page=\&quot;1\&quot; pageScale=\&quot;1\&quot; pageWidth=\&quot;827\&quot; pageHeight=\&quot;1169\&quot; math=\&quot;0\&quot; shadow=\&quot;0\&quot;&gt;&lt;root&gt;&lt;mxCell id=\&quot;0\&quot;/&gt;&lt;mxCell id=\&quot;1\&quot; parent=\&quot;0\&quot;/&gt;&lt;UserObject label=\&quot;&amp;lt;h1&amp;gt;Making Digital Technology Accessible&amp;lt;br&amp;gt;&amp;lt;span style=&amp;quot;font-size:2.4rem;&amp;quot;&amp;gt;for All&amp;lt;/span&amp;gt;&amp;lt;/h1&amp;gt;&amp;lt;br&amp;gt;            &amp;lt;p class=&amp;quot;subtitle&amp;quot;&amp;gt;&amp;lt;font style=&amp;quot;color: rgb(255, 128, 0);&amp;quot;&amp;gt;&amp;lt;font style=&amp;quot;font-size: 19px;&amp;quot;&amp;gt;Learn &amp;amp;amp; Understand by Doing.&amp;lt;br&amp;gt;&amp;lt;/font&amp;gt;&amp;lt;font style=&amp;quot;font-size: 19px;&amp;quot;&amp;gt;You only need curiosity, your life experience, and imagination.&amp;lt;/font&amp;gt;&amp;lt;/font&amp;gt;&amp;lt;/p&amp;gt;&amp;lt;div class=&amp;quot;nav-buttons&amp;quot;&amp;gt;&amp;lt;br&amp;gt;            &amp;lt;/div&amp;gt;\&quot; id=\&quot;81tfFUnnC5xY3v3gQNhU-1\&quot;&gt;&lt;mxCell style=\&quot;text;whiteSpace=wrap;html=1;\&quot; vertex=\&quot;1\&quot; parent=\&quot;1\&quot;&gt;&lt;mxGeometry x=\&quot;40\&quot; y=\&quot;80\&quot; width=\&quot;560\&quot; height=\&quot;250\&quot; as=\&quot;geometry\&quot;/&gt;&lt;/mxCell&gt;&lt;/UserObject&gt;&lt;mxCell id=\&quot;81tfFUnnC5xY3v3gQNhU-2\&quot; value=\&quot;\&quot; style=\&quot;points=[];aspect=fixed;html=1;align=center;shadow=0;dashed=0;fillColor=#FF6A00;strokeColor=none;shape=mxgraph.alibaba_cloud.mps-ai;\&quot; vertex=\&quot;1\&quot; parent=\&quot;1\&quot;&gt;&lt;mxGeometry x=\&quot;80\&quot; y=\&quot;320\&quot; width=\&quot;102.33083333333332\&quot; height=\&quot;102.91666666666666\&quot; as=\&quot;geometry\&quot;/&gt;&lt;/mxCell&gt;&lt;UserObject label=\&quot;&amp;lt;span style=&amp;quot;font-size: 38.4px;&amp;quot;&amp;gt;&amp;lt;span&amp;gt;AI&amp;lt;/span&amp;gt;&amp;lt;/span&amp;gt;\&quot; link=\&quot;https://arghonought.github.io/Urban-Mowgli/\&quot; linkTarget=\&quot;_blank\&quot; id=\&quot;81tfFUnnC5xY3v3gQNhU-5\&quot;&gt;&lt;mxCell style=\&quot;text;whiteSpace=wrap;html=1;align=center;fontStyle=1;verticalAlign=middle;fillColor=#fff2cc;strokeColor=#CC6600;rounded=1;shadow=1;strokeWidth=1.9685;perimeterSpacing=1.9685;\&quot; vertex=\&quot;1\&quot; parent=\&quot;1\&quot;&gt;&lt;mxGeometry x=\&quot;80\&quot; y=\&quot;454.58000000000004\&quot; width=\&quot;127.04\&quot; height=\&quot;75.42\&quot; as=\&quot;geometry\&quot;/&gt;&lt;/mxCell&gt;&lt;/UserObject&gt;&lt;mxCell id=\&quot;81tfFUnnC5xY3v3gQNhU-3\&quot; value=\&quot;\&quot; style=\&quot;image;aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image=img/lib/active_directory/internet_globe.svg;\&quot; vertex=\&quot;1\&quot; parent=\&quot;1\&quot;&gt;&lt;mxGeometry x=\&quot;310.43148148148146\&quot; y=\&quot;319.99666666666667\&quot; width=\&quot;110.83333333333333\&quot; height=\&quot;110.83333333333333\&quot; as=\&quot;geometry\&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=\&quot;81tfFUnnC5xY3v3gQNhU-4\&quot; value=\&quot;\&quot; style=\&quot;image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Devices_Groups.svg;\&quot; vertex=\&quot;1\&quot; parent=\&quot;1\&quot;&gt;&lt;mxGeometry x=\&quot;545.292962962963\&quot; y=\&quot;327.9166666666667\&quot; width=\&quot;110.83333333333333\&quot; height=\&quot;110.83333333333333\&quot; as=\&quot;geometry\&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=\&quot;81tfFUnnC5xY3v3gQNhU-6\&quot; value=\&quot;&amp;lt;span style=&amp;quot;font-family: Helvetica; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 700; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&amp;quot;&amp;gt;&amp;lt;font style=&amp;quot;font-size: 21px;&amp;quot;&amp;gt;INTERNET&amp;lt;/font&amp;gt;&amp;lt;/span&amp;gt;\&quot; style=\&quot;text;whiteSpace=wrap;html=1;fontSize=26;align=center;verticalAlign=middle;fillColor=#fff2cc;strokeColor=#CC6600;rounded=1;shadow=1;strokeWidth=1.9685;perimeterSpacing=1.9685;\&quot; vertex=\&quot;1\&quot; parent=\&quot;1\&quot;&gt;&lt;mxGeometry x=\&quot;302.33\&quot; y=\&quot;454.58000000000004\&quot; width=\&quot;127.04\&quot; height=\&quot;75.42\&quot; as=\&quot;geometry\&quot;/&gt;&lt;/mxCell&gt;&lt;mxCell id=\&quot;81tfFUnnC5xY3v3gQNhU-7\&quot; value=\&quot;&amp;lt;span style=&amp;quot;font-family: Helvetica; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 700; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&amp;quot;&amp;gt;&amp;lt;font style=&amp;quot;font-size: 16px;&amp;quot;&amp;gt;DIGITAL&amp;lt;/font&amp;gt;&amp;lt;/span&amp;gt;&amp;lt;div&amp;gt;&amp;lt;span style=&amp;quot;font-family: Helvetica; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 700; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(236, 236, 236); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&amp;quot;&amp;gt;&amp;lt;font style=&amp;quot;font-size: 16px;&amp;quot;&amp;gt;DEVICES&amp;lt;/font&amp;gt;&amp;lt;/span&amp;gt;&amp;lt;/div&amp;gt;\&quot; style=\&quot;text;whiteSpace=wrap;html=1;fontSize=26;align=center;verticalAlign=middle;fillColor=#fff2cc;strokeColor=#CC6600;rounded=1;shadow=1;strokeWidth=1.9685;perimeterSpacing=1.9685;\&quot; vertex=\&quot;1\&quot; parent=\&quot;1\&quot;&gt;&lt;mxGeometry x=\&quot;545.29\&quot; y=\&quot;454.58000000000004\&quot; width=\&quot;127.04\&quot; height=\&quot;75.42\&quot; as=\&quot;geometry\&quot;/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;&lt;/diagram&gt;&lt;/mxfile&gt;&quot;,&quot;toolbar&quot;:&quot;pages zoom layers lightbox&quot;,&quot;page&quot;:0}"></div>
-<script type="text/javascript" src="https://app.diagrams.net/js/viewer-static.min.js"></script>
+    <div class="container">
+
+        <header>
+            <h1>🌍 Urban Mowgli</h1>
+            <p class="subtitle">Your Gateway to AI, Internet & Digital Literacy<br>Learn & Understand by Doing.</p>
+            <div class="nav-buttons">
+                <a href="#ai" class="btn btn-success">🤖 AI</a>
+                <a href="#internet" class="btn btn-success">🌐 Internet</a>
+                <a href="#devices" class="btn btn-success">💻 Digital Devices</a>
+            </div>
+        </header>
+
+        <main>
+            <section id="ai">
+                <h2>🤖 Artificial Intelligence</h2>
+                <p>Explore the fundamentals of AI, machine learning, and how to effectively communicate with AI systems through prompting. Learn how AI can amplify your reasoning and problem-solving abilities.</p>
+                
+                <div class="grid-3">
+                    <div class="card">
+                        <h3><span class="card-icon">🧠</span> AI Fundamentals</h3>
+                        <p>Understand how AI works, what it can and cannot do, and why reasoning and prompting matter.</p>
+                        <a href="original-index-mowgli.html" class="btn" target="_blank">Enter AI Hub</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><span class="card-icon">💡</span> AI Concepts</h3>
+                        <p>Dive deep into topics like Machine Learning, Neural Networks, and the role of human reasoning in AI.</p>
+                        <a href="original-index-mowgli.html#basics" class="btn" target="_blank">Learn More</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><span class="card-icon">🎯</span> Prompting Strategies</h3>
+                        <p>Master advanced prompting techniques including Chain of Thought, ReAct, and RAG methods.</p>
+                        <a href="prompting-strategies-COT-TOT-ReAct-DPS-RAG.html" class="btn" target="_blank">Explore Strategies</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="internet">
+                <h2>🌐 Internet & Connectivity</h2>
+                <p>Learn the fundamentals of how the internet works, develop practical skills for web browsing, and master YouTube as a learning resource. This section includes hands-on exercises and a comprehensive quiz.</p>
+                
+                <div class="grid-3">
+                    <div class="card">
+                        <h3><span class="card-icon">📚</span> Internet Basics</h3>
+                        <p>Understand how the internet works, web browsers, addresses, and online safety fundamentals.</p>
+                        <a href="internet.html" class="btn" target="_blank">Learn Internet Basics</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><span class="card-icon">📹</span> YouTube & Web Exercise</h3>
+                        <p>Interactive hands-on tasks: learn to navigate YouTube, use search, filters, and find educational content. Includes self-assessment and a 10-question quiz.</p>
+                        <a href="youtube-task.html" class="btn" target="_blank">Start Exercise</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><span class="card-icon">🔒</span> Internet Safety</h3>
+                        <p>Best practices for secure browsing, protecting your privacy, and staying safe online.</p>
+                        <a href="google-search-operators.html" class="btn" target="_blank">Safety Tips & Tools</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="devices">
+                <h2>💻 Digital Devices</h2>
+                <p>Gain confidence with computers, laptops, tablets, and smartphones. Learn about hardware components, keyboard shortcuts, and essential device skills. Test your knowledge with interactive quizzes.</p>
+                
+                <div class="grid-3">
+                    <div class="card">
+                        <h3><span class="card-icon">🖥️</span> Device Fundamentals</h3>
+                        <p>Learn about computer parts, how devices work, and essential hardware components you should know.</p>
+                        <a href="computer-parts.html" class="btn" target="_blank">Explore Devices</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><span class="card-icon">⌨️</span> Windows Shortcuts</h3>
+                        <p>Master keyboard shortcuts and essential Windows skills to work faster and more efficiently.</p>
+                        <a href="windows-shortcuts.html" class="btn" target="_blank">Learn Shortcuts</a>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><span class="card-icon">📋</span> Quizzes & Tests</h3>
+                        <p>Test your knowledge with comprehensive quizzes covering all aspects of digital devices and computer skills.</p>
+                        <a href="quizzes-index.html" class="btn" target="_blank">Take Quizzes</a>
+                    </div>
+                </div>
+            </section>
+
+            <div style="background: #f0f8ff; padding: 30px; border-radius: 16px; margin: 40px 0; border-left: 5px solid var(--success);">
+                <h2 style="color: var(--success); margin-top: 0;">🎯 Getting Started</h2>
+                <p>Choose where you'd like to begin your learning journey:</p>
+                <div class="button-row">
+                    <a href="original-index-mowgli.html" class="btn" target="_blank">📖 AI Learning Path</a>
+                    <a href="youtube-task.html" class="btn" target="_blank">📹 Internet Exercise</a>
+                    <a href="quizzes-index.html" class="btn" target="_blank">💻 Device Quizzes</a>
+                </div>
+            </div>
+
+        </main>
+
+        <footer>
+            <p>Urban Mowgli © 2026 • No computer skills needed • Just bring yourself <span>🐒</span></p>
+        </footer>
+    </div>
+
+    <!-- Back-to-Top Button -->
+    <button onclick="scrollToTop()" id="backToTop" title="Back to top">↑</button>
+
+    <script>
+        // Show button when scrolling down
+        window.onscroll = function() {
+            const btn = document.getElementById("backToTop");
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                btn.style.display = "flex";
+            } else {
+                btn.style.display = "none";
+            }
+        };
+
+        // Smooth scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
