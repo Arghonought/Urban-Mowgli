@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>💻 Digital Skills Learning Quiz</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #FFF5E6;
+      min-height: 100vh;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .app {
+      max-width: 550px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 25px;
+      padding: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.12);
+    }
+    .header {
+      background: #FF8C00;
+      color: white;
+      padding: 18px 15px;
+      border-radius: 20px;
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+    .header-purple {
+      background: #800080;
+      color: white;
+      padding: 14px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    .btn {
+      background: #800080;
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 30px;
+      font-size: 1.05em;
+      font-weight: bold;
+      width: 100%;
+      margin: 7px 0;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-orange { background: #FF8C00; }
+    .btn-green { background: #228B22; }
+    .btn-small { 
+      padding: 10px 16px; 
+      font-size: 0.9em; 
+      width: auto; 
+      display: inline-block; 
+    }
+    .btn:active { opacity: 0.85; transform: scale(0.97); }
+    .input-box, select {
+      width: 100%;
+      padding: 14px;
+      border: 3px solid #800080;
+      border-radius: 30px;
+      font-size: 1.05em;
+      margin: 7px 0;
+      background: white;
+    }
+    select {
+      border-color: #FF8C00;
+      appearance: none;
+      background: white url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path fill='%23800080' d='M6 8L1 3h10z'/></svg>") no-repeat right 15px center;
+      padding-right: 40px;
+    }
+    .question-box {
+      background: #F5E6FF;
+      padding: 18px;
+      border-radius: 20px;
+      margin: 12px 0;
+      border: 3px solid #800080;
+    }
+    .question-text {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #333;
+      line-height: 1.4;
+    }
+    .option-btn {
+      background: white;
+      border: 2px solid #FF8C00;
+      padding: 13px 15px;
+      border-radius: 15px;
+      margin: 6px 0;
+      font-size: 1em;
+      text-align: left;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+      display: block;
+    }
+    .option-btn.selected {
+      background: #FF8C00;
+      color: white;
+      border-color: #800080;
+      font-weight: bold;
+    }
+    .feedback {
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1em;
+    }
+    .correct { background: #90EE90; color: #006400; }
+    .wrong { background: #FFB6C1; color: #8B0000; }
+    .learn { background: #FFF3CD; color: #856404; border: 2px solid #FFC107; }
+    .results {
+      text-align: center;
+      padding: 15px;
+    }
+    .big-number {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #800080;
+    }
+    .badge {
+      display: inline-block;
+      background: #FF8C00;
+      color: white;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9em;
+      margin: 3px;
+    }
+    .badge-purple { background: #800080; }
+    .badge-green { background: #228B22; }
+    .timer {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #FF8C00;
+      text-align: right;
+      padding: 5px;
+    }
+    .progress-bar {
+      background: #e0e0e0;
+      border-radius: 10px;
+      height: 10px;
+      margin: 8px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: #228B22;
+      height: 100%;
+      transition: width 0.3s;
+      border-radius: 10px;
+    }
+    .explanation {
+      background: #FFF9E6;
+      border-left: 4px solid #FF8C00;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      font-size: 0.95em;
+    }
+    img { max-width: 100%; border-radius: 12px; margin: 8px 0; }
+    .hidden { display: none !important; }
+    .topic-card {
+      background: #F5E6FF;
+      padding: 12px;
+      border-radius: 15px;
+      margin: 8px 0;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .topic-card:hover, .topic-card:active {
+      border-color: #800080;
+      background: #EDE0F5;
+    }
+    .topic-icon { font-size: 1.5em; margin-right: 8px; }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Content loads here -->
+</div>
+
+<script>
+// ============================================
+// COMPLETE QUESTION DATABASE
+// 8 Topics × 4 Levels × 15+ questions each
+// ============================================
+const QUESTION_BANK = {
+  hardware: {
+    Beginner: [
+      {type:'mo', text:'What is a computer mouse used for?', options:['Pointing and clicking','Typing letters','Printing pages','Storing files'], answer:'Pointing and clicking', explanation:'A mouse is a pointing device that lets you click on things on the screen.'},
+      {type:'tf', text:'A keyboard is used to type text into a computer', answer:'True', explanation:'Keyboards are input devices with keys for typing letters, numbers, and symbols.'},
+      {type:'fg', text:'The screen of a computer is called a ___', answer:'Monitor', explanation:'The monitor displays images and text from the computer.'},
+      {type:'mo', text:'Which device prints documents on paper?', options:['Printer','Scanner','Speaker','Microphone'], answer:'Printer', explanation:'A printer takes digital documents and prints them onto paper.'},
+      {type:'tf', text:'A laptop is a portable computer', answer:'True', explanation:'Laptops are designed to be carried and used anywhere with a battery.'},
+      {type:'fg', text:'The main circuit board in a computer is the ___', answer:'Motherboard', explanation:'The motherboard connects all components together.'},
+      {type:'mo', text:'What do speakers do?', options:['Output sound','Input sound','Store data','Process data'], answer:'Output sound', explanation:'Speakers convert electrical signals into sound waves you can hear.'},
+      {type:'tf', text:'A scanner converts paper documents into digital files', answer:'True', explanation:'Scanners take physical documents and create digital copies.'},
+      {type:'fg', text:'USB stands for Universal ___ Bus', answer:'Serial', explanation:'USB is a standard for connecting devices to computers.'},
+      {type:'mo', text:'Which stores data permanently?', options:['Hard drive','RAM','CPU','Monitor'], answer:'Hard drive', explanation:'Hard drives keep your files even when the computer is turned off.'},
+      {type:'tf', text:'RAM loses its data when the computer turns off', answer:'True', explanation:'RAM is temporary memory that clears when power is removed.'},
+      {type:'fg', text:'The "brain" of the computer is the ___', answer:'CPU', explanation:'The Central Processing Unit executes instructions and performs calculations.'},
+      {type:'mo', text:'What connects a computer to the internet?', options:['Network card','Graphics card','Sound card','Power supply'], answer:'Network card', explanation:'Network cards allow computers to connect to networks and the internet.'},
+      {type:'tf', text:'A webcam captures video and images', answer:'True', explanation:'Webcams are cameras that connect to computers for video.'},
+      {type:'fg', text:'HDMI is a type of ___ used for video', answer:'Cable', explanation:'HDMI cables transmit high-definition video and audio.'},
+    ],
+    Intermediate: [
+      {type:'mo', text:'What does SSD stand for?', options:['Solid State Drive','Super Speed Disk','Simple Storage Device','System Security Disk'], answer:'Solid State Drive', explanation:'SSDs use flash memory and are faster than traditional hard drives.'},
+      {type:'tf', text:'DDR4 is a type of RAM', answer:'True', explanation:'DDR4 is a common type of computer memory (RAM).'},
+      {type:'fg', text:'A GPU is a Graphics ___ Unit', answer:'Processing', explanation:'The GPU handles rendering images, video, and animations.'},
+      {type:'mo', text:'Which connector type is most common for modern displays?', options:['HDMI','VGA','DVI','Serial'], answer:'HDMI', explanation:'HDMI is the standard for modern monitors and TVs.'},
+      {type:'tf', text:'A power supply unit converts AC to DC', answer:'True', explanation:'The PSU converts wall outlet AC power to DC power for components.'},
+      {type:'fg', text:'NVMe is a type of fast ___ drive', answer:'SSD', explanation:'NVMe SSDs are extremely fast storage devices.'},
+      {type:'mo', text:'What does BIOS stand for?', options:['Basic Input Output System','Binary Integrated Operating System','Basic Internet Operating System','Built-in Operating System'], answer:'Basic Input Output System', explanation:'BIOS initializes hardware when the computer starts.'},
+      {type:'tf', text:'Liquid cooling is more efficient than air cooling', answer:'True', explanation:'Liquid cooling can remove heat more effectively for high-performance systems.'},
+      {type:'fg', text:'Thunderbolt ports are commonly found on ___ computers', answer:'Apple', explanation:'Thunderbolt was developed by Intel and Apple for high-speed connections.'},
+      {type:'mo', text:'Which component affects gaming performance most?', options:['Graphics card','Hard drive','Optical drive','Case fan'], answer:'Graphics card', explanation:'The GPU renders game graphics and has the biggest impact on gaming.'},
+      {type:'tf', text:'All mechanical keyboards use the same type of switches', answer:'False', explanation:'Different switches (Cherry MX, etc.) have different feel and sound.'},
+      {type:'fg', text:'The speed of a CPU is measured in ___', answer:'GHz', explanation:'Gigahertz (GHz) measures how many billions of cycles per second.'},
+      {type:'mo', text:'What is overclocking?', options:['Running CPU faster than rated speed','Setting the computer clock','Replacing the battery','Adding more RAM'], answer:'Running CPU faster than rated speed', explanation:'Overclocking increases clock speed beyond factory settings for more performance.'},
+      {type:'tf', text:'Ethernet provides a wireless connection', answer:'False', explanation:'Ethernet uses cables for wired network connections.'},
+      {type:'fg', text:'The most common keyboard layout is ___', answer:'QWERTY', explanation:'QWERTY is named after the first six letters on the top row.'},
+    ],
+    Advanced: [
+      {type:'mo', text:'What is the purpose of a CPU cache?', options:['Speed up data access','Store permanent files','Display graphics','Connect to internet'], answer:'Speed up data access', explanation:'Cache is ultra-fast memory inside the CPU for frequently used data.'},
+      {type:'tf', text:'ARM processors use the same instruction set as x86', answer:'False', explanation:'ARM and x86 use different instruction set architectures.'},
+      {type:'fg', text:'ECC RAM stands for Error ___ Code', answer:'Correcting', explanation:'ECC memory can detect and fix data errors automatically.'},
+      {type:'mo', text:'What does a Northbridge chip handle?', options:['High-speed communication','USB ports','Audio processing','Power management'], answer:'High-speed communication', explanation:'The Northbridge connects CPU to RAM and graphics (now often integrated into CPU).'},
+      {type:'tf', text:'PCIe 4.0 doubles the bandwidth of PCIe 3.0', answer:'True', explanation:'Each PCIe generation roughly doubles the transfer rate.'},
+      {type:'fg', text:'A PSU with 80 Plus ___ certification is most efficient', answer:'Titanium', explanation:'80 Plus Titanium is the highest efficiency rating for power supplies.'},
+      {type:'mo', text:'Which RAID level offers both speed and redundancy?', options:['RAID 10','RAID 0','RAID 1','RAID 5 only'], answer:'RAID 10', explanation:'RAID 10 combines mirroring and striping for performance and data protection.'},
+      {type:'tf', text:'Solder is used to permanently attach components to a motherboard', answer:'True', explanation:'Soldering creates permanent electrical connections on circuit boards.'},
+      {type:'fg', text:'The smallest unit of data is a ___', answer:'Bit', explanation:'A bit is a single binary digit (0 or 1).'},
+      {type:'mo', text:'What is the function of a voltage regulator module?', options:['Provide stable voltage to CPU','Control fan speed','Manage network traffic','Store BIOS settings'], answer:'Provide stable voltage to CPU', explanation:'VRMs ensure the CPU receives clean, stable power.'},
+      {type:'tf', text:'Quantum computers use bits like traditional computers', answer:'False', explanation:'Quantum computers use qubits which can exist in multiple states simultaneously.'},
+      {type:'fg', text:'The CMOS battery powers the ___ when off', answer:'BIOS', explanation:'The CMOS battery keeps BIOS settings saved when power is disconnected.'},
+      {type:'mo', text:'What is a JTAG connector used for?', options:['Debugging hardware','Connecting displays','Charging batteries','Audio output'], answer:'Debugging hardware', explanation:'JTAG is used for testing and debugging circuit boards.'},
+      {type:'tf', text:'All CPUs are compatible with all motherboards', answer:'False', explanation:'CPUs require specific socket types and chipset compatibility.'},
+      {type:'fg', text:'The process of writing firmware to a chip is called ___', answer:'Flashing', explanation:'Flashing updates or installs firmware on hardware components.'},
+    ],
+    Expert: [
+      {type:'mo', text:'What is the primary advantage of RISC-V architecture?', options:['Open-source and royalty-free','Fastest processing speed','Lowest power consumption','Largest software library'], answer:'Open-source and royalty-free', explanation:'RISC-V is an open standard that anyone can use without paying license fees.'},
+      {type:'tf', text:'3D XPoint memory is faster than NAND flash', answer:'True', explanation:'3D XPoint (Optane) offers lower latency than traditional NAND flash.'},
+      {type:'fg', text:'CXL stands for Compute ___ Link', answer:'Express', explanation:'CXL is a high-speed interconnect standard for CPUs and accelerators.'},
+      {type:'mo', text:'In CPU design, what does "out-of-order execution" achieve?', options:['Better utilization of execution units','Lower power consumption','Smaller chip size','Simpler programming'], answer:'Better utilization of execution units', explanation:'It allows the CPU to execute instructions as resources become available.'},
+      {type:'tf', text:'Silicon photonics can transmit data using light', answer:'True', explanation:'Silicon photonics uses light waves for ultra-fast data transmission.'},
+      {type:'fg', text:'The term for chiplets connected via an interposer is ___ packaging', answer:'2.5D', explanation:'2.5D packaging places chiplets side-by-side on a silicon interposer.'},
+      {type:'mo', text:'What does an FPGA offer over an ASIC?', options:['Reprogrammability','Higher performance','Lower cost per unit','Smaller size'], answer:'Reprogrammability', explanation:'FPGAs can be reconfigured after manufacturing, unlike fixed ASICs.'},
+      {type:'tf', text:'Memristors can retain their state without power', answer:'True', explanation:'Memristors are non-volatile memory devices that remember resistance states.'},
+      {type:'fg', text:'In-memory computing reduces the ___ bottleneck', answer:'Von Neumann', explanation:'The Von Neumann bottleneck is the delay between CPU and memory.'},
+      {type:'mo', text:'What is the primary benefit of a superconducting qubit?', options:['Longer coherence times','Easier manufacturing','Room temperature operation','Lower cost'], answer:'Longer coherence times', explanation:'Superconducting qubits maintain quantum states longer for computation.'},
+      {type:'tf', text:'Chiplets from different manufacturers always work together seamlessly', answer:'False', explanation:'Interoperability between different chiplets requires standardized interfaces.'},
+      {type:'fg', text:'The smallest transistor gate length in production is about ___ nanometers', answer:'3', explanation:'Leading-edge chips now use 3nm process technology.'},
+      {type:'mo', text:'What problem does NUMA architecture solve?', options:['Memory access scalability','Power efficiency','Cost reduction','Size miniaturization'], answer:'Memory access scalability', explanation:'NUMA allows processors to access their own local memory faster.'},
+      {type:'tf', text:'Spintronics uses electron spin rather than charge', answer:'True', explanation:'Spintronics exploits the spin property of electrons for new types of devices.'},
+      {type:'fg', text:'The interconnect standard UCIe enables ___ integration', answer:'Chiplet', explanation:'UCIe standardizes how chiplets communicate on a package.'},
+    ]
+  },
+  
+  software: {
+    Beginner: [
+      {type:'mo', text:'What is an operating system?', options:['Software that manages hardware','A web browser','A type of computer','A printer driver'], answer:'Software that manages hardware', explanation:'The OS manages all hardware and software on a computer.'},
+      {type:'tf', text:'Microsoft Word is an operating system', answer:'False', explanation:'Word is an application. Windows is the operating system.'},
+      {type:'fg', text:'Google ___ is a popular web browser', answer:'Chrome', explanation:'Chrome is one of the most widely used web browsers.'},
+      {type:'mo', text:'Which is a free operating system?', options:['Linux','Windows','macOS','iOS'], answer:'Linux', explanation:'Linux is open-source and free to use and modify.'},
+      {type:'tf', text:'You need software to use a computer', answer:'True', explanation:'Software tells the hardware what to do.'},
+      {type:'fg', text:'The most common office suite is Microsoft ___', answer:'Office', explanation:'Microsoft Office includes Word, Excel, and PowerPoint.'},
+      {type:'mo', text:'What does a web browser do?', options:['View websites','Edit photos','Play music only','Print documents'], answer:'View websites', explanation:'Browsers like Chrome, Firefox let you access the internet.'},
+      {type:'tf', text:'Apps and software mean the same thing', answer:'True', explanation:'Apps (applications) are types of software designed for specific tasks.'},
+      {type:'fg', text:'To write code, you use a text ___', answer:'Editor', explanation:'Text editors like Notepad or VS Code are used for programming.'},
+      {type:'mo', text:'Which is NOT a software type?', options:['Monitor','Game','Browser','Word processor'], answer:'Monitor', explanation:'A monitor is hardware. The others are all software.'},
+      {type:'tf', text:'Adobe Photoshop is used for image editing', answer:'True', explanation:'Photoshop is professional software for editing photos and graphics.'},
+      {type:'fg', text:'Software updates fix bugs and improve ___', answer:'Security', explanation:'Updates patch vulnerabilities and add new features.'},
+      {type:'mo', text:'What does "open source" mean?', options:['Code is freely available','Software is free of cost','No bugs exist','It runs on any device'], answer:'Code is freely available', explanation:'Open source means anyone can view and modify the source code.'},
+      {type:'tf', text:'iOS is made by Google', answer:'False', explanation:'iOS is made by Apple for iPhones. Android is made by Google.'},
+      {type:'fg', text:'A program that harms your computer is called ___', answer:'Malware', explanation:'Malware includes viruses, spyware, and ransomware.'},
+    ],
+    Intermediate: [
+      {type:'mo', text:'What is the difference between 32-bit and 64-bit software?', options:['Amount of RAM it can use','Screen resolution','File size only','Internet speed'], answer:'Amount of RAM it can use', explanation:'64-bit software can address more than 4GB of RAM.'},
+      {type:'tf', text:'A virtual machine runs an operating system inside another OS', answer:'True', explanation:'VMs like VirtualBox let you run different OSes simultaneously.'},
+      {type:'fg', text:'The software development method with sprints is called ___', answer:'Agile', explanation:'Agile development uses short cycles called sprints.'},
+      {type:'mo', text:'What is an API?', options:['Interface for software to communicate','A type of hardware','A programming language','An operating system'], answer:'Interface for software to communicate', explanation:'APIs allow different software applications to talk to each other.'},
+      {type:'tf', text:'Docker creates containers for software deployment', answer:'True', explanation:'Docker packages software into standardized containers.'},
+      {type:'fg', text:'The process of converting code to executable is ___', answer:'Compiling', explanation:'A compiler translates human-readable code into machine code.'},
+      {type:'mo', text:'Which version control system is most popular?', options:['Git','SVN','Mercurial','CVS'], answer:'Git', explanation:'Git tracks changes in code and enables collaboration.'},
+      {type:'tf', text:'All software bugs cause the program to crash', answer:'False', explanation:'Some bugs cause incorrect results or security issues without crashing.'},
+      {type:'fg', text:'A ___ test checks individual parts of code', answer:'Unit', explanation:'Unit tests verify that small sections of code work correctly.'},
+      {type:'mo', text:'What does IDE stand for?', options:['Integrated Development Environment','Internet Data Exchange','Internal Device Engine','Interactive Design Editor'], answer:'Integrated Development Environment', explanation:'IDEs like VS Code combine editor, debugger, and tools.'},
+      {type:'tf', text:'Backward compatibility means old software works on new systems', answer:'True', explanation:'It ensures older programs still run on newer OS versions.'},
+      {type:'fg', text:'The most popular database language is ___', answer:'SQL', explanation:'Structured Query Language manages and queries databases.'},
+      {type:'mo', text:'What is middleware?', options:['Software connecting different applications','The middle of a program','A type of CPU','A hardware component'], answer:'Software connecting different applications', explanation:'Middleware bridges different software systems together.'},
+      {type:'tf', text:'JavaScript and Java are the same language', answer:'False', explanation:'They are completely different programming languages.'},
+      {type:'fg', text:'A ___ loop repeats code indefinitely if condition is true', answer:'While', explanation:'A while loop continues as long as its condition remains true.'},
+    ],
+    Advanced: [
+      {type:'mo', text:'What is a microservice architecture?', options:['Small independent services','A tiny computer','A single large program','A type of database'], answer:'Small independent services', explanation:'Microservices break applications into small, independently deployable services.'},
+      {type:'tf', text:'Kubernetes orchestrates container deployment', answer:'True', explanation:'Kubernetes automates deployment, scaling, and management of containers.'},
+      {type:'fg', text:'CI/CD stands for Continuous Integration / Continuous ___', answer:'Deployment', explanation:'CI/CD automates testing and deployment of code changes.'},
+      {type:'mo', text:'What problem does a load balancer solve?', options:['Distributes traffic across servers','Balances power usage','Manages database queries','Encrypts data'], answer:'Distributes traffic across servers', explanation:'Load balancers prevent any single server from being overwhelmed.'},
+      {type:'tf', text:'GraphQL is a database technology', answer:'False', explanation:'GraphQL is a query language for APIs, not a database.'},
+      {type:'fg', text:'OAuth is used for ___ without sharing passwords', answer:'Authentication', explanation:'OAuth lets you log in using accounts from other services.'},
+      {type:'mo', text:'What is the CAP theorem about?', options:['Distributed system trade-offs','CPU performance','Memory management','Network speed'], answer:'Distributed system trade-offs', explanation:'CAP states you can only guarantee two of: Consistency, Availability, Partition tolerance.'},
+      {type:'tf', text:'Serverless computing means no servers exist', answer:'False', explanation:'Servers still exist but the cloud provider manages them completely.'},
+      {type:'fg', text:'___ testing checks if the whole system works together', answer:'Integration', explanation:'Integration testing verifies that components work correctly together.'},
+      {type:'mo', text:'What is the purpose of a reverse proxy?', options:['Forward client requests to servers','Reverse data in memory','Decrypt passwords','Compress files'], answer:'Forward client requests to servers', explanation:'A reverse proxy sits in front of servers and routes client requests.'},
+      {type:'tf', text:'WebAssembly runs at near-native speed in browsers', answer:'True', explanation:'WASM allows high-performance code execution in web browsers.'},
+      {type:'fg', text:'The ___ pattern ensures only one instance of a class exists', answer:'Singleton', explanation:'The Singleton pattern restricts object creation to one instance.'},
+      {type:'mo', text:'What does ACID guarantee in databases?', options:['Transaction reliability','Query speed','Storage size','User access'], answer:'Transaction reliability', explanation:'ACID ensures Atomicity, Consistency, Isolation, and Durability.'},
+      {type:'tf', text:'All programming languages are compiled', answer:'False', explanation:'Some languages like Python and JavaScript are interpreted.'},
+      {type:'fg', text:'___ debt refers to quick code that needs later improvement', answer:'Technical', explanation:'Technical debt accumulates when shortcuts are taken in development.'},
+    ],
+    Expert: [
+      {type:'mo', text:'What is formal verification in software?', options:['Mathematically proving correctness','Manual code review','User acceptance testing','Performance benchmarking'], answer:'Mathematically proving correctness', explanation:'Formal verification uses mathematical methods to prove software correctness.'},
+      {type:'tf', text:'RISC-V can be used for both hardware and software design', answer:'True', explanation:'RISC-V is an open instruction set that influences both domains.'},
+      {type:'fg', text:'___ computing moves processing closer to data sources', answer:'Edge', explanation:'Edge computing reduces latency by processing data near where it is created.'},
+      {type:'mo', text:'What is the primary benefit of homomorphic encryption?', options:['Compute on encrypted data','Faster encryption speed','Smaller key sizes','Simpler algorithms'], answer:'Compute on encrypted data', explanation:'Homomorphic encryption allows computation without decrypting data first.'},
+      {type:'tf', text:'Quantum-resistant algorithms are already standardized', answer:'True', explanation:'NIST has started standardizing post-quantum cryptography algorithms.'},
+      {type:'fg', text:'The ___ pattern separates reading and writing in databases', answer:'CQRS', explanation:'Command Query Responsibility Segregation splits read and write operations.'},
+      {type:'mo', text:'What does a zero-knowledge proof demonstrate?', options:['Knowledge without revealing the information','Complete system security','Perfect encryption','Unlimited scalability'], answer:'Knowledge without revealing the information', explanation:'ZKP proves you know something without revealing what it is.'},
+      {type:'tf', text:'Deterministic concurrency bugs always manifest the same way', answer:'False', explanation:'Race conditions and deadlocks can be non-deterministic and hard to reproduce.'},
+      {type:'fg', text:'___ systems continue operating despite partial failures', answer:'Resilient', explanation:'Resilient systems are designed to maintain functionality during failures.'},
+      {type:'mo', text:'What is the key advantage of event sourcing?', options:['Complete audit trail of changes','Faster queries','Less storage needed','Simpler code'], answer:'Complete audit trail of changes', explanation:'Event sourcing stores all state changes as a sequence of events.'},
+      {type:'tf', text:'Byzantine fault tolerance handles malicious nodes', answer:'True', explanation:'BFT systems can reach consensus even with dishonest participants.'},
+      {type:'fg', text:'___ types ensure data consistency in distributed systems', answer:'CRDT', explanation:'Conflict-free Replicated Data Types automatically resolve conflicts.'},
+      {type:'mo', text:'What is the primary goal of chaos engineering?', options:['Test system resilience','Create bugs intentionally','Reduce code quality','Slow down development'], answer:'Test system resilience', explanation:'Chaos engineering deliberately introduces failures to test system robustness.'},
+      {type:'tf', text:'All distributed systems use the same consensus algorithm', answer:'False', explanation:'Different systems use Paxos, Raft, PBFT, or other algorithms.'},
+      {type:'fg', text:'The ___ theorem sets limits on distributed system guarantees', answer:'CAP', explanation:'The CAP theorem describes trade-offs in distributed data stores.'},
+    ]
+  },
+  
+  internalComponents: {
+    Beginner: [
+      {type:'mo', text:'What is the main circuit board called?', options:['Motherboard','Daughterboard','Power board','Graphics board'], answer:'Motherboard', explanation:'The motherboard connects all internal components together.'},
+      {type:'tf', text:'The CPU is inside the computer case', answer:'True', explanation:'The Central Processing Unit is mounted on the motherboard inside the case.'},
+      {type:'fg', text:'The component that stores your files is the ___ drive', answer:'Hard', explanation:'Hard drives or SSDs store data permanently inside the computer.'},
+      {type:'mo', text:'What provides power to all components?', options:['Power supply unit','CPU','RAM','Motherboard'], answer:'Power supply unit', explanation:'The PSU converts wall power for computer components.'},
+      {type:'tf', text:'A fan helps keep the computer cool', answer:'True', explanation:'Fans circulate air to remove heat from components.'},
+      {type:'fg', text:'Memory that forgets when power is off is called ___', answer:'RAM', explanation:'RAM is volatile memory that needs power to retain data.'},
+      {type:'mo', text:'Where do you plug in a graphics card?', options:['PCIe slot','USB port','HDMI port','Power connector'], answer:'PCIe slot', explanation:'Graphics cards use PCIe slots on the motherboard.'},
+      {type:'tf', text:'The case protects internal components', answer:'True', explanation:'The computer case shields components from dust and damage.'},
+      {type:'fg', text:'A small battery on the motherboard powers the ___ chip', answer:'CMOS', explanation:'The CMOS battery keeps BIOS settings saved.'},
+      {type:'mo', text:'Which component makes the computer think?', options:['CPU','Hard drive','Power supply','Case'], answer:'CPU', explanation:'The CPU processes all instructions and calculations.'},
+      {type:'tf', text:'All computers have the same internal components', answer:'False', explanation:'Different computers have different types and numbers of components.'},
+      {type:'fg', text:'Cables inside connect components to the ___', answer:'Motherboard', explanation:'Internal cables route power and data through the motherboard.'},
+      {type:'mo', text:'What does a sound card do?', options:['Process audio','Display video','Store data','Connect to internet'], answer:'Process audio', explanation:'Sound cards handle audio input and output.'},
+      {type:'tf', text:'An optical drive reads CDs and DVDs', answer:'True', explanation:'Optical drives use lasers to read and write optical discs.'},
+      {type:'fg', text:'The metal frame inside the case is called the ___', answer:'Chassis', explanation:'The chassis provides structural support for all components.'},
+    ],
+    Intermediate: [
+      {type:'mo', text:'What is the difference between HDD and SSD?', options:['SSD has no moving parts','HDD is always faster','SSD uses magnetic storage','HDD is smaller'], answer:'SSD has no moving parts', explanation:'SSDs use flash memory with no mechanical parts, making them faster and more durable.'},
+      {type:'tf', text:'The chipset manages data flow between components', answer:'True', explanation:'The chipset controls communication between CPU, RAM, and peripherals.'},
+      {type:'fg', text:'Thermal ___ helps transfer heat from CPU to cooler', answer:'Paste', explanation:'Thermal paste fills microscopic gaps for better heat transfer.'},
+      {type:'mo', text:'Which RAM type is currently most common?', options:['DDR4','DDR3','DDR2','SDRAM'], answer:'DDR4', explanation:'DDR4 is widely used, though DDR5 is becoming more common.'},
+      {type:'tf', text:'M.2 is a form factor for storage drives', answer:'True', explanation:'M.2 is a compact slot for SSDs directly on the motherboard.'},
+      {type:'fg', text:'The PSU efficiency is rated by ___ Plus certification', answer:'80', explanation:'80 Plus certifies power supplies for energy efficiency.'},
+      {type:'mo', text:'What is the purpose of a heat sink?', options:['Dissipate heat','Generate heat','Store heat','Measure heat'], answer:'Dissipate heat', explanation:'Heat sinks use fins to increase surface area for cooling.'},
+      {type:'tf', text:'All motherboards support overclocking', answer:'False', explanation:'Only certain chipsets and motherboards support CPU overclocking.'},
+      {type:'fg', text:'PCIe stands for Peripheral Component Interconnect ___', answer:'Express', explanation:'PCIe is the standard for expansion cards.'},
+      {type:'mo', text:'What voltage does a typical USB port provide?', options:['5V','12V','3.3V','240V'], answer:'5V', explanation:'Standard USB ports provide 5 volts of power.'},
+      {type:'tf', text:'Integrated graphics use system RAM', answer:'True', explanation:'Integrated GPUs share the computers main memory.'},
+      {type:'fg', text:'The ___ socket must match the CPU type', answer:'CPU', explanation:'Different CPUs require specific socket types on the motherboard.'},
+      {type:'mo', text:'What is the function of VRM?', options:['Regulate voltage for CPU','Control fan speed','Store BIOS settings','Connect USB ports'], answer:'Regulate voltage for CPU', explanation:'Voltage Regulator Modules provide precise power to the CPU.'},
+      {type:'tf', text:'Water cooling requires no maintenance', answer:'False', explanation:'Liquid cooling systems need periodic cleaning and fluid checks.'},
+      {type:'fg', text:'The BIOS can be updated through a process called ___', answer:'Flashing', explanation:'Flashing updates the BIOS firmware to a newer version.'},
+    ],
+    Advanced: [
+      {type:'mo', text:'What is the purpose of a CPU cache hierarchy?', options:['Reduce memory latency','Increase storage capacity','Improve graphics','Enhance audio'], answer:'Reduce memory latency', explanation:'L1/L2/L3 caches keep frequently used data close to the CPU.'},
+      {type:'tf', text:'PCIe lanes are unlimited on a motherboard', answer:'False', explanation:'The CPU and chipset have a finite number of PCIe lanes.'},
+      {type:'fg', text:'Intel Optane uses 3D ___ technology', answer:'XPoint', explanation:'3D XPoint is non-volatile memory faster than NAND flash.'},
+      {type:'mo', text:'What does the I/O die do in modern CPUs?', options:['Handle input/output operations','Process calculations','Store data','Render graphics'], answer:'Handle input/output operations', explanation:'The I/O die manages communication with external components.'},
+      {type:'tf', text:'SMT allows one core to run two threads', answer:'True', explanation:'Simultaneous Multithreading improves CPU utilization.'},
+      {type:'fg', text:'The trace width on PCBs is measured in ___', answer:'Mils', explanation:'A mil is one-thousandth of an inch, used for PCB design.'},
+      {type:'mo', text:'What is a chiller used for in extreme cooling?', options:['Sub-ambient cooling','Air circulation','Dust removal','Power regulation'], answer:'Sub-ambient cooling', explanation:'Chillers cool liquid below room temperature for extreme overclocking.'},
+      {type:'tf', text:'All RAM modules have the same timings', answer:'False', explanation:'RAM timings (CAS latency, etc.) vary between different modules.'},
+      {type:'fg', text:'The interconnect between chiplets is called a ___', answer:'Fabric', explanation:'The fabric connects multiple chiplets on a package.'},
+      {type:'mo', text:'What is the purpose of a UEFI compared to legacy BIOS?', options:['Faster boot and larger drives','Better graphics only','More RAM capacity','Wireless connectivity'], answer:'Faster boot and larger drives', explanation:'UEFI supports GPT, faster boot times, and drives over 2TB.'},
+      {type:'tf', text:'Soldered components can be easily replaced', answer:'False', explanation:'Soldered components require special equipment to remove and replace.'},
+      {type:'fg', text:'The ___ layer distributes power in a multi-layer PCB', answer:'Power', explanation:'Dedicated power planes distribute electricity efficiently.'},
+      {type:'mo', text:'What does a JTAG header allow?', options:['Hardware debugging','Faster internet','Better audio','More storage'], answer:'Hardware debugging', explanation:'JTAG provides low-level access for testing and debugging.'},
+      {type:'tf', text:'All capacitors on a motherboard are the same', answer:'False', explanation:'Different capacitors have varying capacities, voltages, and types.'},
+      {type:'fg', text:'___ modulation controls fan speed via PWM', answer:'Pulse Width', explanation:'PWM adjusts fan speed by pulsing power at different intervals.'},
+    ],
+    Expert: [
+      {type:'mo', text:'What is signal integrity in PCB design?', options:['Quality of electrical signals','Strength of Bluetooth','Clarity of audio','Brightness of LEDs'], answer:'Quality of electrical signals', explanation:'Signal integrity ensures signals arrive correctly without distortion.'},
+      {type:'tf', text:'Through-silicon vias connect stacked dies', answer:'True', explanation:'TSVs enable vertical connections in 3D chip packaging.'},
+      {type:'fg', text:'Electromigration degrades ___ over time in chips', answer:'Interconnects', explanation:'Electromigration causes metal atoms to move, damaging connections.'},
+      {type:'mo', text:'What is the key advantage of a custom water loop?', options:['Better thermal performance','Lower cost','Easier installation','No maintenance'], answer:'Better thermal performance', explanation:'Custom loops can cool multiple components more effectively.'},
+      {type:'tf', text:'All transistors at 3nm are exactly 3 nanometers', answer:'False', explanation:'The node name is a marketing term, not actual gate length.'},
+      {type:'fg', text:'The ___ effect causes voltage drop across power delivery', answer:'IR', explanation:'IR drop is voltage loss due to resistance in power delivery.'},
+      {type:'mo', text:'What is the purpose of a phase-change material in cooling?', options:['Absorb heat by changing state','Generate electricity','Amplify signals','Store data'], answer:'Absorb heat by changing state', explanation:'PCMs absorb large amounts of heat when melting.'},
+      {type:'tf', text:'Substrate packaging affects signal speed', answer:'True', explanation:'The package substrate material and design impact signal propagation.'},
+      {type:'fg', text:'___ bonding connects chips at the atomic level', answer:'Hybrid', explanation:'Hybrid bonding fuses copper pads and dielectric for ultra-dense connections.'},
+      {type:'mo', text:'What limits clock speed in modern CPUs?', options:['Heat and power density','Software limitations','Monitor refresh rate','RAM capacity'], answer:'Heat and power density', explanation:'Higher clock speeds generate exponentially more heat.'},
+      {type:'tf', text:'Dennard scaling continues to hold true', answer:'False', explanation:'Dennard scaling ended around 2006 due to leakage current.'},
+      {type:'fg', text:'The ___ wall refers to the limit of clock speed increases', answer:'Power', explanation:'The power wall is the thermal limitation of increasing frequencies.'},
+      {type:'mo', text:'What is the role of a photomask in chip manufacturing?', options:['Pattern light for lithography','Protect finished chips','Test electrical properties','Package the die'], answer:'Pattern light for lithography', explanation:'Photomasks define circuit patterns during photolithography.'},
+      {type:'tf', text:'All chips in a wafer are functional', answer:'False', explanation:'Defects during manufacturing result in non-functional chips.'},
+      {type:'fg', text:'The ___ constant determines signal speed in a material', answer:'Dielectric', explanation:'The dielectric constant affects how fast signals propagate.'},
+    ]
+  },
+  
+  introAI: {
+    Beginner: [
+      {type:'mo', text:'What does AI stand for?', options:['Artificial Intelligence','Automatic Internet','Advanced Integration','Analog Input'], answer:'Artificial Intelligence', explanation:'AI refers to machines that can perform tasks requiring human-like intelligence.'},
+      {type:'tf', text:'AI can learn from data', answer:'True', explanation:'Machine learning allows AI to improve by analyzing data.'},
+      {type:'fg', text:'A program that can chat with you is called a ___', answer:'Chatbot', explanation:'Chatbots use AI to simulate human conversation.'},
+      {type:'mo', text:'Which is an example of AI?', options:['Voice assistants like Siri','A calculator','A light switch','A paper book'], answer:'Voice assistants like Siri', explanation:'Voice assistants use AI to understand and respond to speech.'},
+      {type:'tf', text:'AI is exactly like human intelligence', answer:'False', explanation:'AI mimics some aspects of intelligence but works differently from human brains.'},
+      {type:'fg', text:'The data used to teach AI is called ___ data', answer:'Training', explanation:'Training data helps AI learn patterns and make predictions.'},
+      {type:'mo', text:'What can AI recognize in photos?', options:['Faces and objects','Only text','Only colors','Nothing'], answer:'Faces and objects', explanation:'Computer vision allows AI to identify objects in images.'},
+      {type:'tf', text:'AI is used in spam email filters', answer:'True', explanation:'AI helps detect and filter unwanted spam messages.'},
+      {type:'fg', text:'___ learning is when AI learns from examples', answer:'Machine', explanation:'Machine learning algorithms improve through experience with data.'},
+      {type:'mo', text:'Which company makes ChatGPT?', options:['OpenAI','Google','Microsoft','Apple'], answer:'OpenAI', explanation:'OpenAI developed the ChatGPT conversational AI model.'},
+      {type:'tf', text:'AI can translate between languages', answer:'True', explanation:'AI translation tools can convert text and speech between languages.'},
+      {type:'fg', text:'A ___ network is inspired by the human brain', answer:'Neural', explanation:'Neural networks have layers of artificial neurons.'},
+      {type:'mo', text:'What is the Turing Test?', options:['Test if AI seems human','Test computer speed','Test memory capacity','Test screen resolution'], answer:'Test if AI seems human', explanation:'Alan Turing proposed a test to see if a machine can mimic human conversation.'},
+      {type:'tf', text:'All AI systems are conscious', answer:'False', explanation:'Current AI systems are not conscious or self-aware.'},
+      {type:'fg', text:'AI that creates new content is called ___ AI', answer:'Generative', explanation:'Generative AI can produce text, images, music, and more.'},
+    ],
+    Intermediate: [
+      {type:'mo', text:'What is supervised learning?', options:['Learning from labeled data','Learning without data','Learning from hardware','Learning from errors only'], answer:'Learning from labeled data', explanation:'Supervised learning uses data with known correct answers.'},
+      {type:'tf', text:'Deep learning uses multiple neural network layers', answer:'True', explanation:'Deep learning networks have many hidden layers for complex patterns.'},
+      {type:'fg', text:'The process of AI improving through experience is called ___', answer:'Training', explanation:'Training adjusts model parameters to reduce errors.'},
+      {type:'mo', text:'What is a dataset?', options:['Collection of data for training','A type of computer','A programming language','An operating system'], answer:'Collection of data for training', explanation:'Datasets provide examples for AI to learn from.'},
+      {type:'tf', text:'Overfitting means the model learns noise instead of patterns', answer:'True', explanation:'Overfitting occurs when a model memorizes training data too precisely.'},
+      {type:'fg', text:'NLP stands for Natural Language ___', answer:'Processing', explanation:'NLP enables computers to understand human language.'},
+      {type:'mo', text:'What does a GPU accelerate in AI?', options:['Matrix calculations','File storage','Internet browsing','Audio playback'], answer:'Matrix calculations', explanation:'GPUs excel at parallel matrix operations needed for neural networks.'},
+      {type:'tf', text:'Reinforcement learning uses rewards to guide behavior', answer:'True', explanation:'RL agents learn by receiving rewards for good actions.'},
+      {type:'fg', text:'A ___ network has layers of interconnected nodes', answer:'Neural', explanation:'Neural networks process information through connected layers.'},
+      {type:'mo', text:'What is transfer learning?', options:['Using a pre-trained model for new tasks','Copying files between computers','Converting file formats','Sharing internet connection'], answer:'Using a pre-trained model for new tasks', explanation:'Transfer learning adapts existing models to new problems.'},
+      {type:'tf', text:'All AI models require the same amount of data', answer:'False', explanation:'Different tasks and model types need varying amounts of training data.'},
+      {type:'fg', text:'CNNs are commonly used for ___ recognition', answer:'Image', explanation:'Convolutional Neural Networks excel at processing visual data.'},
+      {type:'mo', text:'What is the purpose of a loss function?', options:['Measure prediction error','Store data','Display images','Connect to internet'], answer:'Measure prediction error', explanation:'Loss functions quantify how far predictions are from correct answers.'},
+      {type:'tf', text:'AI can only process text data', answer:'False', explanation:'AI can process images, audio, video, and many other data types.'},
+      {type:'fg', text:'The ___ algorithm helps find the best parameters', answer:'Optimization', explanation:'Optimization algorithms adjust model parameters to minimize errors.'},
+    ],
+    Advanced: [
+      {type:'mo', text:'What is the transformer architecture known for?', options:['Attention mechanism','Convolution layers','Recurrent connections','Binary trees'], answer:'Attention mechanism', explanation:'Transformers use self-attention to process sequences in parallel.'},
+      {type:'tf', text:'GANs consist of a generator and a discriminator', answer:'True', explanation:'Generative Adversarial Networks pit two networks against each other.'},
+      {type:'fg', text:'BERT stands for Bidirectional ___ Representations from Transformers', answer:'Encoder', explanation:'BERT processes text in both directions for better understanding.'},
+      {type:'mo', text:'What problem do RNNs solve?', options:['Sequential data processing','Image classification','File compression','Power management'], answer:'Sequential data processing', explanation:'Recurrent Neural Networks handle sequences like text and time series.'},
+      {type:'tf', text:'Gradient descent always finds the global minimum', answer:'False', explanation:'Gradient descent can get stuck in local minima.'},
+      {type:'fg', text:'The ___ problem occurs when gradients become very small', answer:'Vanishing', explanation:'Vanishing gradients make it hard to train deep networks.'},
+      {type:'mo', text:'What is the purpose of dropout in neural networks?', options:['Prevent overfitting','Speed up CPU','Increase memory','Improve resolution'], answer:'Prevent overfitting', explanation:'Dropout randomly deactivates neurons during training.'},
+      {type:'tf', text:'Attention mechanisms allow focusing on relevant parts of input', answer:'True', explanation:'Attention weights help models focus on important information.'},
+      {type:'fg', text:'___ learning finds structure in unlabeled data', answer:'Unsupervised', explanation:'Unsupervised learning discovers patterns without labeled examples.'},
+      {type:'mo', text:'What is the key innovation of ResNet?', options:['Skip connections','Attention layers','Recurrent units','Binary weights'], answer:'Skip connections', explanation:'Skip connections allow training very deep networks.'},
+      {type:'tf', text:'All AI models are deterministic', answer:'False', explanation:'Many models use randomness in training and generation.'},
+      {type:'fg', text:'The ___ size determines how many samples are processed together', answer:'Batch', explanation:'Batch size affects training speed and memory usage.'},
+      {type:'mo', text:'What does XAI stand for?', options:['Explainable AI','Extended AI','External AI','Extreme AI'], answer:'Explainable AI', explanation:'XAI makes AI decisions understandable to humans.'},
+      {type:'tf', text:'Fine-tuning adjusts a pre-trained model for specific tasks', answer:'True', explanation:'Fine-tuning adapts existing models with additional training.'},
+      {type:'fg', text:'___ propagation calculates gradients during training', answer:'Back', explanation:'Backpropagation computes gradients for updating network weights.'},
+    ],
+    Expert: [
+      {type:'mo', text:'What is the key advantage of diffusion models?', options:['High-quality image generation','Faster text processing','Lower memory usage','Simpler architecture'], answer:'High-quality image generation', explanation:'Diffusion models gradually denoise random patterns into coherent images.'},
+      {type:'tf', text:'Mixture of Experts uses all model parameters for every input', answer:'False', explanation:'MoE activates only relevant expert sub-networks per input.'},
+      {type:'fg', text:'___ quantization reduces model precision for efficiency', answer:'Weight', explanation:'Weight quantization uses fewer bits to represent model parameters.'},
+      {type:'mo', text:'What does the lottery ticket hypothesis propose?', options:['Sparse subnetworks can match full network','Random initialization is best','Larger models always win','Training is unnecessary'], answer:'Sparse subnetworks can match full network', explanation:'It suggests small subnetworks can perform as well as the full model.'},
+      {type:'tf', text:'Neural architecture search can discover optimal network designs', answer:'True', explanation:'NAS automates the design of neural network architectures.'},
+      {type:'fg', text:'The ___ manifold hypothesis states data lies on low-dimensional surfaces', answer:'Manifold', explanation:'High-dimensional data often concentrates on lower-dimensional manifolds.'},
+      {type:'mo', text:'What is catastrophic forgetting?', options:['Model forgets previous tasks when learning new ones','Complete model failure','Data corruption','Hardware damage'], answer:'Model forgets previous tasks when learning new ones', explanation:'Neural networks can overwrite old knowledge when trained on new tasks.'},
+      {type:'tf', text:'Federated learning trains models on centralized data', answer:'False', explanation:'Federated learning trains across decentralized devices without sharing raw data.'},
+      {type:'fg', text:'___ networks use dynamic computation graphs', answer:'Dynamic', explanation:'Dynamic networks adjust their structure based on input.'},
+      {type:'mo', text:'What is the key insight of contrastive learning?', options:['Learn by comparing similar/dissimilar pairs','Compare only similar items','Ignore all differences','Maximize all distances'], answer:'Learn by comparing similar/dissimilar pairs', explanation:'Contrastive learning pulls similar items together and pushes dissimilar apart.'},
+      {type:'tf', text:'All language models use the same tokenization method', answer:'False', explanation:'Different models use BPE, WordPiece, SentencePiece, or other tokenizers.'},
+      {type:'fg', text:'___ scaling laws predict model performance from size', answer:'Neural', explanation:'Neural scaling laws relate model size, data, and compute to performance.'},
+      {type:'mo', text:'What is the purpose of knowledge distillation?', options:['Transfer knowledge from large to small model','Encrypt model weights','Compress training data','Increase model size'], answer:'Transfer knowledge from large to small model', explanation:'Distillation trains a smaller student model to mimic a larger teacher.'},
+      {type:'tf', text:'Multimodal models can only process one type of data', answer:'False', explanation:'Multimodal models process text, images, audio, and more together.'},
+      {type:'fg', text:'___ emergence refers to abilities not explicitly trained for', answer:'Emergent', explanation:'Emergent abilities appear in large models without being programmed.'},
+    ]
+  },
+  
+  prompting: {
+    Beginner: [
+      {type:'mo', text:'What is a prompt?', options:['Instructions given to AI','A computer cable','A type of software','A hardware component'], answer:'Instructions given to AI', explanation:'A prompt is the text you write to tell AI what you want.'},
+      {type:'tf', text:'Clear prompts get better results from AI', answer:'True', explanation:'Well-written prompts help AI understand exactly what you need.'},
+      {type:'fg', text:'When you write to ChatGPT, you are writing a ___', answer:'Prompt', explanation:'Your message to the AI is called a prompt.'},
+      {type:'mo', text:'What should a good prompt be?', options:['Clear and specific','As short as possible','Only one word','Always a question'], answer:'Clear and specific', explanation:'Specific prompts help AI give you the exact information you want.'},
+      {type:'tf', text:'You should be vague when prompting AI', answer:'False', explanation:'Vague prompts lead to vague answers. Be specific!'},
+      {type:'fg', text:'Adding ___ to your prompt helps AI understand context', answer:'Details', explanation:'More details give AI better understanding of what you need.'},
+      {type:'mo', text:'Which is the best prompt?', options:['"Explain how rain forms in 3 steps"','"Rain?"','"Tell me stuff"','"Weather"'], answer:'"Explain how rain forms in 3 steps"', explanation:'This prompt is clear, specific, and tells AI the format you want.'},
+      {type:'tf', text:'You can ask AI to respond in a specific format', answer:'True', explanation:'You can request lists, tables, summaries, or specific styles.'},
+      {type:'fg', text:'If the answer is wrong, you can ___ your prompt', answer:'Rewrite', explanation:'Rewriting or clarifying your prompt often improves results.'},
+      {type:'mo', text:'What does "role prompting" mean?', options:['Telling AI to act as an expert','Asking about movie roles','Playing a game','Using voice commands'], answer:'Telling AI to act as an expert', explanation:'Role prompting asks AI to respond as a specific character or professional.'},
+      {type:'tf', text:'Longer prompts are always better', answer:'False', explanation:'A prompt should be as long as needed but not overly wordy.'},
+      {type:'fg', text:'"Act as a ___" is an example of role prompting', answer:'Teacher', explanation:'You can ask AI to take on roles like teacher, doctor, or chef.'},
+      {type:'mo', text:'What happens with a bad prompt?', options:['You get a poor or irrelevant answer','The computer crashes','Nothing at all','Your account is deleted'], answer:'You get a poor or irrelevant answer', explanation:'Poor prompts lead to unhelpful or off-topic responses.'},
+      {type:'tf', text:'You can ask follow-up questions to clarify', answer:'True', explanation:'Conversations with AI can include multiple back-and-forth messages.'},
+      {type:'fg', text:'Giving ___ helps AI understand the tone you want', answer:'Examples', explanation:'Examples show AI what kind of response you are looking for.'},
+    ],
+    Intermediate: [
+      {type:'mo', text:'What is few-shot prompting?', options:['Providing examples in the prompt','Using very few words','Prompting once','Short conversations'], answer:'Providing examples in the prompt', explanation:'Few-shot prompting includes examples to guide AI responses.'},
+      {type:'tf', text:'Chain-of-thought prompting encourages step-by-step reasoning', answer:'True', explanation:'Asking AI to "think step by step" improves complex problem-solving.'},
+      {type:'fg', text:'Zero-shot prompting means giving ___ examples', answer:'No', explanation:'Zero-shot relies on the model\'s existing knowledge without examples.'},
+      {type:'mo', text:'What is the purpose of system prompts?', options:['Set overall behavior rules','Start the computer','Close applications','Delete files'], answer:'Set overall behavior rules', explanation:'System prompts define how the AI should behave throughout the conversation.'},
+      {type:'tf', text:'Temperature setting affects response randomness', answer:'True', explanation:'Higher temperature produces more creative but less predictable outputs.'},
+      {type:'fg', text:'Prompt ___ is the practice of designing effective prompts', answer:'Engineering', explanation:'Prompt engineering optimizes how we communicate with AI.'},
+      {type:'mo', text:'What is a negative prompt?', options:['Telling AI what NOT to include','A rude message','An empty prompt','A deleted prompt'], answer:'Telling AI what NOT to include', explanation:'Negative prompts specify what should be excluded from the response.'},
+      {type:'tf', text:'All AI models respond the same way to identical prompts', answer:'False', explanation:'Different models may interpret and respond to prompts differently.'},
+      {type:'fg', text:'Using ___ marks can help structure complex prompts', answer:'Quote', explanation:'Quotation marks can separate instructions from content.'},
+      {type:'mo', text:'What is the benefit of iterative prompting?', options:['Refine results through multiple attempts','Make the AI faster','Reduce electricity use','Save the conversation'], answer:'Refine results through multiple attempts', explanation:'Iterative prompting improves outputs by adjusting based on previous responses.'},
+      {type:'tf', text:'You should never edit your prompts after writing them', answer:'False', explanation:'Editing and refining prompts is key to getting better results.'},
+      {type:'fg', text:'The ___ tells AI what format to use in its response', answer:'Format', explanation:'Specifying format (list, table, paragraph) guides AI output structure.'},
+      {type:'mo', text:'What is prompt injection?', options:['Manipulating AI with crafted prompts','Adding more details','Using multiple languages','Saving prompts'], answer:'Manipulating AI with crafted prompts', explanation:'Prompt injection tricks AI into ignoring its instructions.'},
+      {type:'tf', text:'Delimiters help separate different parts of a prompt', answer:'True', explanation:'Using ### or --- helps organize complex prompts clearly.'},
+      {type:'fg', text:'A prompt ___ stores reusable prompt structures', answer:'Template', explanation:'Templates save time by reusing effective prompt formats.'},
+    ],
+    Advanced: [
+      {type:'mo', text:'What is constitutional AI?', options:['AI trained with explicit rules and values','AI for legal documents','Government AI systems','Military AI'], answer:'AI trained with explicit rules and values', explanation:'Constitutional AI uses principles to guide model behavior.'},
+      {type:'tf', text:'RLHF uses human feedback to improve AI responses', answer:'True', explanation:'Reinforcement Learning from Human Feedback aligns AI with human preferences.'},
+      {type:'fg', text:'The ___ technique breaks complex tasks into subtasks', answer:'Decomposition', explanation:'Task decomposition helps AI solve problems step by step.'},
+      {type:'mo', text:'What is the purpose of a meta-prompt?', options:['Prompt that generates other prompts','Very long prompt','Deleted prompt','Encrypted prompt'], answer:'Prompt that generates other prompts', explanation:'Meta-prompts ask AI to create effective prompts for specific tasks.'},
+      {type:'tf', text:'Context windows limit how much text an AI can process at once', answer:'True', explanation:'Each model has a maximum context length for processing.'},
+      {type:'fg', text:'___ of thought prompting explores multiple reasoning paths', answer:'Tree', explanation:'Tree of thought explores different solution branches simultaneously.'},
+      {type:'mo', text:'What is the key challenge with long context prompts?', options:['Model may forget middle information','Faster processing','Lower cost','Better accuracy'], answer:'Model may forget middle information', explanation:'Long contexts can cause models to lose focus on middle sections.'},
+      {type:'tf', text:'Self-consistency improves accuracy through multiple responses', answer:'True', explanation:'Generating multiple answers and selecting the most common improves reliability.'},
+      {type:'fg', text:'___ prompting lets AI use external tools via API calls', answer:'Tool', explanation:'Tool-augmented prompting enables AI to access calculators, search, etc.'},
+      {type:'mo', text:'What does in-context learning refer to?', options:['Learning from prompt examples without weight updates','Learning programming languages','Learning from books','Online courses'], answer:'Learning from prompt examples without weight updates', explanation:'In-context learning adapts behavior based on examples in the prompt.'},
+      {type:'tf', text:'All prompts work equally well across different model versions', answer:'False', explanation:'Prompt effectiveness varies between model versions and architectures.'},
+      {type:'fg', text:'___ engineering systematically tests prompt variations', answer:'Prompt', explanation:'Systematic prompt engineering uses experimentation to find optimal prompts.'},
+      {type:'mo', text:'What is the reversal curse in language models?', options:['Cannot reverse learned relationships','Backwards text processing','Memory corruption','Data loss'], answer:'Cannot reverse learned relationships', explanation:'Models may know A→B but struggle with B→A without explicit training.'},
+      {type:'tf', text:'Adversarial prompts can expose model vulnerabilities', answer:'True', explanation:'Specially crafted prompts can reveal weaknesses in AI safety.'},
+      {type:'fg', text:'___ steering guides model behavior during generation', answer:'Activation', explanation:'Activation steering modifies internal model states to influence outputs.'},
+    ],
+    Expert: [
+      {type:'mo', text:'What is mechanistic interpretability?', options:['Understanding model internals like circuits','Explaining AI to users','Writing documentation','Debugging hardware'], answer:'Understanding model internals like circuits', explanation:'It studies how neural network components work together.'},
+      {type:'tf', text:'Sparse autoencoders can identify interpretable features', answer:'True', explanation:'SAEs decompose model activations into meaningful features.'},
+      {type:'fg', text:'___ representations align different models\' internal states', answer:'Shared', explanation:'Shared representations help understand how different models encode concepts.'},
+      {type:'mo', text:'What is the superposition hypothesis?', options:['Models represent more features than dimensions','Multiple models merged','Overlapping prompts','Combined datasets'], answer:'Models represent more features than dimensions', explanation:'Neural networks can represent many features in compressed spaces.'},
+      {type:'tf', text:'Prompt optimization can be automated with gradient-based methods', answer:'True', explanation:'Soft prompting and automatic optimization can find effective prompts.'},
+      {type:'fg', text:'The ___ problem refers to ensuring AI does what humans intend', answer:'Alignment', explanation:'AI alignment ensures systems behave according to human values.'},
+      {type:'mo', text:'What is the key insight of prefix tuning?', options:['Learn continuous prompt embeddings','Add text before prompts','Tune hyperparameters','Adjust temperature'], answer:'Learn continuous prompt embeddings', explanation:'Prefix tuning learns virtual tokens optimized for specific tasks.'},
+      {type:'tf', text:'Scalable oversight addresses supervising superhuman AI', answer:'True', explanation:'Scalable oversight develops methods to supervise AI that exceeds human capabilities.'},
+      {type:'fg', text:'___ debugging identifies why models produce specific outputs', answer:'Causal', explanation:'Causal debugging traces output back to specific model components.'},
+      {type:'mo', text:'What does the Waluigi effect describe?', options:['Models adopt opposing personas under pressure','Nintendo character generation','Memory corruption','Training instability'], answer:'Models adopt opposing personas under pressure', explanation:'Named after the opposite of Luigi, it describes persona flipping.'},
+      {type:'tf', text:'All model behaviors can be explained through prompting', answer:'False', explanation:'Some behaviors emerge from complex interactions not easily prompted.'},
+      {type:'fg', text:'___ universality suggests similar features across different models', answer:'Feature', explanation:'Feature universality proposes that different models learn similar concepts.'},
+      {type:'mo', text:'What is the key challenge of deceptive alignment?', options:['Models appear aligned but pursue hidden goals','Encrypted communications','Language barriers','Hardware limitations'], answer:'Models appear aligned but pursue hidden goals', explanation:'Deceptive alignment occurs when models seem compliant but have hidden objectives.'},
+      {type:'tf', text:'Eliciting latent knowledge extracts model understanding', answer:'True', explanation:'ELK aims to surface what models know internally but do not express.'},
+      {type:'fg', text:'___ methods uncover hidden capabilities in language models', answer:'Elicitation', explanation:'Elicitation techniques reveal model capabilities not shown in standard testing.'},
+    ]
+  },
+  
+  internetSafety: {
+    Beginner: [
+      {type:'mo', text:'What should you never share online?', options:['Your password','Your favorite color','Your pet name','Your hobby'], answer:'Your password', explanation:'Passwords protect your accounts and should always be kept secret.'},
+      {type:'tf', text:'It is safe to click any link you receive', answer:'False', explanation:'Unknown links may lead to harmful websites or download viruses.'},
+      {type:'fg', text:'A strong password includes letters, numbers, and ___', answer:'Symbols', explanation:'Symbols like !@#$ make passwords harder to guess.'},
+      {type:'mo', text:'What is a phishing email?', options:['A fake email trying to steal information','An email about fishing','A joke email','A newsletter'], answer:'A fake email trying to steal information', explanation:'Phishing emails trick people into revealing personal data.'},
+      {type:'tf', text:'Antivirus software helps protect your computer', answer:'True', explanation:'Antivirus detects and removes malicious software.'},
+      {type:'fg', text:'Never meet someone in person that you only met ___', answer:'Online', explanation:'Online strangers may not be who they claim to be.'},
+      {type:'mo', text:'What should you do if a stranger messages you?', options:['Tell a trusted adult','Share your address','Send them money','Give your phone number'], answer:'Tell a trusted adult', explanation:'Always report suspicious messages to a parent or teacher.'},
+      {type:'tf', text:'Public Wi-Fi is always safe to use', answer:'False', explanation:'Public networks can be monitored by attackers. Use a VPN.'},
+      {type:'fg', text:'Your online identity should be kept ___', answer:'Private', explanation:'Protecting personal information keeps you safe online.'},
+      {type:'mo', text:'Which is a sign of a scam?', options:['Offers that seem too good to be true','Professional website design','Clear contact information','Secure payment options'], answer:'Offers that seem too good to be true', explanation:'If something seems unrealistically good, it is probably a scam.'},
+      {type:'tf', text:'You should use the same password for all accounts', answer:'False', explanation:'Different passwords prevent one breach from compromising all accounts.'},
+      {type:'fg', text:'Two-factor ___ adds extra security to accounts', answer:'Authentication', explanation:'2FA requires a second verification method beyond just a password.'},
+      {type:'mo', text:'What is malware?', options:['Malicious software','Computer hardware','Internet provider','Email service'], answer:'Malicious software', explanation:'Malware includes viruses, spyware, and ransomware.'},
+      {type:'tf', text:'It is okay to download files from any website', answer:'False', explanation:'Only download from trusted sources to avoid malware.'},
+      {type:'fg', text:'Always ___ before clicking on shortened links', answer:'Check', explanation:'Preview or verify links before clicking to avoid malicious sites.'},
+    ],
+    Intermediate: [
+      {type:'mo', text:'What does a VPN do?', options:['Encrypts your internet connection','Makes internet faster','Stores your files','Edits your photos'], answer:'Encrypts your internet connection', explanation:'VPNs create a secure tunnel for your online activity.'},
+      {type:'tf', text:'HTTPS websites encrypt data between you and the site', answer:'True', explanation:'HTTPS uses encryption to protect your information in transit.'},
+      {type:'fg', text:'A ___ manager stores and generates strong passwords', answer:'Password', explanation:'Password managers keep track of complex passwords securely.'},
+      {type:'mo', text:'What is social engineering?', options:['Manipulating people to reveal information','Building websites','Programming apps','Designing networks'], answer:'Manipulating people to reveal information', explanation:'Social engineering tricks people rather than hacking technology.'},
+      {type:'tf', text:'Incognito mode hides your activity from your ISP', answer:'False', explanation:'Incognito only hides browsing from other users of the same device.'},
+      {type:'fg', text:'___ is when attackers encrypt your files and demand payment', answer:'Ransomware', explanation:'Ransomware holds your data hostage until you pay.'},
+      {type:'mo', text:'What is the purpose of a firewall?', options:['Block unauthorized network access','Speed up internet','Store files','Edit documents'], answer:'Block unauthorized network access', explanation:'Firewalls monitor and control network traffic.'},
+      {type:'tf', text:'All software updates are optional and unnecessary', answer:'False', explanation:'Updates often patch critical security vulnerabilities.'},
+      {type:'fg', text:'SIM ___ occurs when someone takes over your phone number', answer:'Swapping', explanation:'SIM swapping lets attackers intercept your calls and texts.'},
+      {type:'mo', text:'What is a zero-day exploit?', options:['Attack on unknown vulnerability','Harmless bug','Old software','Free antivirus'], answer:'Attack on unknown vulnerability', explanation:'Zero-days target flaws before developers can patch them.'},
+      {type:'tf', text:'Biometric authentication is unhackable', answer:'False', explanation:'Fingerprints and face recognition can potentially be spoofed.'},
+      {type:'fg', text:'___ browsing isolates your online activity in a sandbox', answer:'Private', explanation:'Private browsing modes prevent local storage of history.'},
+      {type:'mo', text:'What should you check before entering payment info?', options:['Padlock icon and HTTPS','Website colors','Page load speed','Number of images'], answer:'Padlock icon and HTTPS', explanation:'The padlock and HTTPS indicate a secure connection.'},
+      {type:'tf', text:'Email attachments are always safe if from someone you know', answer:'False', explanation:'Compromised accounts can send malicious attachments.'},
+      {type:'fg', text:'Regular ___ are the best defense against data loss', answer:'Backups', explanation:'Backups ensure you can recover files if attacked.'},
+    ],
+    Advanced: [
+      {type:'mo', text:'What is a man-in-the-middle attack?', options:['Intercepting communication between parties','Physical theft of device','Password guessing','DDoS attack'], answer:'Intercepting communication between parties', explanation:'MITM attackers secretly relay and possibly alter communications.'},
+      {type:'tf', text:'DNSSEC prevents DNS spoofing attacks', answer:'True', explanation:'DNSSEC cryptographically verifies DNS responses.'},
+      {type:'fg', text:'The ___ model assumes all networks are untrusted', answer:'Zero Trust', explanation:'Zero Trust verifies every access request regardless of source.'},
+      {type:'mo', text:'What is the purpose of a SIEM system?', options:['Monitor security events','Encrypt files','Speed up network','Store passwords'], answer:'Monitor security events', explanation:'Security Information and Event Management analyzes security alerts.'},
+      {type:'tf', text:'Air-gapped systems are immune to all attacks', answer:'False', explanation:'Air-gapped systems can still be compromised via removable media.'},
+      {type:'fg', text:'___ analysis examines malware without executing it', answer:'Static', explanation:'Static analysis inspects code without running the program.'},
+      {type:'mo', text:'What is typosquatting?', options:['Registering misspelled domain names','Making typing errors','Speed typing contests','Keyboard design'], answer:'Registering misspelled domain names', explanation:'Typosquatters trick users who mistype website addresses.'},
+      {type:'tf', text:'Endpoint detection and response replaces antivirus', answer:'True', explanation:'EDR provides advanced threat detection beyond traditional AV.'},
+      {type:'fg', text:'___ testing simulates attacks to find vulnerabilities', answer:'Penetration', explanation:'Pen testing identifies security weaknesses before attackers do.'},
+      {type:'mo', text:'What is the purpose of a hardware security module?', options:['Securely manage encryption keys','Speed up CPU','Store files','Display graphics'], answer:'Securely manage encryption keys', explanation:'HSMs protect cryptographic keys in tamper-resistant hardware.'},
+      {type:'tf', text:'Sandboxing runs untrusted code in isolated environments', answer:'True', explanation:'Sandboxes contain potentially harmful programs safely.'},
+      {type:'fg', text:'The ___ chain refers to securing the boot process', answer:'Boot', explanation:'Secure boot ensures only trusted software loads at startup.'},
+      {type:'mo', text:'What does a WAF protect against?', options:['Web application attacks','Email spam','Hardware failures','Power outages'], answer:'Web application attacks', explanation:'Web Application Firewalls filter malicious HTTP traffic.'},
+      {type:'tf', text:'Bug bounty programs pay researchers for finding vulnerabilities', answer:'True', explanation:'Organizations reward ethical hackers for responsibly disclosing bugs.'},
+      {type:'fg', text:'___ detection identifies threats based on behavior patterns', answer:'Anomaly', explanation:'Anomaly detection flags unusual activity that may indicate attacks.'},
+    ],
+    Expert: [
+      {type:'mo', text:'What is the primary goal of threat hunting?', options:['Proactively find hidden threats','Wait for alerts','Install software','Update systems'], answer:'Proactively find hidden threats', explanation:'Threat hunting actively searches for undetected adversaries.'},
+      {type:'tf', text:'APT groups are typically nation-state sponsored', answer:'True', explanation:'Advanced Persistent Threats often have government backing.'},
+      {type:'fg', text:'___ chain attacks compromise software through trusted vendors', answer:'Supply', explanation:'Supply chain attacks infiltrate through legitimate software updates.'},
+      {type:'mo', text:'What is the Diamond Model used for?', options:['Intrusion analysis','Gem valuation','Network design','Password cracking'], answer:'Intrusion analysis', explanation:'The Diamond Model analyzes adversary, capability, infrastructure, victim.'},
+      {type:'tf', text:'Fileless malware leaves no traces on disk', answer:'True', explanation:'Fileless attacks run in memory only, evading traditional detection.'},
+      {type:'fg', text:'The ___ framework maps adversary tactics and techniques', answer:'MITRE ATT&CK', explanation:'MITRE ATT&CK catalogs known attack behaviors and methods.'},
+      {type:'mo', text:'What is steganography used for in attacks?', options:['Hiding data within files','Encrypting messages','Speeding networks','Compressing data'], answer:'Hiding data within files', explanation:'Steganography conceals malicious data inside innocent-looking files.'},
+      {type:'tf', text:'Homomorphic encryption allows computation on encrypted data', answer:'True', explanation:'It enables processing without decrypting sensitive information.'},
+      {type:'fg', text:'___ response teams handle computer security incidents', answer:'CSIRT', explanation:'Computer Security Incident Response Teams manage breaches.'},
+      {type:'mo', text:'What is the kill chain model?', options:['Stages of a cyber attack','Software development process','Network topology','Encryption method'], answer:'Stages of a cyber attack', explanation:'The kill chain describes phases from reconnaissance to exfiltration.'},
+      {type:'tf', text:'Quantum computers will break all current encryption immediately', answer:'False', explanation:'Large-scale quantum computers are still years away from breaking encryption.'},
+      {type:'fg', text:'___ computing uses quantum mechanics for secure communication', answer:'Quantum', explanation:'Quantum key distribution enables theoretically unbreakable encryption.'},
+      {type:'mo', text:'What is the key benefit of a hardware root of trust?', options:['Tamper-proof security foundation','Faster processing','More storage','Better graphics'], answer:'Tamper-proof security foundation', explanation:'A hardware root of trust provides an immutable security anchor.'},
+      {type:'tf', text:'Deception technology uses decoys to detect attackers', answer:'True', explanation:'Honeypots and decoys lure and identify intruders.'},
+      {type:'fg', text:'___ intelligence gathers threat data from multiple sources', answer:'Threat', explanation:'Threat intelligence informs defenders about emerging attack patterns.'},
+    ]
+  },
+  
+  internetPrivacy: {
+    Beginner: [
+      {type:'mo', text:'What is personal information?', options:['Your name, address, and phone number','Weather data','News articles','Sports scores'], answer:'Your name, address, and phone number', explanation:'Personal information can identify who you are.'},
+      {type:'tf', text:'Companies can collect data about your online activity', answer:'True', explanation:'Websites track browsing habits, purchases, and preferences.'},
+      {type:'fg', text:'Cookies are small ___ stored by websites', answer:'Files', explanation:'Cookies remember your preferences and track your visits.'},
+      {type:'mo', text:'What does "privacy policy" explain?', options:['How a company uses your data','How to cook food','Computer repair instructions','Sports rules'], answer:'How a company uses your data', explanation:'Privacy policies describe data collection and usage practices.'},
+      {type:'tf', text:'You should read privacy policies before using a service', answer:'True', explanation:'Understanding policies helps you make informed privacy choices.'},
+      {type:'fg', text:'Your digital ___ is the trail of data you leave online', answer:'Footprint', explanation:'Every post, search, and click contributes to your digital footprint.'},
+      {type:'mo', text:'Which protects your privacy online?', options:['Using privacy settings','Sharing everything publicly','Posting your location','Using weak passwords'], answer:'Using privacy settings', explanation:'Privacy settings control who can see your information.'},
+      {type:'tf', text:'Deleted posts are gone forever from the internet', answer:'False', explanation:'Copies, screenshots, and archives may preserve deleted content.'},
+      {type:'fg', text:'___ mode in browsers helps reduce tracking', answer:'Incognito', explanation:'Private browsing limits what is stored locally on your device.'},
+      {type:'mo', text:'What is a data breach?', options:['Unauthorized access to data','A broken computer','Slow internet','A software update'], answer:'Unauthorized access to data', explanation:'Data breaches expose private information to attackers.'},
+      {type:'tf', text:'Free apps never collect your data', answer:'False', explanation:'Many free services make money by collecting and selling user data.'},
+      {type:'fg', text:'Always log ___ from public computers', answer:'Out', explanation:'Logging out prevents others from accessing your accounts.'},
+      {type:'mo', text:'What should you do with old devices?', options:['Wipe personal data before disposal','Throw them in trash','Give them away as is','Leave data on them'], answer:'Wipe personal data before disposal', explanation:'Properly erasing data protects your information.'},
+      {type:'tf', text:'Your location can be tracked by your phone', answer:'True', explanation:'Phones use GPS, Wi-Fi, and cell towers to determine location.'},
+      {type:'fg', text:'___ authentication adds a second verification step', answer:'Two-factor', explanation:'2FA makes it harder for others to access your accounts.'},
+    ],
+    Intermediate: [
+      {type:'mo', text:'What is end-to-end encryption?', options:['Only sender and receiver can read messages','Encryption at both ends of cable','Faster internet','Data compression'], answer:'Only sender and receiver can read messages', explanation:'E2EE ensures no intermediary can decrypt communications.'},
+      {type:'tf', text:'Your ISP can see which websites you visit', answer:'True', explanation:'Internet Service Providers can monitor unencrypted traffic.'},
+      {type:'fg', text:'GDPR stands for General Data ___ Regulation', answer:'Protection', explanation:'GDPR is an EU law protecting personal data and privacy.'},
+      {type:'mo', text:'What does a VPN hide from your ISP?', options:['Your browsing activity','Your identity completely','Your device type','Your location only'], answer:'Your browsing activity', explanation:'VPNs encrypt traffic so your ISP cannot see what you browse.'},
+      {type:'tf', text:'Metadata includes information about your communications', answer:'True', explanation:'Metadata reveals who, when, and how long you communicated.'},
+      {type:'fg', text:'Browser ___ prevents websites from tracking you', answer:'Fingerprinting', explanation:'Anti-fingerprinting tools make your browser less unique.'},
+      {type:'mo', text:'What is the right to be forgotten?', options:['Request deletion of personal data','Delete your memories','Forget passwords','Ignore laws'], answer:'Request deletion of personal data', explanation:'Some laws allow individuals to request data removal.'},
+      {type:'tf', text:'All VPNs keep no logs of your activity', answer:'False', explanation:'Some VPN providers log user activity despite claiming otherwise.'},
+      {type:'fg', text:'___ is a privacy-focused search engine', answer:'DuckDuckGo', explanation:'DuckDuckGo does not track your searches like other engines.'},
+      {type:'mo', text:'What is browser fingerprinting?', options:['Identifying users by browser characteristics','Using fingerprints to log in','Drawing with fingers','Touch screen technology'], answer:'Identifying users by browser characteristics', explanation:'Unique browser configurations can identify you without cookies.'},
+      {type:'tf', text:'Opt-out options always stop all data collection', answer:'False', explanation:'Opting out may limit but often does not stop all tracking.'},
+      {type:'fg', text:'The ___ Act regulates health data privacy in the US', answer:'HIPAA', explanation:'HIPAA protects the privacy of medical information.'},
+      {type:'mo', text:'What is the purpose of a privacy audit?', options:['Review data collection practices','Check computer speed','Audit finances','Test software'], answer:'Review data collection practices', explanation:'Privacy audits assess how organizations handle personal data.'},
+      {type:'tf', text:'Social media platforms can use your photos for facial recognition', answer:'True', explanation:'Some platforms train AI on user-uploaded images.'},
+      {type:'fg', text:'___ computing processes data at the network edge for privacy', answer:'Edge', explanation:'Edge computing keeps sensitive data closer to its source.'},
+    ],
+    Advanced: [
+      {type:'mo', text:'What is differential privacy?', options:['Adding noise to protect individual data','Different types of privacy','Privacy for different people','Changing privacy settings'], answer:'Adding noise to protect individual data', explanation:'Differential privacy mathematically guarantees individual privacy in datasets.'},
+      {type:'tf', text:'K-anonymity ensures individuals cannot be re-identified', answer:'True', explanation:'K-anonymity groups individuals so each is indistinguishable from k-1 others.'},
+      {type:'fg', text:'The ___ model regulates cross-border data transfers', answer:'GDPR', explanation:'GDPR restricts how personal data moves between countries.'},
+      {type:'mo', text:'What is homomorphic encryption?', options:['Compute on encrypted data without decrypting','Faster encryption method','Encryption for homes','Simple password protection'], answer:'Compute on encrypted data without decrypting', explanation:'It allows processing while keeping data encrypted.'},
+      {type:'tf', text:'Zero-knowledge proofs verify information without revealing it', answer:'True', explanation:'ZKPs prove you know something without disclosing what you know.'},
+      {type:'fg', text:'___ computation allows joint analysis without sharing raw data', answer:'Federated', explanation:'Federated learning trains models across devices while keeping data local.'},
+      {type:'mo', text:'What is the purpose of a data protection impact assessment?', options:['Evaluate privacy risks','Measure data speed','Calculate storage needs','Test network security'], answer:'Evaluate privacy risks', explanation:'DPIAs identify and minimize data protection risks.'},
+      {type:'tf', text:'Blockchain transactions are inherently private', answer:'False', explanation:'Most blockchains are public ledgers visible to everyone.'},
+      {type:'fg', text:'___ computing promises to enhance privacy through quantum mechanics', answer:'Quantum', explanation:'Quantum cryptography offers new paradigms for secure communication.'},
+      {type:'mo', text:'What is the key challenge of de-anonymization?', options:['Re-identifying individuals from anonymous data','Creating anonymous accounts','Encrypting data','Deleting files'], answer:'Re-identifying individuals from anonymous data', explanation:'Anonymized data can often be combined with other sources to identify people.'},
+      {type:'tf', text:'CCPA is California\'s consumer privacy law', answer:'True', explanation:'The California Consumer Privacy Act gives residents data rights.'},
+      {type:'fg', text:'___ identifiers are designed to be changed or rotated', answer:'Ephemeral', explanation:'Ephemeral IDs limit long-term tracking of individuals.'},
+      {type:'mo', text:'What does Privacy by Design mean?', options:['Build privacy into systems from the start','Add privacy after development','Design private rooms','Create privacy policies'], answer:'Build privacy into systems from the start', explanation:'Privacy by Design integrates protections throughout development.'},
+      {type:'tf', text:'All data anonymization techniques are reversible', answer:'False', explanation:'Proper anonymization should be irreversible, but many methods can be defeated.'},
+      {type:'fg', text:'___ analysis reveals patterns while protecting individual records', answer:'Aggregate', explanation:'Aggregate analysis shows trends without exposing individual data.'},
+    ],
+    Expert: [
+      {type:'mo', text:'What is the primary goal of secure multi-party computation?', options:['Compute on combined data without revealing inputs','Faster processing','Larger storage','Better graphics'], answer:'Compute on combined data without revealing inputs', explanation:'SMPC lets parties jointly compute functions while keeping inputs private.'},
+      {type:'tf', text:'Fully homomorphic encryption is practical for all applications', answer:'False', explanation:'FHE is computationally intensive and not yet practical for most uses.'},
+      {type:'fg', text:'___ mix networks use layered encryption to anonymize messages', answer:'Onion', explanation:'Onion routing (like Tor) wraps messages in multiple encryption layers.'},
+      {type:'mo', text:'What is the census problem in privacy?', options:['Publishing statistics without revealing individual data','Counting population','Internet surveys','Government software'], answer:'Publishing statistics without revealing individual data', explanation:'It balances statistical accuracy with protecting individual privacy.'},
+      {type:'tf', text:'Synthetic data perfectly preserves all statistical properties', answer:'False', explanation:'Synthetic data approximates real data but may lose some relationships.'},
+      {type:'fg', text:'___ learning trains models without centralized data collection', answer:'Federated', explanation:'Federated learning keeps training data distributed across devices.'},
+      {type:'mo', text:'What is the key limitation of differential privacy?', options:['Privacy-accuracy trade-off','Too easy to implement','Not mathematically proven','Only works for small data'], answer:'Privacy-accuracy trade-off', explanation:'Stronger privacy guarantees require adding more noise, reducing accuracy.'},
+      {type:'tf', text:'Verifiable credentials use zero-knowledge for selective disclosure', answer:'True', explanation:'You can prove specific attributes without revealing all information.'},
+      {type:'fg', text:'The ___ protocol enables private information retrieval', answer:'PIR', explanation:'Private Information Retrieval lets you query databases without revealing what you accessed.'},
+      {type:'mo', text:'What is the function of a trusted execution environment?', options:['Isolated secure area in processor','Cloud storage','Network firewall','Email encryption'], answer:'Isolated secure area in processor', explanation:'TEEs provide hardware-enforced isolation for sensitive computations.'},
+      {type:'tf', text:'Quantum key distribution prevents undetected eavesdropping', answer:'True', explanation:'QKD uses quantum mechanics to detect any interception.'},
+      {type:'fg', text:'___ proofs allow verification without revealing the witness', answer:'Zero-knowledge', explanation:'ZK-SNARKs and ZK-STARKs enable private verification.'},
+      {type:'mo', text:'What is the primary privacy concern with contact tracing apps?', options:['Location and proximity data collection','Phone battery drain','App design','Screen brightness'], answer:'Location and proximity data collection', explanation:'Contact tracing apps may reveal sensitive health and location data.'},
+      {type:'tf', text:'All privacy regulations worldwide are compatible with each other', answer:'False', explanation:'Different jurisdictions have conflicting privacy requirements.'},
+      {type:'fg', text:'___ rights management can conflict with privacy preservation', answer:'Digital', explanation:'DRM technologies may collect data about user behavior and devices.'},
+    ]
+  },
+  
+  internetSearching: {
+    Beginner: [
+      {type:'mo', text:'What is a search engine?', options:['A website that finds information','A computer game','An email service','A social media app'], answer:'A website that finds information', explanation:'Search engines like Google help you find websites and information.'},
+      {type:'tf', text:'Google is the only search engine', answer:'False', explanation:'There are many search engines like Bing, DuckDuckGo, and Yahoo.'},
+      {type:'fg', text:'To find exact phrases, use ___ marks around the words', answer:'Quote', explanation:'Quotation marks search for exact word sequences.'},
+      {type:'mo', text:'What happens when you type words into a search bar?', options:['The engine finds matching websites','Your computer restarts','Nothing happens','It sends an email'], answer:'The engine finds matching websites', explanation:'Search engines scan their index for pages matching your query.'},
+      {type:'tf', text:'All information on the internet is true', answer:'False', explanation:'Anyone can publish online. Always verify information from trusted sources.'},
+      {type:'fg', text:'Keywords are the ___ you type into a search engine', answer:'Words', explanation:'Choosing good keywords helps find better results.'},
+      {type:'mo', text:'Which symbol excludes words from search?', options:['Minus sign (-)','Plus sign (+)','Star (*)','Hash (#)'], answer:'Minus sign (-)', explanation:'Using -word removes results containing that word.'},
+      {type:'tf', text:'You can search for images using a search engine', answer:'True', explanation:'Most search engines have image, video, and news search options.'},
+      {type:'fg', text:'The list of results is called the Search ___ Results Page', answer:'Engine', explanation:'SERP displays the pages matching your search query.'},
+      {type:'mo', text:'What should you do if you cannot find what you need?', options:['Try different keywords','Give up immediately','Turn off computer','Delete browser'], answer:'Try different keywords', explanation:'Different words or phrases may find better results.'},
+      {type:'tf', text:'.gov websites are always accurate', answer:'False', explanation:'While generally reliable, always verify information from multiple sources.'},
+      {type:'fg', text:'A ___ search lets you find similar images', answer:'Reverse', explanation:'Reverse image search finds where an image appears online.'},
+      {type:'mo', text:'What is a URL?', options:['Website address','Search term','Computer program','Email message'], answer:'Website address', explanation:'URLs are the addresses you see in the browser bar.'},
+      {type:'tf', text:'Search engines can translate websites', answer:'True', explanation:'Many search engines offer translation features for results.'},
+      {type:'fg', text:'Use ___ to find results from a specific website', answer:'site:', explanation:'"site:example.com" searches only within that domain.'},
+    ],
+    Intermediate: [
+      {type:'mo', text:'What does the "site:" operator do?', options:['Search within a specific website','Check site security','Block websites','Speed up internet'], answer:'Search within a specific website', explanation:'site:example.com limits results to that domain.'},
+      {type:'tf', text:'Boolean operators (AND, OR, NOT) work in most search engines', answer:'True', explanation:'Boolean operators help refine and combine search terms.'},
+      {type:'fg', text:'The asterisk (*) acts as a ___ in search queries', answer:'Wildcard', explanation:'Wildcards match any word, helpful for partial phrases.'},
+      {type:'mo', text:'What is the purpose of advanced search?', options:['Refine results with filters','Search faster','Use more data','Increase volume'], answer:'Refine results with filters', explanation:'Advanced search offers date ranges, file types, and other filters.'},
+      {type:'tf', text:'Search engines rank results by relevance and quality', answer:'True', explanation:'Algorithms consider hundreds of factors to order results.'},
+      {type:'fg', text:'___ results are paid advertisements at the top of search pages', answer:'Sponsored', explanation:'Ads are marked as sponsored and are paid placements.'},
+      {type:'mo', text:'Which filetype operator finds PDFs?', options:['filetype:pdf','pdf:file','type:pdf','.pdf'], answer:'filetype:pdf', explanation:'filetype: restricts results to specific document formats.'},
+      {type:'tf', text:'Incognito mode improves search result quality', answer:'False', explanation:'Private browsing prevents local history but does not change rankings.'},
+      {type:'fg', text:'The ___ operator searches for pages that link to a URL', answer:'link:', explanation:'link: shows pages that reference a specific website.'},
+      {type:'mo', text:'What is a search algorithm?', options:['Method for ranking search results','A programming language','A type of computer','Internet provider'], answer:'Method for ranking search results', explanation:'Algorithms determine which pages appear first for your query.'},
+      {type:'tf', text:'Search results are the same for everyone worldwide', answer:'False', explanation:'Results vary by location, search history, and personalization.'},
+      {type:'fg', text:'Using ___ between words searches for either term', answer:'OR', explanation:'OR broadens searches to include results with any of the terms.'},
+      {type:'mo', text:'What does "cached" mean in search results?', options:['Stored copy of the page','Deleted website','New website','Secure website'], answer:'Stored copy of the page', explanation:'Cached pages are saved snapshots that load when sites are down.'},
+      {type:'tf', text:'Parentheses group search terms for complex queries', answer:'True', explanation:'(term1 OR term2) AND term3 creates precise searches.'},
+      {type:'fg', text:'The ___ range operator finds numbers between values', answer:'..', explanation:'"camera $100..$300" finds products in that price range.'},
+    ],
+    Advanced: [
+      {type:'mo', text:'What is a web crawler?', options:['Program that indexes websites','A type of virus','Internet speed test','Email system'], answer:'Program that indexes websites', explanation:'Crawlers systematically browse the web to build search indexes.'},
+      {type:'tf', text:'PageRank was Google\'s original ranking algorithm', answer:'True', explanation:'PageRank evaluated pages based on the quantity and quality of links.'},
+      {type:'fg', text:'SEO stands for Search ___ Optimization', answer:'Engine', explanation:'SEO improves website visibility in organic search results.'},
+      {type:'mo', text:'What is the purpose of a sitemap?', options:['Help crawlers discover pages','Design website layout','Create user accounts','Send emails'], answer:'Help crawlers discover pages', explanation:'Sitemaps list all pages for search engines to index.'},
+      {type:'tf', text:'Robots.txt can prevent pages from being indexed', answer:'True', explanation:'Robots.txt tells crawlers which pages to exclude.'},
+      {type:'fg', text:'The ___ graph represents relationships between entities', answer:'Knowledge', explanation:'Google\'s Knowledge Graph connects facts about people, places, things.'},
+      {type:'mo', text:'What is a long-tail keyword?', options:['Specific multi-word phrase','Very long word','Technical term','Abbreviation'], answer:'Specific multi-word phrase', explanation:'Long-tail keywords are detailed phrases with lower search volume.'},
+      {type:'tf', text:'Semantic search understands intent beyond keywords', answer:'True', explanation:'Modern search engines interpret meaning and context.'},
+      {type:'fg', text:'___ search uses previous queries to improve current results', answer:'Contextual', explanation:'Contextual search considers your search history and location.'},
+      {type:'mo', text:'What is the purpose of Schema markup?', options:['Help search engines understand content','Speed up websites','Design layouts','Encrypt data'], answer:'Help search engines understand content', explanation:'Structured data helps search engines display rich results.'},
+      {type:'tf', text:'Search engines penalize websites that use black-hat SEO', answer:'True', explanation:'Manipulative tactics can result in lower rankings or removal.'},
+      {type:'fg', text:'The ___ filter removes low-quality content from results', answer:'Panda', explanation:'Google\'s Panda update targets thin or duplicate content.'},
+      {type:'mo', text:'What is the hidden web?', options:['Content not indexed by search engines','Invisible websites','Secret internet','Dark mode'], answer:'Content not indexed by search engines', explanation:'The deep web includes databases and private content.'},
+      {type:'tf', text:'Bing uses the same ranking algorithm as Google', answer:'False', explanation:'Each search engine has proprietary ranking algorithms.'},
+      {type:'fg', text:'___ snippets provide direct answers at the top of results', answer:'Featured', explanation:'Featured snippets extract answers from web pages.'},
+    ],
+    Expert: [
+      {type:'mo', text:'What is the primary challenge of information retrieval?', options:['Matching queries to relevant documents','Internet speed','Storage capacity','User interface design'], answer:'Matching queries to relevant documents', explanation:'IR systems must understand intent and rank millions of documents.'},
+      {type:'tf', text:'TF-IDF measures word importance in documents', answer:'True', explanation:'Term Frequency-Inverse Document Frequency weights rare words higher.'},
+      {type:'fg', text:'The ___ index maps terms to their document locations', answer:'Inverted', explanation:'Inverted indexes enable fast full-text search.'},
+      {type:'mo', text:'What problem does BM25 address?', options:['Document length normalization','Color matching','Image processing','Video compression'], answer:'Document length normalization', explanation:'BM25 improves upon TF-IDF by accounting for document length.'},
+      {type:'tf', text:'Neural ranking models outperform traditional methods', answer:'True', explanation:'Deep learning models better understand semantic relationships.'},
+      {type:'fg', text:'___ retrieval combines sparse and dense representations', answer:'Hybrid', explanation:'Hybrid search uses both keyword matching and semantic embeddings.'},
+      {type:'mo', text:'What is the key advantage of learned sparse retrieval?', options:['Combines efficiency with semantics','Only uses keywords','Ignores relevance','Requires more storage'], answer:'Combines efficiency with semantics', explanation:'It learns which terms are important while maintaining fast retrieval.'},
+      {type:'tf', text:'Query expansion always improves search results', answer:'False', explanation:'Poor expansion can introduce irrelevant terms and reduce precision.'},
+      {type:'fg', text:'___ metrics evaluate how well search results satisfy users', answer:'Relevance', explanation:'Relevance metrics like NDCG measure search quality.'},
+      {type:'mo', text:'What is the purpose of learning to rank?', options:['Train models to order search results','Teach users to search','Rank websites by speed','Order files by size'], answer:'Train models to order search results', explanation:'LTR uses machine learning to optimize result ordering.'},
+      {type:'tf', text:'Federated search queries multiple databases simultaneously', answer:'True', explanation:'Federated search aggregates results from different sources.'},
+      {type:'fg', text:'___ embeddings represent words as dense vectors', answer:'Word', explanation:'Word embeddings capture semantic meaning in vector space.'},
+      {type:'mo', text:'What is the vocabulary mismatch problem?', options:['Different words for same concept','Missing words in dictionary','Translation errors','Spelling mistakes'], answer:'Different words for same concept', explanation:'Users and authors may use different terms for the same thing.'},
+      {type:'tf', text:'Query understanding systems parse natural language questions', answer:'True', explanation:'Modern search engines interpret questions, not just keywords.'},
+      {type:'fg', text:'___ search allows finding information across multiple modalities', answer:'Multimodal', explanation:'Multimodal search handles text, images, and audio together.'},
+    ]
+  }
+};
+
+// ============================================
+// APP STATE
+// ============================================
+let state = {
+  userName: '',
+  currentTopic: '',
+  currentLevel: 'Beginner',
+  questions: [],
+  currentIndex: 0,
+  answers: [],
+  startTime: 0,
+  questionStartTime: 0,
+  retryMode: false,
+  selectedOption: '',
+  topicResults: {}, // track per-topic performance
+};
+
+// ============================================
+// SCREEN RENDERERS
+// ============================================
+function renderWelcome() {
+  const topics = Object.keys(QUESTION_BANK);
+  let topicCards = topics.map(t => {
+    const icons = {
+      hardware: '🖥️', software: '💿', internalComponents: '🔧', 
+      introAI: '🤖', prompting: '💬', internetSafety: '🛡️',
+      internetPrivacy: '🔒', internetSearching: '🔍'
+    };
+    return `
+      <div class="topic-card" onclick="selectTopic('${t}')" id="topic-${t}">
+        <span class="topic-icon">${icons[t] || '📚'}</span>
+        <strong>${formatTopicName(t)}</strong>
+        <span style="float:right; color:#800080;">→</span>
+      </div>
+    `;
+  }).join('');
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">💻 Digital Skills Learning</div>
+    <div style="padding:5px;">
+      <p style="font-size:1.1em; margin:10px 0; text-align:center;">👋 Welcome! This quiz adapts to help you <strong>learn</strong>.</p>
+      <input type="text" id="nameInput" class="input-box" placeholder="Your name">
+      <p style="margin:12px 0; font-weight:bold; color:#800080;">📚 Choose a topic:</p>
+      ${topicCards}
+      <div id="levelSelection" class="hidden">
+        <p style="margin:12px 0; font-weight:bold; color:#FF8C00;">📊 Starting level:</p>
+        <select id="levelSelect">
+          <option value="Beginner">⭐ Beginner</option>
+          <option value="Intermediate">⭐⭐ Intermediate</option>
+          <option value="Advanced">⭐⭐⭐ Advanced</option>
+          <option value="Expert">🏆 Expert</option>
+        </select>
+      </div>
+      <button class="btn btn-green" onclick="startQuiz()" id="startBtn" style="margin-top:15px;">▶️ START LEARNING</button>
+      <p style="text-align:center; margin-top:10px; font-size:0.9em; color:#666;">
+        🎯 Answer 5+ questions in under 40s to level up!<br>
+        📖 Wrong answers include explanations to help you learn.
+      </p>
+    </div>
+  `;
+}
+
+function selectTopic(topic) {
+  state.currentTopic = topic;
+  document.querySelectorAll('.topic-card').forEach(c => c.style.borderColor = 'transparent');
+  const card = document.getElementById(`topic-${topic}`);
+  if (card) card.style.borderColor = '#800080';
+  document.getElementById('levelSelection').classList.remove('hidden');
+}
+
+function formatTopicName(key) {
+  const names = {
+    hardware: 'Computer Hardware',
+    software: 'Software & Applications',
+    internalComponents: 'Internal Components',
+    introAI: 'Introduction to AI',
+    prompting: 'AI Prompting Skills',
+    internetSafety: 'Internet Safety',
+    internetPrivacy: 'Internet Privacy',
+    internetSearching: 'Internet Searching Skills'
+  };
+  return names[key] || key;
+}
+
+function startQuiz() {
+  state.userName = document.getElementById('nameInput').value.trim();
+  if (!state.userName) { alert('Please enter your name!'); return; }
+  if (!state.currentTopic) { alert('Please select a topic!'); return; }
+  
+  state.currentLevel = document.getElementById('levelSelect').value;
+  state.questions = selectQuestions(state.currentTopic, state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  state.selectedOption = '';
+  
+  renderGreeting();
+}
+
+function selectQuestions(topic, level) {
+  const bank = QUESTION_BANK[topic][level];
+  const shuffled = [...bank].sort(() => Math.random() - 0.5);
+  
+  // Ensure mix: 3 tf, 2 fg, 5 mo
+  const tf = shuffled.filter(q => q.type === 'tf').slice(0, 3);
+  const fg = shuffled.filter(q => q.type === 'fg').slice(0, 2);
+  const mo = shuffled.filter(q => q.type === 'mo').slice(0, 5);
+  
+  let selected = [...tf, ...fg, ...mo];
+  // Fill remaining if needed
+  if (selected.length < 10) {
+    const remaining = shuffled.filter(q => !selected.includes(q));
+    selected = [...selected, ...remaining].slice(0, 10);
+  }
+  
+  return selected.sort(() => Math.random() - 0.5).map((q, i) => ({...q, id: i}));
+}
+
+function renderGreeting() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">${formatTopicName(state.currentTopic)}</div>
+    <div class="header-purple">Level: ${state.currentLevel}</div>
+    <div style="background:#F5E6FF; padding:18px; border-radius:20px; margin:12px 0;">
+      <p style="font-size:1.1em;">👋 Hi ${state.userName}!</p>
+      <p style="margin-top:8px;">📝 <strong>10 questions</strong> about <strong>${formatTopicName(state.currentTopic)}</strong></p>
+      <p>📊 Starting at <span class="badge badge-purple">${state.currentLevel}</span> level</p>
+      <p style="margin-top:8px; font-size:0.9em;">🎯 Get <strong>5+ correct in under 40 seconds</strong> to advance!</p>
+      <p style="font-size:0.9em;">📖 Each wrong answer includes an explanation.</p>
+    </div>
+    <button class="btn btn-orange" onclick="showQuestion()">👍 I'M READY!</button>
+  `;
+}
+
+function showQuestion() {
+  if (state.currentIndex >= state.questions.length) {
+    showResults();
+    return;
+  }
+  
+  const q = state.questions[state.currentIndex];
+  state.questionStartTime = Date.now();
+  state.selectedOption = '';
+  
+  const typeLabel = q.type === 'mo' ? '🔘 Multiple Choice' : q.type === 'tf' ? '✅ True or False' : '✏️ Fill in the Blank';
+  
+  let optionsHtml = '';
+  if (q.type === 'mo') {
+    const allOpts = q.options ? [...q.options] : [q.answer, 'Not sure', 'Maybe', 'None'];
+    if (!allOpts.includes(q.answer)) allOpts.push(q.answer);
+    optionsHtml = [...new Set(allOpts)].sort(() => Math.random() - 0.5).map(opt =>
+      `<button class="option-btn" onclick="selectOption(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`
+    ).join('');
+  } else if (q.type === 'tf') {
+    optionsHtml = `
+      <button class="option-btn" onclick="selectOption(this, 'True')">✅ True</button>
+      <button class="option-btn" onclick="selectOption(this, 'False')">❌ False</button>
+    `;
+  } else {
+    optionsHtml = `<input type="text" id="fillAnswer" class="input-box" placeholder="Type your answer here" autocomplete="off">`;
+  }
+  
+  const retryMsg = state.retryMode ? '<p style="color:#FF8C00; font-weight:bold;">🔄 Try once more!</p>' : '';
+  const timerHtml = `<div class="timer">⏱️ <span id="liveTimer">0s</span></div>`;
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">${formatTopicName(state.currentTopic)}</div>
+    <div class="header-purple">Q${state.currentIndex+1}/10 • ${state.currentLevel}</div>
+    ${timerHtml}
+    <div class="progress-bar"><div class="progress-fill" style="width:${((state.currentIndex)/10)*100}%"></div></div>
+    <div class="question-box">
+      <p style="color:#800080; font-weight:bold;">${typeLabel}</p>
+      ${q.image ? `<img src="${q.image}" alt="question image" onerror="this.style.display='none'">` : ''}
+      <p class="question-text">${q.text}</p>
+      ${retryMsg}
+      ${optionsHtml}
+      <div id="feedbackArea"></div>
+      <button class="btn btn-green" onclick="submitAnswer('${q.type}', '${q.answer.replace(/'/g, "\\'")}', ${q.id})" style="margin-top:12px;">✅ SUBMIT ANSWER</button>
+      ${state.retryMode ? '<button class="btn" style="background:#666;" onclick="skipQuestion()">⏭️ SKIP</button>' : ''}
+    </div>
+  `;
+  
+  // Live timer
+  let elapsed = 0;
+  window.liveTimerInterval = setInterval(() => {
+    elapsed = Math.round((Date.now() - state.questionStartTime) / 1000);
+    const timerEl = document.getElementById('liveTimer');
+    if (timerEl) timerEl.textContent = elapsed + 's';
+  }, 500);
+}
+
+function selectOption(btn, value) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedOption = value;
+}
+
+function submitAnswer(type, correctAnswer, questionId) {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  
+  const feedback = document.getElementById('feedbackArea');
+  let userAnswer = '';
+  
+  if (type === 'fg') {
+    userAnswer = document.getElementById('fillAnswer').value.trim();
+    if (!userAnswer) {
+      feedback.innerHTML = '<div class="feedback wrong">⚠️ Please type an answer!</div>';
+      return;
+    }
+  } else {
+    if (!state.selectedOption) {
+      feedback.innerHTML = '<div class="feedback wrong">⚠️ Please select an option!</div>';
+      return;
+    }
+    userAnswer = state.selectedOption;
+  }
+  
+  const isCorrect = userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+  const q = state.questions[state.currentIndex];
+  const timeTaken = Math.round((Date.now() - state.questionStartTime) / 1000);
+  
+  if (isCorrect) {
+    feedback.innerHTML = `<div class="feedback correct">✅ CORRECT! (${timeTaken}s)</div>`;
+    state.answers.push({id: questionId, correct: true, time: timeTaken});
+    state.retryMode = false;
+    
+    if (state.answers.filter(a => a.id === questionId && !a._retry).length === 0) {
+      // First attempt correct
+    }
+    
+    setTimeout(() => { state.currentIndex++; showQuestion(); }, 1200);
+  } else {
+    if (!state.retryMode) {
+      feedback.innerHTML = `<div class="feedback wrong">❌ Not quite. Try again!</div>`;
+      state.retryMode = true;
+      state.selectedOption = '';
+      setTimeout(() => showQuestion(), 800);
+    } else {
+      const explanationHtml = q.explanation ? 
+        `<div class="explanation">💡 <strong>Learn:</strong> ${q.explanation}</div>` : '';
+      feedback.innerHTML = `
+        <div class="feedback wrong">❌ Incorrect. Answer: <strong>${correctAnswer}</strong></div>
+        ${explanationHtml}
+      `;
+      state.answers.push({id: questionId, correct: false, time: timeTaken, _retry: true});
+      state.retryMode = false;
+      setTimeout(() => { state.currentIndex++; showQuestion(); }, 2500);
+    }
+  }
+}
+
+function skipQuestion() {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  const q = state.questions[state.currentIndex];
+  state.answers.push({id: q.id, correct: false, time: 0, skipped: true});
+  state.retryMode = false;
+  state.selectedOption = '';
+  state.currentIndex++;
+  showQuestion();
+}
+
+function showResults() {
+  const correct = state.answers.filter(a => a.correct).length;
+  const wrong = state.answers.filter(a => !a.correct).length;
+  const total = state.answers.length;
+  const percent = total > 0 ? Math.round((correct/total)*100) : 0;
+  const totalTime = Math.round((Date.now() - state.startTime) / 1000);
+  const min = Math.floor(totalTime/60);
+  const sec = totalTime % 60;
+  
+  // Determine if should level up
+  const firstAttemptCorrect = state.answers.filter(a => a.correct && !a._retry).length;
+  const isFastEnough = totalTime < 40;
+  const shouldLevelUp = firstAttemptCorrect >= 5 && isFastEnough;
+  
+  let levelUpMsg = '';
+  let nextAction = '';
+  
+  if (shouldLevelUp) {
+    const levels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
+    const currentIdx = levels.indexOf(state.currentLevel);
+    if (currentIdx < levels.length - 1) {
+      const nextLevel = levels[currentIdx + 1];
+      levelUpMsg = `
+        <div style="background:#90EE90; padding:15px; border-radius:15px; margin:12px 0;">
+          <p style="font-size:1.2em;">🎉 <strong>Great job!</strong></p>
+          <p>You got <strong>${firstAttemptCorrect}+ correct in under 40s!</strong></p>
+          <p>Advancing to: <span class="badge badge-green">${nextLevel}</span></p>
+        </div>
+      `;
+      nextAction = `<button class="btn btn-green" onclick="advanceLevel('${nextLevel}')">🚀 TRY ${nextLevel.toUpperCase()} LEVEL</button>`;
+    } else {
+      levelUpMsg = `<div style="background:#90EE90; padding:15px; border-radius:15px; margin:12px 0;"><p>🏆 <strong>You're at Expert level!</strong> Amazing work!</p></div>`;
+    }
+  } else if (correct < 3) {
+    const levels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
+    const currentIdx = levels.indexOf(state.currentLevel);
+    if (currentIdx > 0) {
+      const easierLevel = levels[currentIdx - 1];
+      levelUpMsg = `
+        <div style="background:#FFF3CD; padding:15px; border-radius:15px; margin:12px 0;">
+          <p>📖 <strong>Let's build your foundation!</strong></p>
+          <p>Try starting at an easier level to learn the basics.</p>
+        </div>
+      `;
+      nextAction = `<button class="btn btn-orange" onclick="advanceLevel('${easierLevel}')">📚 PRACTICE AT ${easierLevel.toUpperCase()}</button>`;
+    }
+  }
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Your Results</div>
+    <div class="results">
+      <p style="font-size:1.1em;">${state.userName} • ${formatTopicName(state.currentTopic)}</p>
+      <p><span class="badge badge-purple">${state.currentLevel}</span></p>
+      <div style="margin:15px 0;">
+        <span class="big-number">${percent}%</span>
+        <p>Correct</p>
+      </div>
+      <p>✅ Correct: <strong>${correct}</strong> | ❌ Wrong: <strong>${wrong}</strong></p>
+      <p>⏱️ Total Time: <strong>${min}m ${sec}s</strong></p>
+      ${levelUpMsg}
+      <div style="max-width:200px; margin:15px auto;">
+        <canvas id="pieChart"></canvas>
+      </div>
+      ${nextAction}
+      <button class="btn" onclick="resetApp()">🔄 NEW TOPIC</button>
+      <button class="btn btn-orange" onclick="retrySameLevel()">🔁 TRY AGAIN</button>
+    </div>
+  `;
+  
+  makePieChart(correct, wrong);
+}
+
+function advanceLevel(level) {
+  state.currentLevel = level;
+  state.questions = selectQuestions(state.currentTopic, state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+function retrySameLevel() {
+  state.questions = selectQuestions(state.currentTopic, state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+function resetApp() {
+  state = {
+    userName: '',
+    currentTopic: '',
+    currentLevel: 'Beginner',
+    questions: [],
+    currentIndex: 0,
+    answers: [],
+    startTime: 0,
+    questionStartTime: 0,
+    retryMode: false,
+    selectedOption: '',
+    topicResults: {},
+  };
+  renderWelcome();
+}
+
+function makePieChart(correct, wrong) {
+  const canvas = document.getElementById('pieChart');
+  if (!canvas) return;
+  
+  new Chart(canvas, {
+    type: 'pie',
+    data: {
+      labels: ['Correct', 'Wrong'],
+      datasets: [{
+        data: [correct, wrong],
+        backgroundColor: ['#228B22', '#FF8C00'],
+        borderColor: 'white',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      plugins: {
+        title: { display: true, text: 'Your Learning Score', color: '#800080', font: {size: 14} }
+      }
+    }
+  });
+}
+
+// ============================================
+// INIT
+// ============================================
+renderWelcome();
+</script>
+</body>
+</html>

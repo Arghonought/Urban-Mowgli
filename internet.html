@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Learn Internet & Web Basics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #FFF5E6; min-height: 100vh; padding: 10px; font-size: 16px; }
+    .app { max-width: 500px; margin: 0 auto; background: white; border-radius: 25px; padding: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+    .header { background: #1a73e8; color: white; padding: 18px; border-radius: 20px; text-align: center; margin-bottom: 15px; font-size: 1.2em; font-weight: bold; }
+    .header-purple { background: #800080; color: white; padding: 12px; border-radius: 15px; text-align: center; margin-bottom: 12px; font-size: 1em; font-weight: bold; }
+    .header-orange { background: #FF8C00; color: white; padding: 12px; border-radius: 15px; text-align: center; margin-bottom: 12px; font-size: 1em; font-weight: bold; }
+    .btn { background: #800080; color: white; border: none; padding: 14px 20px; border-radius: 30px; font-size: 1.05em; font-weight: bold; width: 100%; margin: 7px 0; cursor: pointer; }
+    .btn-orange { background: #FF8C00; }
+    .btn-green { background: #228B22; }
+    .btn-blue { background: #1a73e8; }
+    .btn:active { opacity: 0.85; transform: scale(0.97); }
+    .input-box, select { width: 100%; padding: 14px; border: 3px solid #800080; border-radius: 30px; font-size: 1.05em; margin: 7px 0; background: white; }
+    select { border-color: #1a73e8; }
+    .question-box { background: #F5E6FF; padding: 18px; border-radius: 20px; margin: 12px 0; border: 3px solid #800080; }
+    .question-text { font-size: 1.15em; font-weight: bold; margin: 10px 0; color: #333; line-height: 1.4; }
+    .option-btn { background: white; border: 2px solid #1a73e8; padding: 13px 15px; border-radius: 15px; margin: 6px 0; font-size: 1em; text-align: left; cursor: pointer; width: 100%; display: block; }
+    .option-btn.selected { background: #1a73e8; color: white; border-color: #800080; font-weight: bold; }
+    .feedback { padding: 12px; margin: 10px 0; border-radius: 12px; font-weight: bold; text-align: center; }
+    .correct { background: #90EE90; color: #006400; }
+    .wrong { background: #FFB6C1; color: #8B0000; }
+    .learn { background: #E8F0FE; border-left: 4px solid #1a73e8; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 0.95em; }
+    .results { text-align: center; padding: 15px; }
+    .big-number { font-size: 2.5em; font-weight: bold; color: #1a73e8; }
+    .badge { display: inline-block; background: #1a73e8; color: white; padding: 5px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9em; margin: 3px; }
+    .badge-purple { background: #800080; }
+    .badge-orange { background: #FF8C00; }
+    .progress-bar { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 8px 0; overflow: hidden; }
+    .progress-fill { background: #1a73e8; height: 100%; transition: width 0.3s; border-radius: 10px; }
+    .timer { font-size: 1em; font-weight: bold; color: #FF8C00; text-align: right; padding: 5px; }
+    .tip-box { background: #FFF9E6; border: 2px solid #FF8C00; padding: 10px; border-radius: 12px; margin: 8px 0; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const QUESTION_BANK = {
+  Beginner: [
+    {type:'mo', text:'What is the internet?', options:['A global network of computers','A single computer','A type of software','A phone app'], answer:'A global network of computers', explanation:'The internet connects billions of devices worldwide to share information.'},
+    {type:'tf', text:'Wi-Fi connects you to the internet without cables', answer:'True', explanation:'Wi-Fi uses radio waves to connect devices to a router wirelessly.'},
+    {type:'fg', text:'The box at the top of a browser where you type website names is the ___ bar', answer:'Address', explanation:'The address bar (or URL bar) is where you enter web addresses.'},
+    {type:'mo', text:'What is a web browser?', options:['A program to view websites','A search engine','The internet itself','A type of computer'], answer:'A program to view websites', explanation:'Browsers like Chrome, Edge, and Firefox display web pages.'},
+    {type:'tf', text:'A tab lets you open multiple pages in one browser window', answer:'True', explanation:'Tabs keep different websites organized without opening new windows.'},
+    {type:'fg', text:'A website address usually starts with ___ or https://', answer:'http://', explanation:'HTTP/HTTPS are protocols for transferring web pages.'},
+    {type:'mo', text:'What is the cloud?', options:['Storing files on internet servers','Water in the sky','A type of computer','A Wi-Fi signal'], answer:'Storing files on internet servers', explanation:'The cloud means your files are saved on remote computers you access online.'},
+    {type:'tf', text:'Google is a search engine, not a browser', answer:'True', explanation:'Google.com is a search engine. Chrome is the browser. They are different things!'},
+    {type:'fg', text:'The small lock icon in the address bar means the site is ___', answer:'Secure', explanation:'The padlock means the connection is encrypted (HTTPS).'},
+    {type:'mo', text:'Which is a search engine?', options:['Google','Chrome','Firefox','Edge'], answer:'Google', explanation:'Google SEARCHES for websites. Chrome VIEWS websites. Different jobs!'},
+    {type:'tf', text:'A browser and a search engine are the same thing', answer:'False', explanation:'Browser = tool to VIEW pages. Search engine = website to FIND pages.'},
+    {type:'fg', text:'The main page of a website is called the ___ page', answer:'Home', explanation:'The home page is the first page you see when visiting a website.'},
+    {type:'mo', text:'What happens when you type a web address and press Enter?', options:['Browser loads that page','Computer restarts','Nothing happens','Email opens'], answer:'Browser loads that page', explanation:'The browser finds the server and downloads the page to display.'},
+    {type:'tf', text:'You need the internet to use cloud storage', answer:'True', explanation:'Cloud files are on remote servers, so you need internet to access them.'},
+    {type:'fg', text:'A ___ is a unique number assigned to your device on the internet', answer:'IP address', explanation:'IP addresses are like phone numbers for computers on the network.'},
+  ],
+  Intermediate: [
+    {type:'mo', text:'What does VPN stand for?', options:['Virtual Private Network','Very Personal Network','Visual Public Network','Verified Private Node'], answer:'Virtual Private Network', explanation:'A VPN creates a secure, encrypted connection to another network.'},
+    {type:'tf', text:'A VPN hides your real IP address', answer:'True', explanation:'VPNs mask your location by routing traffic through a different server.'},
+    {type:'fg', text:'The "S" in HTTPS stands for ___', answer:'Secure', explanation:'HTTPS encrypts data between your browser and the website.'},
+    {type:'mo', text:'What is an IP address like?', options:['A phone number for your device','Your home address','Your email','Your password'], answer:'A phone number for your device', explanation:'IP addresses identify devices and help route information on the internet.'},
+    {type:'tf', text:'Public Wi-Fi is always safe to use', answer:'False', explanation:'Public networks can be monitored. Use a VPN for safety on public Wi-Fi.'},
+    {type:'fg', text:'The part of a URL after the domain is the ___', answer:'Path', explanation:'In example.com/blog, "/blog" is the path to a specific page.'},
+    {type:'mo', text:'What does a browser cache do?', options:['Stores copies of pages for faster loading','Deletes files','Blocks websites','Saves passwords'], answer:'Stores copies of pages for faster loading', explanation:'Cache saves images and files so pages load faster next visit.'},
+    {type:'tf', text:'The cloud means your data is stored on someone else\'s computer', answer:'True', explanation:'Cloud storage uses data centers with many servers to store your files.'},
+    {type:'fg', text:'.com, .org, and .edu are examples of ___', answer:'Domains', explanation:'Top-level domains (TLDs) help identify the type of organization.'},
+    {type:'mo', text:'What is the difference between Chrome and Google?', options:['Chrome is a browser, Google is a search engine','They are the same','Google is faster','Chrome searches better'], answer:'Chrome is a browser, Google is a search engine', explanation:'You USE Chrome to VISIT Google.com to SEARCH. Different tools!'},
+    {type:'tf', text:'A firewall protects your network from unwanted traffic', answer:'True', explanation:'Firewalls monitor and block suspicious connections.'},
+    {type:'fg', text:'The ___ is the part of a URL before the colon', answer:'Protocol', explanation:'HTTP, HTTPS, FTP are protocols that define how data transfers.'},
+    {type:'mo', text:'What does an ad blocker do?', options:['Removes advertisements from web pages','Speeds up internet','Blocks viruses','Saves passwords'], answer:'Removes advertisements from web pages', explanation:'Ad blockers filter out advertising content before pages display.'},
+    {type:'tf', text:'Your browser history can be viewed by others using your device', answer:'True', explanation:'Browsing history is stored locally unless you use private mode.'},
+    {type:'fg', text:'A ___ is a small text file websites store on your computer', answer:'Cookie', explanation:'Cookies remember your preferences, login status, and browsing activity.'},
+  ],
+  Advanced: [
+    {type:'mo', text:'What is the difference between IPv4 and IPv6?', options:['IPv6 has more available addresses','IPv4 is faster','No difference','IPv6 is older'], answer:'IPv6 has more available addresses', explanation:'IPv4 has ~4 billion addresses. IPv6 has trillions to support more devices.'},
+    {type:'tf', text:'A VPN makes you completely anonymous online', answer:'False', explanation:'VPNs hide your IP but websites can still identify you through cookies, logins, and fingerprinting.'},
+    {type:'fg', text:'DNS stands for Domain ___ System', answer:'Name', explanation:'DNS translates website names (google.com) into IP addresses (142.250.80.46).'},
+    {type:'mo', text:'What is browser fingerprinting?', options:['Identifying users by browser settings','Using fingerprints to log in','A security feature','Typing with fingers'], answer:'Identifying users by browser settings', explanation:'Your browser reveals unique details (screen size, fonts, plugins) that identify you.'},
+    {type:'tf', text:'Cloud computing means programs run on remote servers', answer:'True', explanation:'Apps like Google Docs run in the cloud, not on your local computer.'},
+    {type:'fg', text:'The "incognito" mode prevents ___ storage of history', answer:'Local', explanation:'Private browsing does not save history on your device but does not hide from ISPs.'},
+    {type:'mo', text:'What is an ISP?', options:['Internet Service Provider','Internal Security Protocol','Internet Speed Program','International Server Portal'], answer:'Internet Service Provider', explanation:'Your ISP (like Comcast, BT, Vodafone) connects you to the internet.'},
+    {type:'tf', text:'Search engines and AI chatbots use the same technology', answer:'False', explanation:'Search engines find existing pages. AI chatbots generate new responses using language models.'},
+    {type:'fg', text:'A ___ server acts as a middleman between you and the internet', answer:'Proxy', explanation:'Proxy servers forward your requests, hiding your IP address.'},
+    {type:'mo', text:'What is the key difference between ChatGPT and Google?', options:['ChatGPT generates answers, Google finds pages','Both search the internet','ChatGPT is faster','No difference'], answer:'ChatGPT generates answers, Google finds pages', explanation:'Google FINDS existing information. ChatGPT CREATES new text based on training.'},
+    {type:'tf', text:'All data in the cloud is automatically backed up', answer:'False', explanation:'Cloud storage does not always include backups. You should verify backup settings.'},
+    {type:'fg', text:'The ___ is the physical location where cloud servers are kept', answer:'Data center', explanation:'Data centers are large buildings with thousands of servers running 24/7.'},
+    {type:'mo', text:'What does a VPN tunnel do?', options:['Encrypts all your internet traffic','Makes internet faster','Blocks all ads','Stores passwords'], answer:'Encrypts all your internet traffic', explanation:'VPN creates an encrypted "tunnel" that protects data from interception.'},
+    {type:'tf', text:'Your ISP can see your browsing even with HTTPS', answer:'True', explanation:'ISPs see which websites you visit (domains) but not the specific pages with HTTPS.'},
+    {type:'fg', text:'A ___ error means the browser cannot find the server', answer:'DNS', explanation:'DNS errors occur when domain names cannot be translated to IP addresses.'},
+  ],
+  Expert: [
+    {type:'mo', text:'What is the primary purpose of a CDN?', options:['Deliver content faster globally','Encrypt data','Block hackers','Store passwords'], answer:'Deliver content faster globally', explanation:'Content Delivery Networks cache content on servers worldwide for faster access.'},
+    {type:'tf', text:'Zero-knowledge encryption means the provider cannot access your data', answer:'True', explanation:'With zero-knowledge, only you have the decryption key. Not even the provider can read your files.'},
+    {type:'fg', text:'The ___ protocol assigns IP addresses automatically', answer:'DHCP', explanation:'Dynamic Host Configuration Protocol gives devices IP addresses on a network.'},
+    {type:'mo', text:'What is the main advantage of a decentralized web (Web3)?', options:['No single point of control','Faster loading','Better graphics','More ads'], answer:'No single point of control', explanation:'Web3 uses blockchain and peer-to-peer technology instead of central servers.'},
+    {type:'tf', text:'Tor browser provides stronger anonymity than standard VPNs', answer:'True', explanation:'Tor routes traffic through multiple encrypted layers across volunteer servers.'},
+    {type:'fg', text:'___ computing processes data near its source rather than in cloud', answer:'Edge', explanation:'Edge computing reduces latency by processing closer to devices (IoT, 5G).'},
+    {type:'mo', text:'What is the key vulnerability of cloud storage?', options:['Shared responsibility for security','Too much storage','Fast access','Color options'], answer:'Shared responsibility for security', explanation:'Cloud providers secure infrastructure; you must secure your account and data.'},
+    {type:'tf', text:'AI chatbots like ChatGPT search the live internet for every answer', answer:'False', explanation:'ChatGPT uses training data up to a cutoff date. It does not browse live unless specifically designed to.'},
+    {type:'fg', text:'A ___ attack overwhelms a website with traffic from many sources', answer:'DDoS', explanation:'Distributed Denial of Service floods servers to make them unavailable.'},
+    {type:'mo', text:'What is the function of SSL/TLS?', options:['Encrypt data between browser and server','Speed up internet','Store passwords','Block ads'], answer:'Encrypt data between browser and server', explanation:'SSL/TLS certificates enable HTTPS and secure data transmission.'},
+    {type:'tf', text:'Browser extensions can read all data on web pages you visit', answer:'True', explanation:'Some extensions have broad permissions. Only install trusted extensions.'},
+    {type:'fg', text:'The ___ model assumes no network is trusted by default', answer:'Zero Trust', explanation:'Zero Trust architecture verifies every access request, even inside the network.'},
+    {type:'mo', text:'What is the primary difference between Bing Chat and Google Search?', options:['Bing Chat uses AI to answer, Google lists links','Same technology','Bing is faster','Google has AI too'], answer:'Bing Chat uses AI to answer, Google lists links', explanation:'Bing Chat (Copilot) integrates AI conversation. Google primarily lists results.'},
+    {type:'tf', text:'Quantum computers will break current encryption methods', answer:'True', explanation:'Large-scale quantum computers could break RSA encryption. Post-quantum cryptography is being developed.'},
+    {type:'fg', text:'The ___ dark web uses onion routing for anonymity', answer:'Tor', explanation:'Tor (The Onion Router) accesses .onion sites on the dark web.'},
+  ]
+};
+
+let state = {
+  userName: '',
+  currentLevel: 'Beginner',
+  questions: [],
+  currentIndex: 0,
+  answers: [],
+  startTime: 0,
+  questionStartTime: 0,
+  retryMode: false,
+  selectedOption: '',
+};
+
+function selectQuestions(level) {
+  const bank = QUESTION_BANK[level];
+  const shuffled = [...bank].sort(() => Math.random() - 0.5);
+  const tf = shuffled.filter(q => q.type === 'tf').slice(0, 3);
+  const fg = shuffled.filter(q => q.type === 'fg').slice(0, 2);
+  const mo = shuffled.filter(q => q.type === 'mo').slice(0, 5);
+  let selected = [...tf, ...fg, ...mo];
+  if (selected.length < 10) {
+    const remaining = shuffled.filter(q => !selected.includes(q));
+    selected = [...selected, ...remaining].slice(0, 10);
+  }
+  return selected.sort(() => Math.random() - 0.5).map((q, i) => ({...q, id: i}));
+}
+
+function renderWelcome() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">🌐 Internet & Web Basics</div>
+    <div style="padding:5px;">
+      <p style="font-size:1.1em; margin:10px 0; text-align:center;">👋 Learn how the internet really works!</p>
+      <p style="text-align:center; font-size:0.9em; color:#666;">Browsers • Search Engines • AI Chatbots • VPN • Cloud • IP</p>
+      <input type="text" id="nameInput" class="input-box" placeholder="Your name">
+      <p style="margin:12px 0; font-weight:bold; color:#1a73e8;">📊 Choose your level:</p>
+      <select id="levelSelect">
+        <option value="Beginner">⭐ Beginner (Basics)</option>
+        <option value="Intermediate">⭐⭐ Intermediate (How things work)</option>
+        <option value="Advanced">⭐⭐⭐ Advanced (Deep understanding)</option>
+        <option value="Expert">🏆 Expert (Security & architecture)</option>
+      </select>
+      <button class="btn btn-blue" onclick="startQuiz()" style="margin-top:15px;">▶️ START LEARNING</button>
+      <div class="tip-box">💡 <strong>Key difference:</strong> Browser = tool to VIEW pages. Search engine = website to FIND pages. AI Chatbot = program that GENERATES answers.</div>
+    </div>
+  `;
+}
+
+function startQuiz() {
+  state.userName = document.getElementById('nameInput').value.trim();
+  if (!state.userName) { alert('Please enter your name!'); return; }
+  state.currentLevel = document.getElementById('levelSelect').value;
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+function renderGreeting() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">🌐 Internet & Web</div>
+    <div class="header-purple">Level: ${state.currentLevel}</div>
+    <div style="background:#F5E6FF; padding:18px; border-radius:20px; margin:12px 0;">
+      <p>👋 Hi ${state.userName}!</p>
+      <p>📝 <strong>10 questions</strong></p>
+      <p>📊 Level: <span class="badge badge-purple">${state.currentLevel}</span></p>
+    </div>
+    <button class="btn btn-orange" onclick="showQuestion()">👍 START!</button>
+  `;
+}
+
+function showQuestion() {
+  if (state.currentIndex >= state.questions.length) { showResults(); return; }
+  const q = state.questions[state.currentIndex];
+  state.questionStartTime = Date.now();
+  state.selectedOption = '';
+  const typeLabel = q.type === 'mo' ? '🔘 Multiple Choice' : q.type === 'tf' ? '✅ True/False' : '✏️ Type Answer';
+  
+  let optionsHtml = '';
+  if (q.type === 'mo') {
+    optionsHtml = q.options.map(opt => `<button class="option-btn" onclick="selectOption(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`).join('');
+  } else if (q.type === 'tf') {
+    optionsHtml = `<button class="option-btn" onclick="selectOption(this, 'True')">✅ True</button><button class="option-btn" onclick="selectOption(this, 'False')">❌ False</button>`;
+  } else {
+    optionsHtml = `<input type="text" id="fillAnswer" class="input-box" placeholder="Type your answer" autocomplete="off">`;
+  }
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">🌐 Internet & Web</div>
+    <div class="header-purple">Q${state.currentIndex+1}/10 • ${state.currentLevel}</div>
+    <div class="timer">⏱️ <span id="liveTimer">0s</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${((state.currentIndex)/10)*100}%"></div></div>
+    <div class="question-box">
+      <p style="color:#1a73e8; font-weight:bold;">${typeLabel}</p>
+      <p class="question-text">${q.text}</p>
+      ${state.retryMode ? '<p style="color:#FF8C00;">🔄 Try once more!</p>' : ''}
+      ${optionsHtml}
+      <div id="feedbackArea"></div>
+      <button class="btn btn-green" onclick="submitAnswer('${q.type}', '${q.answer.replace(/'/g, "\\'")}', ${q.id})">✅ SUBMIT</button>
+      ${state.retryMode ? '<button class="btn" style="background:#666;" onclick="skipQuestion()">⏭️ SKIP</button>' : ''}
+    </div>
+  `;
+  
+  window.liveTimerInterval = setInterval(() => {
+    const elapsed = Math.round((Date.now() - state.questionStartTime)/1000);
+    const el = document.getElementById('liveTimer');
+    if (el) el.textContent = elapsed + 's';
+  }, 500);
+}
+
+function selectOption(btn, value) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedOption = value;
+}
+
+function submitAnswer(type, correctAnswer, questionId) {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  const feedback = document.getElementById('feedbackArea');
+  let userAnswer = '';
+  if (type === 'fg') {
+    userAnswer = document.getElementById('fillAnswer').value.trim();
+    if (!userAnswer) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please type an answer!</div>'; return; }
+  } else {
+    if (!state.selectedOption) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please select an option!</div>'; return; }
+    userAnswer = state.selectedOption;
+  }
+  
+  const isCorrect = userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+  const q = state.questions[state.currentIndex];
+  
+  if (isCorrect) {
+    feedback.innerHTML = '<div class="feedback correct">✅ CORRECT!</div>';
+    state.answers.push({id: questionId, correct: true});
+    state.retryMode = false;
+    setTimeout(() => { state.currentIndex++; showQuestion(); }, 1000);
+  } else {
+    if (!state.retryMode) {
+      feedback.innerHTML = '<div class="feedback wrong">❌ Not quite. Try again!</div>';
+      state.retryMode = true;
+      state.selectedOption = '';
+      setTimeout(() => showQuestion(), 800);
+    } else {
+      feedback.innerHTML = `<div class="feedback wrong">❌ Answer: <strong>${correctAnswer}</strong></div><div class="learn">💡 ${q.explanation}</div>`;
+      state.answers.push({id: questionId, correct: false});
+      state.retryMode = false;
+      setTimeout(() => { state.currentIndex++; showQuestion(); }, 2500);
+    }
+  }
+}
+
+function skipQuestion() {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  state.answers.push({id: state.questions[state.currentIndex].id, correct: false, skipped: true});
+  state.retryMode = false;
+  state.selectedOption = '';
+  state.currentIndex++;
+  showQuestion();
+}
+
+function showResults() {
+  const correct = state.answers.filter(a => a.correct).length;
+  const wrong = state.answers.filter(a => !a.correct).length;
+  const percent = Math.round((correct/10)*100);
+  const totalTime = Math.round((Date.now() - state.startTime)/1000);
+  const min = Math.floor(totalTime/60);
+  const sec = totalTime % 60;
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Results</div>
+    <div class="results">
+      <p>${state.userName} • <span class="badge badge-purple">${state.currentLevel}</span></p>
+      <div style="margin:15px 0;"><span class="big-number">${percent}%</span></div>
+      <p>✅ Correct: <strong>${correct}</strong> | ❌ Wrong: <strong>${wrong}</strong></p>
+      <p>⏱️ Time: <strong>${min}m ${sec}s</strong></p>
+      <div style="max-width:200px; margin:15px auto;"><canvas id="pieChart"></canvas></div>
+      <button class="btn btn-orange" onclick="retrySameLevel()">🔁 TRY AGAIN</button>
+      <button class="btn" onclick="renderWelcome()">🔄 CHANGE LEVEL</button>
+    </div>
+  `;
+  
+  new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: { labels: ['Correct', 'Wrong'], datasets: [{ data: [correct, wrong], backgroundColor: ['#228B22', '#FF8C00'], borderColor: 'white', borderWidth: 2 }] },
+    options: { plugins: { title: { display: true, text: 'Your Score', color: '#1a73e8', font: {size: 14} } } }
+  });
+}
+
+function retrySameLevel() {
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+renderWelcome();
+</script>
+</body>
+</html>

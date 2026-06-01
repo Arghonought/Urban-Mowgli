@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Human vs Machine Intelligence</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #FFF5E6; min-height: 100vh; padding: 10px; font-size: 16px; }
+    .app { max-width: 500px; margin: 0 auto; background: white; border-radius: 25px; padding: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+    .header { background: linear-gradient(135deg, #800080, #FF8C00); color: white; padding: 18px; border-radius: 20px; text-align: center; margin-bottom: 15px; font-size: 1.2em; font-weight: bold; }
+    .header-purple { background: #800080; color: white; padding: 12px; border-radius: 15px; text-align: center; margin-bottom: 12px; font-size: 1em; font-weight: bold; }
+    .header-orange { background: #FF8C00; color: white; padding: 12px; border-radius: 15px; text-align: center; margin-bottom: 12px; font-size: 1em; font-weight: bold; }
+    .btn { background: #800080; color: white; border: none; padding: 14px 20px; border-radius: 30px; font-size: 1.05em; font-weight: bold; width: 100%; margin: 7px 0; cursor: pointer; }
+    .btn-orange { background: #FF8C00; }
+    .btn-green { background: #228B22; }
+    .btn:active { opacity: 0.85; transform: scale(0.97); }
+    .input-box, select { width: 100%; padding: 14px; border: 3px solid #800080; border-radius: 30px; font-size: 1.05em; margin: 7px 0; background: white; }
+    select { border-color: #FF8C00; }
+    .question-box { background: #F5E6FF; padding: 18px; border-radius: 20px; margin: 12px 0; border: 3px solid #800080; }
+    .question-text { font-size: 1.15em; font-weight: bold; margin: 10px 0; color: #333; line-height: 1.4; }
+    .option-btn { background: white; border: 2px solid #800080; padding: 13px 15px; border-radius: 15px; margin: 6px 0; font-size: 1em; text-align: left; cursor: pointer; width: 100%; display: block; }
+    .option-btn.selected { background: #800080; color: white; border-color: #FF8C00; font-weight: bold; }
+    .feedback { padding: 12px; margin: 10px 0; border-radius: 12px; font-weight: bold; text-align: center; }
+    .correct { background: #90EE90; color: #006400; }
+    .wrong { background: #FFB6C1; color: #8B0000; }
+    .learn { background: #FFF9E6; border-left: 4px solid #800080; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 0.95em; }
+    .results { text-align: center; padding: 15px; }
+    .big-number { font-size: 2.5em; font-weight: bold; background: linear-gradient(135deg, #800080, #FF8C00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .badge { display: inline-block; background: #800080; color: white; padding: 5px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9em; margin: 3px; }
+    .badge-orange { background: #FF8C00; }
+    .progress-bar { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 8px 0; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg, #800080, #FF8C00); height: 100%; transition: width 0.3s; border-radius: 10px; }
+    .timer { font-size: 1em; font-weight: bold; color: #FF8C00; text-align: right; padding: 5px; }
+    .quote-box { background: #F5E6FF; border-left: 4px solid #FF8C00; padding: 12px; margin: 10px 0; border-radius: 8px; font-style: italic; }
+  </style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const QUESTION_BANK = {
+  Beginner: [
+    {type:'mo', text:'What is intelligence?', options:['Ability to learn and solve problems','How fast you can type','How many facts you know','Your school grades'], answer:'Ability to learn and solve problems', explanation:'Intelligence includes adapting to new situations, learning, and reasoning.'},
+    {type:'tf', text:'Only humans have intelligence', answer:'False', explanation:'Many animals show intelligence. Machines can perform intelligent tasks too.'},
+    {type:'fg', text:'The IQ test measures only one type of ___ ability', answer:'Cognitive', explanation:'IQ tests measure logical and verbal skills, not creativity or emotional wisdom.'},
+    {type:'mo', text:'How does a human learn something new?', options:['Practice, mistakes, and feedback','Downloading data','Installing software','Plugging in a cable'], answer:'Practice, mistakes, and feedback', explanation:'Humans learn through experience, repetition, and learning from errors.'},
+    {type:'tf', text:'AI can feel emotions like happiness or sadness', answer:'False', explanation:'AI can recognize or simulate emotions but does not truly feel them.'},
+    {type:'fg', text:'The ability to understand your own feelings is called ___ intelligence', answer:'Emotional', explanation:'Emotional intelligence helps us manage relationships and understand ourselves.'},
+    {type:'mo', text:'What does a machine need to learn?', options:['Lots of data and examples','Food and water','Sleep and rest','Friends and family'], answer:'Lots of data and examples', explanation:'Machines learn by finding patterns in large amounts of data.'},
+    {type:'tf', text:'IQ measures everything about a person\'s intelligence', answer:'False', explanation:'IQ tests miss creativity, intuition, social skills, and practical wisdom.'},
+    {type:'fg', text:'When you adapt to a new situation, you are showing ___', answer:'Intelligence', explanation:'True intelligence includes adapting to change and overcoming challenges.'},
+    {type:'mo', text:'Which is an example of human learning?', options:['A child learning to walk','A calculator adding numbers','A clock showing time','A light turning on'], answer:'A child learning to walk', explanation:'Humans learn through trial, error, and practice. Machines follow instructions.'},
+    {type:'tf', text:'Machines learn the same way humans do', answer:'False', explanation:'Machines learn from data patterns. Humans learn from experience and understanding.'},
+    {type:'fg', text:'___ is when you understand something without needing to think step by step', answer:'Intuition', explanation:'Intuition is quick understanding based on experience and feelings.'},
+    {type:'mo', text:'What is a barrier to learning?', options:['A difficulty that blocks progress','A type of test','A computer error','A speed limit'], answer:'A difficulty that blocks progress', explanation:'Barriers challenge us. Learning to overcome them builds real intelligence.'},
+    {type:'tf', text:'Making mistakes helps humans learn', answer:'True', explanation:'Mistakes provide feedback that helps us improve and understand better.'},
+    {type:'fg', text:'The human ability to create new ideas is called ___', answer:'Creativity', explanation:'Creativity generates original ideas. AI can combine existing ideas but does not truly create.'},
+  ],
+  Intermediate: [
+    {type:'mo', text:'What is machine learning?', options:['Computers finding patterns in data','Machines becoming conscious','Computers downloading apps','Robots walking around'], answer:'Computers finding patterns in data', explanation:'Machine learning algorithms improve by analyzing examples and data.'},
+    {type:'tf', text:'AI can recognize images better than humans in some tasks', answer:'True', explanation:'AI excels at pattern recognition in large datasets like medical images.'},
+    {type:'fg', text:'The Turing Test checks if a machine can ___ human conversation', answer:'Imitate', explanation:'Alan Turing proposed a test to see if machines can mimic human responses.'},
+    {type:'mo', text:'What is the difference between training data and real experience?', options:['Training data is labeled examples, experience is lived','They are the same','Data is better','Experience is useless'], answer:'Training data is labeled examples, experience is lived', explanation:'Humans learn from rich, messy life. AI learns from clean, structured data.'},
+    {type:'tf', text:'Emotional intelligence helps in teamwork and relationships', answer:'True', explanation:'EQ (emotional quotient) is as important as IQ for success in life.'},
+    {type:'fg', text:'The ability to manage your own emotions is called ___', answer:'Self-regulation', explanation:'Self-regulation helps you stay calm and focused during challenges.'},
+    {type:'mo', text:'What does "neural network" mean in AI?', options:['Computer system inspired by brain cells','A type of internet cable','A phone network','Human brain surgery'], answer:'Computer system inspired by brain cells', explanation:'Artificial neural networks have layers of connected nodes like simplified neurons.'},
+    {type:'tf', text:'AI systems can develop biases from their training data', answer:'True', explanation:'If training data contains human biases, the AI will learn and repeat them.'},
+    {type:'fg', text:'The ability to bounce back from failure is called ___', answer:'Resilience', explanation:'Resilience is key to learning. Machines do not have this emotional strength.'},
+    {type:'mo', text:'What is the key limitation of current AI?', options:['Cannot truly understand meaning','Too slow','Too expensive','Cannot do math'], answer:'Cannot truly understand meaning', explanation:'AI processes patterns but does not have genuine understanding or consciousness.'},
+    {type:'tf', text:'Humans can learn from just one or two examples', answer:'True', explanation:'One-shot learning is easy for humans. AI usually needs thousands of examples.'},
+    {type:'fg', text:'When AI improves through trial and error, it is called ___ learning', answer:'Reinforcement', explanation:'Reinforcement learning uses rewards and penalties to guide AI behavior.'},
+    {type:'mo', text:'What is transfer learning in humans?', options:['Applying knowledge to new situations','Moving to a new school','Copying files','Changing jobs'], answer:'Applying knowledge to new situations', explanation:'Humans excel at using past experience to solve new, different problems.'},
+    {type:'tf', text:'AI can explain why it made a specific decision', answer:'False', explanation:'Many AI systems are "black boxes" - even experts cannot fully explain their decisions.'},
+    {type:'fg', text:'The human sense that helps understand others\' feelings is ___', answer:'Empathy', explanation:'Empathy allows us to feel what others feel. AI cannot truly experience this.'},
+  ],
+  Advanced: [
+    {type:'mo', text:'What is the key difference between supervised and unsupervised learning?', options:['Labeled vs unlabeled training data','Speed of learning','Type of computer used','Programming language'], answer:'Labeled vs unlabeled training data', explanation:'Supervised uses labeled examples. Unsupervised finds patterns without labels.'},
+    {type:'tf', text:'General intelligence in AI has been achieved', answer:'False', explanation:'AGI (Artificial General Intelligence) that matches human flexibility does not yet exist.'},
+    {type:'fg', text:'The ___ problem occurs when AI memorizes instead of learning patterns', answer:'Overfitting', explanation:'Overfitting means the model works perfectly on training data but fails on new data.'},
+    {type:'mo', text:'What is the Chinese Room argument about?', options:['AI may simulate understanding without truly understanding','Chinese language learning','Room design','Translation software'], answer:'AI may simulate understanding without truly understanding', explanation:'It argues that following rules to produce responses is not the same as understanding.'},
+    {type:'tf', text:'IQ scores have been steadily increasing over generations', answer:'True', explanation:'The Flynn Effect shows rising IQ scores, possibly due to better education and nutrition.'},
+    {type:'fg', text:'The ability to think about your own thinking is called ___', answer:'Metacognition', explanation:'Metacognition helps you evaluate and improve your own learning strategies.'},
+    {type:'mo', text:'What is the key insight of embodied cognition?', options:['Thinking is shaped by physical experience','Bodies are not important','Only brains matter','Machines need bodies'], answer:'Thinking is shaped by physical experience', explanation:'Human intelligence develops through physical interaction with the world.'},
+    {type:'tf', text:'Deep learning requires human-designed features', answer:'False', explanation:'Deep learning automatically discovers features from raw data, unlike traditional ML.'},
+    {type:'fg', text:'The ___ bias affects how we interpret information based on existing beliefs', answer:'Confirmation', explanation:'Confirmation bias makes us favor information that supports what we already believe.'},
+    {type:'mo', text:'What is the purpose of a loss function in machine learning?', options:['Measure how wrong predictions are','Save data','Speed up computer','Display results'], answer:'Measure how wrong predictions are', explanation:'Loss functions quantify errors so the model can learn to minimize them.'},
+    {type:'tf', text:'Human intelligence is fixed and cannot be improved', answer:'False', explanation:'Neuroplasticity shows our brains can grow and change throughout life.'},
+    {type:'fg', text:'The ___ effect describes how expectations influence outcomes', answer:'Pygmalion', explanation:'Higher expectations can lead to better performance. Belief shapes learning.'},
+    {type:'mo', text:'What is the key difference between narrow AI and general AI?', options:['Narrow AI does one task, general AI does many','Narrow is faster','General is cheaper','No difference'], answer:'Narrow AI does one task, general AI does many', explanation:'All current AI is narrow. General AI that matches human flexibility does not exist.'},
+    {type:'tf', text:'Intuition comes from unconscious pattern recognition', answer:'True', explanation:'Intuition draws on accumulated experience processed below conscious awareness.'},
+    {type:'fg', text:'The ___ test measures creative thinking and problem-solving', answer:'Torrance', explanation:'Torrance Tests of Creative Thinking assess creativity, not just logic.'},
+  ],
+  Expert: [
+    {type:'mo', text:'What is the hard problem of consciousness?', options:['Explaining subjective experience','Building faster computers','Programming AI','Measuring IQ'], answer:'Explaining subjective experience', explanation:'Why do we have inner feelings and awareness? Science cannot fully explain this yet.'},
+    {type:'tf', text:'The Turing Test is a perfect measure of machine intelligence', answer:'False', explanation:'Passing the Turing Test only proves imitation, not genuine understanding.'},
+    {type:'fg', text:'The philosophical position that mind and body are separate is ___', answer:'Dualism', explanation:'Descartes proposed mind-body dualism. Modern science sees them as integrated.'},
+    {type:'mo', text:'What is the primary argument against AI consciousness?', options:['AI lacks subjective experience (qualia)','AI is too slow','AI uses electricity','AI cannot move'], answer:'AI lacks subjective experience (qualia)', explanation:'Qualia are the felt experiences (redness of red, pain). AI processes data without feeling.'},
+    {type:'tf', text:'Multiple intelligences theory identifies 8+ types of intelligence', answer:'True', explanation:'Howard Gardner proposed linguistic, logical, musical, spatial, bodily, interpersonal, intrapersonal, and naturalistic intelligence.'},
+    {type:'fg', text:'The ___ paradox states that easy tasks for humans are hard for AI', answer:'Moravec', explanation:'Moravec\'s paradox: reasoning needs little computation, but sensorimotor skills need enormous computation.'},
+    {type:'mo', text:'What is the key limitation of current language models?', options:['No grounded understanding of the world','Too slow to respond','Cannot process text','Only work in English'], answer:'No grounded understanding of the world', explanation:'LLMs learn from text alone. They have no physical experience of what words mean.'},
+    {type:'tf', text:'Emotional intelligence can be accurately measured by a single test', answer:'False', explanation:'EQ is complex and multidimensional. No single test captures it completely.'},
+    {type:'fg', text:'The ___ effect describes how stress impairs cognitive performance', answer:'Yerkes-Dodson', explanation:'The Yerkes-Dodson law shows optimal performance at moderate stress levels.'},
+    {type:'mo', text:'What does the frame problem in AI refer to?', options:['Knowing what is relevant in a situation','Processing speed limits','Memory constraints','Programming errors'], answer:'Knowing what is relevant in a situation', explanation:'Humans effortlessly know what matters. AI struggles to determine relevance.'},
+    {type:'tf', text:'Consciousness emerges from information processing complexity', answer:'True', explanation:'Integrated Information Theory suggests consciousness arises from complex information integration.'},
+    {type:'fg', text:'The ability to delay gratification predicts ___ success', answer:'Academic', explanation:'The Marshmallow Test showed self-control in children predicts later achievement.'},
+    {type:'mo', text:'What is the primary goal of artificial general intelligence research?', options:['Create human-like flexible intelligence','Build faster computers','Replace all workers','Make better games'], answer:'Create human-like flexible intelligence', explanation:'AGI aims to match human ability across any intellectual task.'},
+    {type:'tf', text:'Gut feelings are always unreliable', answer:'False', explanation:'Intuition often reflects deep pattern recognition from accumulated experience.'},
+    {type:'fg', text:'The ___ network in the brain activates during rest and self-reflection', answer:'Default mode', explanation:'The default mode network is active when daydreaming, remembering, and planning.'},
+  ]
+};
+
+let state = {
+  userName: '',
+  currentLevel: 'Beginner',
+  questions: [],
+  currentIndex: 0,
+  answers: [],
+  startTime: 0,
+  questionStartTime: 0,
+  retryMode: false,
+  selectedOption: '',
+};
+
+function selectQuestions(level) {
+  const bank = QUESTION_BANK[level];
+  const shuffled = [...bank].sort(() => Math.random() - 0.5);
+  const tf = shuffled.filter(q => q.type === 'tf').slice(0, 3);
+  const fg = shuffled.filter(q => q.type === 'fg').slice(0, 2);
+  const mo = shuffled.filter(q => q.type === 'mo').slice(0, 5);
+  let selected = [...tf, ...fg, ...mo];
+  if (selected.length < 10) {
+    const remaining = shuffled.filter(q => !selected.includes(q));
+    selected = [...selected, ...remaining].slice(0, 10);
+  }
+  return selected.sort(() => Math.random() - 0.5).map((q, i) => ({...q, id: i}));
+}
+
+function renderWelcome() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">🧠 Human vs Machine Intelligence</div>
+    <div style="padding:5px;">
+      <p style="font-size:1.1em; margin:10px 0; text-align:center;">👋 Explore what intelligence really means!</p>
+      <p style="text-align:center; font-size:0.9em; color:#666;">IQ • AI • Emotions • Learning • Intuition • Creativity</p>
+      <input type="text" id="nameInput" class="input-box" placeholder="Your name">
+      <p style="margin:12px 0; font-weight:bold; color:#800080;">📊 Choose your level:</p>
+      <select id="levelSelect">
+        <option value="Beginner">⭐ Beginner (What is intelligence?)</option>
+        <option value="Intermediate">⭐⭐ Intermediate (How learning works)</option>
+        <option value="Advanced">⭐⭐⭐ Advanced (Deep concepts)</option>
+        <option value="Expert">🏆 Expert (Philosophy & consciousness)</option>
+      </select>
+      <button class="btn btn-orange" onclick="startQuiz()" style="margin-top:15px;">▶️ START LEARNING</button>
+      <div class="quote-box">💡 "Intelligence is not just what you know. It is how you use what you know to adapt, grow, and overcome."</div>
+    </div>
+  `;
+}
+
+function startQuiz() {
+  state.userName = document.getElementById('nameInput').value.trim();
+  if (!state.userName) { alert('Please enter your name!'); return; }
+  state.currentLevel = document.getElementById('levelSelect').value;
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+function renderGreeting() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">🧠 Intelligence</div>
+    <div class="header-purple">Level: ${state.currentLevel}</div>
+    <div style="background:#F5E6FF; padding:18px; border-radius:20px; margin:12px 0;">
+      <p>👋 Hi ${state.userName}!</p>
+      <p>📝 <strong>10 questions</strong> about intelligence and learning</p>
+      <p>📊 Level: <span class="badge">${state.currentLevel}</span></p>
+    </div>
+    <button class="btn btn-orange" onclick="showQuestion()">👍 START!</button>
+  `;
+}
+
+function showQuestion() {
+  if (state.currentIndex >= state.questions.length) { showResults(); return; }
+  const q = state.questions[state.currentIndex];
+  state.questionStartTime = Date.now();
+  state.selectedOption = '';
+  const typeLabel = q.type === 'mo' ? '🔘 Multiple Choice' : q.type === 'tf' ? '✅ True/False' : '✏️ Type Answer';
+  
+  let optionsHtml = '';
+  if (q.type === 'mo') {
+    optionsHtml = q.options.map(opt => `<button class="option-btn" onclick="selectOption(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`).join('');
+  } else if (q.type === 'tf') {
+    optionsHtml = `<button class="option-btn" onclick="selectOption(this, 'True')">✅ True</button><button class="option-btn" onclick="selectOption(this, 'False')">❌ False</button>`;
+  } else {
+    optionsHtml = `<input type="text" id="fillAnswer" class="input-box" placeholder="Type your answer" autocomplete="off">`;
+  }
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">🧠 Intelligence</div>
+    <div class="header-purple">Q${state.currentIndex+1}/10 • ${state.currentLevel}</div>
+    <div class="timer">⏱️ <span id="liveTimer">0s</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${((state.currentIndex)/10)*100}%"></div></div>
+    <div class="question-box">
+      <p style="color:#800080; font-weight:bold;">${typeLabel}</p>
+      <p class="question-text">${q.text}</p>
+      ${state.retryMode ? '<p style="color:#FF8C00;">🔄 Try once more!</p>' : ''}
+      ${optionsHtml}
+      <div id="feedbackArea"></div>
+      <button class="btn btn-green" onclick="submitAnswer('${q.type}', '${q.answer.replace(/'/g, "\\'")}', ${q.id})">✅ SUBMIT</button>
+      ${state.retryMode ? '<button class="btn" style="background:#666;" onclick="skipQuestion()">⏭️ SKIP</button>' : ''}
+    </div>
+  `;
+  
+  window.liveTimerInterval = setInterval(() => {
+    const elapsed = Math.round((Date.now() - state.questionStartTime)/1000);
+    const el = document.getElementById('liveTimer');
+    if (el) el.textContent = elapsed + 's';
+  }, 500);
+}
+
+function selectOption(btn, value) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedOption = value;
+}
+
+function submitAnswer(type, correctAnswer, questionId) {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  const feedback = document.getElementById('feedbackArea');
+  let userAnswer = '';
+  if (type === 'fg') {
+    userAnswer = document.getElementById('fillAnswer').value.trim();
+    if (!userAnswer) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please type an answer!</div>'; return; }
+  } else {
+    if (!state.selectedOption) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please select an option!</div>'; return; }
+    userAnswer = state.selectedOption;
+  }
+  
+  const isCorrect = userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+  const q = state.questions[state.currentIndex];
+  
+  if (isCorrect) {
+    feedback.innerHTML = '<div class="feedback correct">✅ CORRECT!</div>';
+    state.answers.push({id: questionId, correct: true});
+    state.retryMode = false;
+    setTimeout(() => { state.currentIndex++; showQuestion(); }, 1000);
+  } else {
+    if (!state.retryMode) {
+      feedback.innerHTML = '<div class="feedback wrong">❌ Not quite. Try again!</div>';
+      state.retryMode = true;
+      state.selectedOption = '';
+      setTimeout(() => showQuestion(), 800);
+    } else {
+      feedback.innerHTML = `<div class="feedback wrong">❌ Answer: <strong>${correctAnswer}</strong></div><div class="learn">💡 ${q.explanation}</div>`;
+      state.answers.push({id: questionId, correct: false});
+      state.retryMode = false;
+      setTimeout(() => { state.currentIndex++; showQuestion(); }, 2500);
+    }
+  }
+}
+
+function skipQuestion() {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  state.answers.push({id: state.questions[state.currentIndex].id, correct: false, skipped: true});
+  state.retryMode = false;
+  state.selectedOption = '';
+  state.currentIndex++;
+  showQuestion();
+}
+
+function showResults() {
+  const correct = state.answers.filter(a => a.correct).length;
+  const wrong = state.answers.filter(a => !a.correct).length;
+  const percent = Math.round((correct/10)*100);
+  const totalTime = Math.round((Date.now() - state.startTime)/1000);
+  const min = Math.floor(totalTime/60);
+  const sec = totalTime % 60;
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Results</div>
+    <div class="results">
+      <p>${state.userName} • <span class="badge">${state.currentLevel}</span></p>
+      <div style="margin:15px 0;"><span class="big-number">${percent}%</span></div>
+      <p>✅ Correct: <strong>${correct}</strong> | ❌ Wrong: <strong>${wrong}</strong></p>
+      <p>⏱️ Time: <strong>${min}m ${sec}s</strong></p>
+      <div class="quote-box">💡 "Intelligence is knowing how to use the tools you have, managing barriers, and adapting with intuition, emotion, and creativity."</div>
+      <div style="max-width:200px; margin:15px auto;"><canvas id="pieChart"></canvas></div>
+      <button class="btn btn-orange" onclick="retrySameLevel()">🔁 TRY AGAIN</button>
+      <button class="btn" onclick="renderWelcome()">🔄 CHANGE LEVEL</button>
+    </div>
+  `;
+  
+  new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: { labels: ['Correct', 'Wrong'], datasets: [{ data: [correct, wrong], backgroundColor: ['#228B22', '#FF8C00'], borderColor: 'white', borderWidth: 2 }] },
+    options: { plugins: { title: { display: true, text: 'Your Score', color: '#800080', font: {size: 14} } } }
+  });
+}
+
+function retrySameLevel() {
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+renderWelcome();
+</script>
+</body>
+</html>

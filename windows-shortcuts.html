@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Learn Windows Shortcuts</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #FFF5E6; min-height: 100vh; padding: 10px; font-size: 16px; }
+    .app { max-width: 500px; margin: 0 auto; background: white; border-radius: 25px; padding: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+    .header { background: #FF8C00; color: white; padding: 18px; border-radius: 20px; text-align: center; margin-bottom: 15px; font-size: 1.3em; font-weight: bold; }
+    .header-purple { background: #800080; color: white; padding: 12px; border-radius: 15px; text-align: center; margin-bottom: 12px; font-size: 1em; font-weight: bold; }
+    .btn { background: #800080; color: white; border: none; padding: 14px 20px; border-radius: 30px; font-size: 1.05em; font-weight: bold; width: 100%; margin: 7px 0; cursor: pointer; }
+    .btn-orange { background: #FF8C00; }
+    .btn-green { background: #228B22; }
+    .btn:active { opacity: 0.85; transform: scale(0.97); }
+    .input-box, select { width: 100%; padding: 14px; border: 3px solid #800080; border-radius: 30px; font-size: 1.05em; margin: 7px 0; background: white; }
+    select { border-color: #FF8C00; }
+    .question-box { background: #F5E6FF; padding: 18px; border-radius: 20px; margin: 12px 0; border: 3px solid #800080; }
+    .question-text { font-size: 1.2em; font-weight: bold; margin: 10px 0; color: #333; line-height: 1.4; }
+    .option-btn { background: white; border: 2px solid #FF8C00; padding: 13px 15px; border-radius: 15px; margin: 6px 0; font-size: 1em; text-align: left; cursor: pointer; width: 100%; display: block; }
+    .option-btn.selected { background: #FF8C00; color: white; border-color: #800080; font-weight: bold; }
+    .feedback { padding: 12px; margin: 10px 0; border-radius: 12px; font-weight: bold; text-align: center; }
+    .correct { background: #90EE90; color: #006400; }
+    .wrong { background: #FFB6C1; color: #8B0000; }
+    .learn { background: #FFF9E6; border-left: 4px solid #FF8C00; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 0.95em; }
+    .results { text-align: center; padding: 15px; }
+    .big-number { font-size: 2.5em; font-weight: bold; color: #800080; }
+    .badge { display: inline-block; background: #FF8C00; color: white; padding: 5px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9em; margin: 3px; }
+    .badge-purple { background: #800080; }
+    .progress-bar { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 8px 0; overflow: hidden; }
+    .progress-fill { background: #228B22; height: 100%; transition: width 0.3s; border-radius: 10px; }
+    .timer { font-size: 1em; font-weight: bold; color: #FF8C00; text-align: right; padding: 5px; }
+    .hidden { display: none !important; }
+    .key-box { background: #2d2d2d; color: #fff; padding: 6px 12px; border-radius: 8px; font-family: monospace; font-weight: bold; display: inline-block; margin: 2px; font-size: 1.1em; }
+  </style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+// ============================================
+// QUESTION BANK - Windows Shortcuts
+// ============================================
+const QUESTION_BANK = {
+  Beginner: [
+    {type:'mo', text:'How do you copy selected text?', options:['Ctrl + C','Ctrl + V','Ctrl + X','Ctrl + Z'], answer:'Ctrl + C', explanation:'Ctrl + C copies. Think: C = Copy.'},
+    {type:'mo', text:'How do you paste what you copied?', options:['Ctrl + V','Ctrl + C','Ctrl + P','Ctrl + S'], answer:'Ctrl + V', explanation:'Ctrl + V pastes. V looks like an arrow pointing down.'},
+    {type:'tf', text:'Ctrl + Z undoes your last action', answer:'True', explanation:'Ctrl + Z is "undo" - it takes back what you just did.'},
+    {type:'fg', text:'To save a file, press Ctrl + ___', answer:'S', explanation:'Ctrl + S saves. S = Save.'},
+    {type:'mo', text:'Which shortcut selects everything?', options:['Ctrl + A','Ctrl + S','Ctrl + E','Ctrl + L'], answer:'Ctrl + A', explanation:'Ctrl + A selects ALL. A = All.'},
+    {type:'tf', text:'Ctrl + X cuts text (removes and copies it)', answer:'True', explanation:'Cut removes text and saves it for pasting.'},
+    {type:'fg', text:'To print, press Ctrl + ___', answer:'P', explanation:'Ctrl + P opens the print window. P = Print.'},
+    {type:'mo', text:'How do you open a new browser tab?', options:['Ctrl + T','Ctrl + N','Ctrl + O','Ctrl + B'], answer:'Ctrl + T', explanation:'Ctrl + T opens a new Tab. T = Tab.'},
+    {type:'tf', text:'Alt + Tab switches between open windows', answer:'True', explanation:'Hold Alt and press Tab to see all open programs.'},
+    {type:'fg', text:'To find text on a page, press Ctrl + ___', answer:'F', explanation:'Ctrl + F opens Find. F = Find.'},
+    {type:'mo', text:'What does the Windows key do?', options:['Opens the Start menu','Closes all programs','Turns off computer','Opens email'], answer:'Opens the Start menu', explanation:'The Windows key (between Ctrl and Alt) opens Start.'},
+    {type:'tf', text:'Ctrl + W closes the current tab or window', answer:'True', explanation:'Ctrl + W closes tabs. Think "W = Window closed".'},
+    {type:'fg', text:'To make text bold, press Ctrl + ___', answer:'B', explanation:'Ctrl + B makes text Bold. B = Bold.'},
+    {type:'mo', text:'Which key takes a screenshot of the whole screen?', options:['Print Screen (PrtSc)','Delete','Escape','Space'], answer:'Print Screen (PrtSc)', explanation:'PrtSc captures your screen. Find it near F12 key.'},
+    {type:'tf', text:'Ctrl + mouse wheel zooms in and out', answer:'True', explanation:'Scroll while holding Ctrl to zoom pages.'},
+  ],
+  Intermediate: [
+    {type:'mo', text:'What does Windows + Shift + S do?', options:['Opens Snipping Tool','Saves file','Shuts down','Opens settings'], answer:'Opens Snipping Tool', explanation:'This opens the screen snipping tool to capture part of screen.'},
+    {type:'tf', text:'Alt + F4 closes the current program', answer:'True', explanation:'Alt + F4 closes active window. Be careful with this one!'},
+    {type:'fg', text:'To open Task Manager quickly, press Ctrl + Shift + ___', answer:'Esc', explanation:'Ctrl+Shift+Esc opens Task Manager directly.'},
+    {type:'mo', text:'What does Windows + D do?', options:['Show desktop (hide all windows)','Delete file','Open documents','Turn off screen'], answer:'Show desktop (hide all windows)', explanation:'Windows + D shows your desktop. D = Desktop.'},
+    {type:'tf', text:'Windows + L locks your computer', answer:'True', explanation:'Win + L locks screen. L = Lock. Use when leaving desk.'},
+    {type:'fg', text:'To rename a file, press ___ key', answer:'F2', explanation:'F2 renames selected file. Much faster than right-clicking!'},
+    {type:'mo', text:'What does Windows + E open?', options:['File Explorer','Email','Edge browser','Excel'], answer:'File Explorer', explanation:'Win + E opens File Explorer. E = Explorer.'},
+    {type:'tf', text:'Ctrl + Shift + T reopens closed browser tab', answer:'True', explanation:'This magic shortcut brings back accidentally closed tabs!'},
+    {type:'fg', text:'Windows + ___ opens the emoji keyboard', answer:'.', explanation:'Win + . (period) opens emoji panel in any text field.'},
+    {type:'mo', text:'Which snipping mode captures a free-form shape?', options:['Free-form snip','Rectangular snip','Window snip','Full-screen snip'], answer:'Free-form snip', explanation:'Free-form lets you draw any shape around what you want.'},
+    {type:'tf', text:'You can delay a snip by 3, 5, or 10 seconds', answer:'True', explanation:'Snipping Tool has a delay feature to capture menus.'},
+    {type:'fg', text:'Windows + V opens ___ history', answer:'Clipboard', explanation:'Clipboard history shows things you copied before.'},
+    {type:'mo', text:'What does Ctrl + Shift + N do in File Explorer?', options:['Create new folder','New document','New window','New tab'], answer:'Create new folder', explanation:'Quick way to make a new folder without using mouse.'},
+    {type:'tf', text:'Alt + Enter shows properties of selected file', answer:'True', explanation:'Alt+Enter opens file properties. Very useful!'},
+    {type:'fg', text:'Windows + ___ opens Settings', answer:'I', explanation:'Win + I opens Windows Settings. I = Settings (think iPhone settings).'},
+  ],
+  Advanced: [
+    {type:'mo', text:'What does Windows + Ctrl + D do?', options:['Create new virtual desktop','Delete file','Duplicate screen','Open device manager'], answer:'Create new virtual desktop', explanation:'Virtual desktops organize windows into separate spaces.'},
+    {type:'tf', text:'You can snip a specific window with Alt + PrtSc', answer:'True', explanation:'Alt+PrtSc captures only the active window.'},
+    {type:'fg', text:'Windows + ___ opens the Run dialog box', answer:'R', explanation:'Win + R opens Run. Type commands like "cmd" or "notepad".'},
+    {type:'mo', text:'How do you switch between virtual desktops?', options:['Windows + Ctrl + Left/Right arrow','Alt + Tab','Windows + Tab only','Ctrl + number'], answer:'Windows + Ctrl + Left/Right arrow', explanation:'Navigate between your virtual desktops easily.'},
+    {type:'tf', text:'You can annotate screenshots in Snipping Tool', answer:'True', explanation:'Use pen, highlighter, and crop tools after capturing.'},
+    {type:'fg', text:'Ctrl + Shift + ___ opens Task Manager directly', answer:'Esc', explanation:'The fastest way to Task Manager without Ctrl+Alt+Del menu.'},
+    {type:'mo', text:'What is the shortcut for Windows Terminal (admin)?', options:['Windows + X, then A','Windows + T','Ctrl + Alt + T','Windows + Cmd'], answer:'Windows + X, then A', explanation:'Win+X opens power menu, then A for admin Terminal.'},
+    {type:'tf', text:'Snipping Tool can record video of your screen', answer:'True', explanation:'New Snipping Tool includes screen recording feature.'},
+    {type:'fg', text:'Windows + ___ opens Quick Assist for remote help', answer:'Ctrl + Q', explanation:'Quick Assist lets someone help you remotely.'},
+    {type:'mo', text:'Which shortcut opens System Information?', options:['Windows + Pause/Break','Windows + I','Windows + S','Ctrl + Alt + I'], answer:'Windows + Pause/Break', explanation:'Shows detailed information about your computer.'},
+    {type:'tf', text:'You can use Snipping Tool with keyboard only', answer:'True', explanation:'After opening, use Tab and arrow keys to select snip mode.'},
+    {type:'fg', text:'Ctrl + Windows + ___ creates a screenshot saved to folder', answer:'S', explanation:'This saves screenshot directly to Pictures > Screenshots.'},
+    {type:'mo', text:'What does the Snipping Tool shortcut Win+Shift+S NOT do?', options:['Save automatically to file','Open snipping toolbar','Copy to clipboard','Allow editing'], answer:'Save automatically to file', explanation:'It copies to clipboard. You must save manually or use notifications.'},
+    {type:'tf', text:'PowerToys Run is opened with Alt + Space', answer:'True', explanation:'PowerToys Run is a fast launcher (requires PowerToys installed).'},
+    {type:'fg', text:'To open Magnifier, press Windows + ___', answer:'Plus', explanation:'Win + Plus (+) opens screen magnifier for zooming.'},
+  ],
+  Expert: [
+    {type:'mo', text:'What does Windows + Ctrl + Shift + B do?', options:['Reset graphics driver','Backup files','Boot options','Blue screen'], answer:'Reset graphics driver', explanation:'This restarts graphics driver if screen freezes.'},
+    {type:'tf', text:'You can create custom keyboard shortcuts for any program', answer:'True', explanation:'Right-click shortcut > Properties > Shortcut key to assign.'},
+    {type:'fg', text:'The shortcut to open Group Policy Editor is Windows + R then type ___', answer:'gpedit.msc', explanation:'Group Policy controls advanced Windows settings (Pro edition).'},
+    {type:'mo', text:'What does the Snipping Tool OCR feature do?', options:['Extract text from images','Edit images','Record video','Annotate'], answer:'Extract text from images', explanation:'Text Actions can copy text from screenshots.'},
+    {type:'tf', text:'AutoHotkey can create custom shortcuts beyond Windows defaults', answer:'True', explanation:'AutoHotkey scripts can automate almost anything with hotkeys.'},
+    {type:'fg', text:'Windows + ___ opens the Windows Security app', answer:'I then Privacy', explanation:'Win+I opens Settings, navigate to Privacy & Security.'},
+    {type:'mo', text:'What is the purpose of Windows + Alt + R?', options:['Start/stop screen recording','Restart computer','Open Registry','Run program'], answer:'Start/stop screen recording', explanation:'Game Bar recording shortcut for capturing video.'},
+    {type:'tf', text:'Snipping Tool can automatically save to a specific folder', answer:'True', explanation:'Settings allow auto-save location configuration.'},
+    {type:'fg', text:'The shortcut to open Services is ___', answer:'services.msc', explanation:'Type in Run dialog to manage Windows services.'},
+    {type:'mo', text:'What does Windows + Ctrl + F do?', options:['Find computers on network','Find files only','Format drive','Firewall settings'], answer:'Find computers on network', explanation:'Searches for computers on Active Directory network.'},
+    {type:'tf', text:'You can chain multiple snipping tool shortcuts with third-party tools', answer:'True', explanation:'Tools like ShareX extend snipping capabilities significantly.'},
+    {type:'fg', text:'To create a new text file via keyboard: Alt + H, then ___', answer:'W, T', explanation:'In File Explorer, this sequence creates a new text file.'},
+    {type:'mo', text:'Which command opens the Snipping Tool from Run?', options:['snippingtool','snip','screenshot','capture'], answer:'snippingtool', explanation:'Type "snippingtool" in Run dialog to open it.'},
+    {type:'tf', text:'Windows keyboard shortcuts can be remapped in Registry', answer:'True', explanation:'Advanced users can remap keys via Registry or PowerToys.'},
+    {type:'fg', text:'The shortcut Alt + ___ opens the context menu for selected item', answer:'Shift + F10', explanation:'This opens right-click menu without using mouse.'},
+  ]
+};
+
+// ============================================
+// APP STATE
+// ============================================
+let state = {
+  userName: '',
+  currentLevel: 'Beginner',
+  questions: [],
+  currentIndex: 0,
+  answers: [],
+  startTime: 0,
+  questionStartTime: 0,
+  retryMode: false,
+  selectedOption: '',
+};
+
+// ============================================
+// FUNCTIONS
+// ============================================
+function selectQuestions(level) {
+  const bank = QUESTION_BANK[level];
+  const shuffled = [...bank].sort(() => Math.random() - 0.5);
+  const tf = shuffled.filter(q => q.type === 'tf').slice(0, 3);
+  const fg = shuffled.filter(q => q.type === 'fg').slice(0, 2);
+  const mo = shuffled.filter(q => q.type === 'mo').slice(0, 5);
+  let selected = [...tf, ...fg, ...mo];
+  if (selected.length < 10) {
+    const remaining = shuffled.filter(q => !selected.includes(q));
+    selected = [...selected, ...remaining].slice(0, 10);
+  }
+  return selected.sort(() => Math.random() - 0.5).map((q, i) => ({...q, id: i}));
+}
+
+function renderWelcome() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">🪟 Windows Shortcuts Quiz</div>
+    <div style="padding:5px;">
+      <p style="font-size:1.1em; margin:10px 0; text-align:center;">👋 Learn keyboard shortcuts to work faster!</p>
+      <input type="text" id="nameInput" class="input-box" placeholder="Your name">
+      <p style="margin:12px 0; font-weight:bold; color:#800080;">📊 Choose your level:</p>
+      <select id="levelSelect">
+        <option value="Beginner">⭐ Beginner (Basic shortcuts)</option>
+        <option value="Intermediate">⭐⭐ Intermediate (Windows features)</option>
+        <option value="Advanced">⭐⭐⭐ Advanced (Power user)</option>
+        <option value="Expert">🏆 Expert (System tools)</option>
+      </select>
+      <button class="btn btn-green" onclick="startQuiz()" style="margin-top:15px;">▶️ START LEARNING</button>
+      <p style="text-align:center; margin-top:10px; font-size:0.9em; color:#666;">📖 Wrong answers include explanations to help you remember!</p>
+    </div>
+  `;
+}
+
+function startQuiz() {
+  state.userName = document.getElementById('nameInput').value.trim();
+  if (!state.userName) { alert('Please enter your name!'); return; }
+  state.currentLevel = document.getElementById('levelSelect').value;
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+function renderGreeting() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">🪟 Windows Shortcuts</div>
+    <div class="header-purple">Level: ${state.currentLevel}</div>
+    <div style="background:#F5E6FF; padding:18px; border-radius:20px; margin:12px 0;">
+      <p style="font-size:1.1em;">👋 Hi ${state.userName}!</p>
+      <p style="margin-top:8px;">📝 <strong>10 questions</strong> about keyboard shortcuts</p>
+      <p>📊 Level: <span class="badge badge-purple">${state.currentLevel}</span></p>
+      <p style="margin-top:8px; font-size:0.9em;">💡 Tip: Try these shortcuts on your computer!</p>
+    </div>
+    <button class="btn btn-orange" onclick="showQuestion()">👍 START!</button>
+  `;
+}
+
+function showQuestion() {
+  if (state.currentIndex >= state.questions.length) { showResults(); return; }
+  const q = state.questions[state.currentIndex];
+  state.questionStartTime = Date.now();
+  state.selectedOption = '';
+  
+  const typeLabel = q.type === 'mo' ? '🔘 Multiple Choice' : q.type === 'tf' ? '✅ True/False' : '✏️ Type Answer';
+  
+  let optionsHtml = '';
+  if (q.type === 'mo') {
+    optionsHtml = q.options.map(opt =>
+      `<button class="option-btn" onclick="selectOption(this, '${opt.replace(/'/g, "\\'")}')"><span class="key-box">${opt}</span></button>`
+    ).join('');
+  } else if (q.type === 'tf') {
+    optionsHtml = `
+      <button class="option-btn" onclick="selectOption(this, 'True')">✅ True</button>
+      <button class="option-btn" onclick="selectOption(this, 'False')">❌ False</button>
+    `;
+  } else {
+    optionsHtml = `<input type="text" id="fillAnswer" class="input-box" placeholder="Type the key or shortcut" autocomplete="off">`;
+  }
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">🪟 Shortcuts Quiz</div>
+    <div class="header-purple">Q${state.currentIndex+1}/10 • ${state.currentLevel}</div>
+    <div class="timer">⏱️ <span id="liveTimer">0s</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${((state.currentIndex)/10)*100}%"></div></div>
+    <div class="question-box">
+      <p style="color:#800080; font-weight:bold;">${typeLabel}</p>
+      <p class="question-text">${q.text}</p>
+      ${state.retryMode ? '<p style="color:#FF8C00; font-weight:bold;">🔄 Try once more!</p>' : ''}
+      ${optionsHtml}
+      <div id="feedbackArea"></div>
+      <button class="btn btn-green" onclick="submitAnswer('${q.type}', '${q.answer.replace(/'/g, "\\'")}', ${q.id})" style="margin-top:12px;">✅ SUBMIT</button>
+      ${state.retryMode ? '<button class="btn" style="background:#666;" onclick="skipQuestion()">⏭️ SKIP</button>' : ''}
+    </div>
+  `;
+  
+  window.liveTimerInterval = setInterval(() => {
+    const elapsed = Math.round((Date.now() - state.questionStartTime)/1000);
+    const el = document.getElementById('liveTimer');
+    if (el) el.textContent = elapsed + 's';
+  }, 500);
+}
+
+function selectOption(btn, value) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedOption = value;
+}
+
+function submitAnswer(type, correctAnswer, questionId) {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  const feedback = document.getElementById('feedbackArea');
+  let userAnswer = '';
+  
+  if (type === 'fg') {
+    userAnswer = document.getElementById('fillAnswer').value.trim();
+    if (!userAnswer) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please type an answer!</div>'; return; }
+  } else {
+    if (!state.selectedOption) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please select an option!</div>'; return; }
+    userAnswer = state.selectedOption;
+  }
+  
+  const isCorrect = userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+  const q = state.questions[state.currentIndex];
+  
+  if (isCorrect) {
+    feedback.innerHTML = `<div class="feedback correct">✅ CORRECT!</div>`;
+    state.answers.push({id: questionId, correct: true});
+    state.retryMode = false;
+    setTimeout(() => { state.currentIndex++; showQuestion(); }, 1000);
+  } else {
+    if (!state.retryMode) {
+      feedback.innerHTML = `<div class="feedback wrong">❌ Not quite. Try again!</div>`;
+      state.retryMode = true;
+      state.selectedOption = '';
+      setTimeout(() => showQuestion(), 800);
+    } else {
+      feedback.innerHTML = `
+        <div class="feedback wrong">❌ The answer is: <span class="key-box">${correctAnswer}</span></div>
+        <div class="learn">💡 <strong>Remember:</strong> ${q.explanation}</div>
+      `;
+      state.answers.push({id: questionId, correct: false});
+      state.retryMode = false;
+      setTimeout(() => { state.currentIndex++; showQuestion(); }, 2500);
+    }
+  }
+}
+
+function skipQuestion() {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  state.answers.push({id: state.questions[state.currentIndex].id, correct: false, skipped: true});
+  state.retryMode = false;
+  state.selectedOption = '';
+  state.currentIndex++;
+  showQuestion();
+}
+
+function showResults() {
+  const correct = state.answers.filter(a => a.correct).length;
+  const wrong = state.answers.filter(a => !a.correct).length;
+  const percent = Math.round((correct/10)*100);
+  const totalTime = Math.round((Date.now() - state.startTime)/1000);
+  const min = Math.floor(totalTime/60);
+  const sec = totalTime % 60;
+  
+  let advice = '';
+  if (percent >= 80) advice = '🌟 Excellent! Try the next level!';
+  else if (percent >= 50) advice = '👍 Good job! Practice these shortcuts on your computer.';
+  else advice = '📖 Keep learning! Open a program and try these shortcuts now.';
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Results</div>
+    <div class="results">
+      <p>${state.userName} • <span class="badge badge-purple">${state.currentLevel}</span></p>
+      <div style="margin:15px 0;"><span class="big-number">${percent}%</span></div>
+      <p>✅ Correct: <strong>${correct}</strong> | ❌ Wrong: <strong>${wrong}</strong></p>
+      <p>⏱️ Time: <strong>${min}m ${sec}s</strong></p>
+      <p style="margin:10px 0; font-size:1.1em;">${advice}</p>
+      <div style="max-width:200px; margin:15px auto;"><canvas id="pieChart"></canvas></div>
+      <button class="btn btn-orange" onclick="retrySameLevel()">🔁 TRY AGAIN</button>
+      <button class="btn" onclick="renderWelcome()">🔄 CHANGE LEVEL</button>
+    </div>
+  `;
+  
+  new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: {
+      labels: ['Correct', 'Wrong'],
+      datasets: [{ data: [correct, wrong], backgroundColor: ['#228B22', '#FF8C00'], borderColor: 'white', borderWidth: 2 }]
+    },
+    options: { plugins: { title: { display: true, text: 'Your Score', color: '#800080', font: {size: 14} } } }
+  });
+}
+
+function retrySameLevel() {
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+renderWelcome();
+</script>
+</body>
+</html>

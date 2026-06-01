@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Learn Excel Basics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #FFF5E6; min-height: 100vh; padding: 10px; font-size: 16px; }
+    .app { max-width: 500px; margin: 0 auto; background: white; border-radius: 25px; padding: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+    .header { background: #228B22; color: white; padding: 18px; border-radius: 20px; text-align: center; margin-bottom: 15px; font-size: 1.3em; font-weight: bold; }
+    .header-purple { background: #800080; color: white; padding: 12px; border-radius: 15px; text-align: center; margin-bottom: 12px; font-size: 1em; font-weight: bold; }
+    .btn { background: #800080; color: white; border: none; padding: 14px 20px; border-radius: 30px; font-size: 1.05em; font-weight: bold; width: 100%; margin: 7px 0; cursor: pointer; }
+    .btn-orange { background: #FF8C00; }
+    .btn-green { background: #228B22; }
+    .btn:active { opacity: 0.85; transform: scale(0.97); }
+    .input-box, select { width: 100%; padding: 14px; border: 3px solid #800080; border-radius: 30px; font-size: 1.05em; margin: 7px 0; background: white; }
+    select { border-color: #228B22; }
+    .question-box { background: #F5E6FF; padding: 18px; border-radius: 20px; margin: 12px 0; border: 3px solid #800080; }
+    .question-text { font-size: 1.2em; font-weight: bold; margin: 10px 0; color: #333; line-height: 1.4; }
+    .option-btn { background: white; border: 2px solid #228B22; padding: 13px 15px; border-radius: 15px; margin: 6px 0; font-size: 1em; text-align: left; cursor: pointer; width: 100%; display: block; }
+    .option-btn.selected { background: #228B22; color: white; border-color: #800080; font-weight: bold; }
+    .feedback { padding: 12px; margin: 10px 0; border-radius: 12px; font-weight: bold; text-align: center; }
+    .correct { background: #90EE90; color: #006400; }
+    .wrong { background: #FFB6C1; color: #8B0000; }
+    .learn { background: #FFF9E6; border-left: 4px solid #228B22; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 0.95em; }
+    .results { text-align: center; padding: 15px; }
+    .big-number { font-size: 2.5em; font-weight: bold; color: #228B22; }
+    .badge { display: inline-block; background: #228B22; color: white; padding: 5px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9em; margin: 3px; }
+    .badge-purple { background: #800080; }
+    .progress-bar { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 8px 0; overflow: hidden; }
+    .progress-fill { background: #228B22; height: 100%; transition: width 0.3s; border-radius: 10px; }
+    .timer { font-size: 1em; font-weight: bold; color: #FF8C00; text-align: right; padding: 5px; }
+  </style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const QUESTION_BANK = {
+  Beginner: [
+    {type:'mo', text:'What is Excel?', options:['A spreadsheet program','A word processor','A web browser','An email app'], answer:'A spreadsheet program', explanation:'Excel organizes data in rows and columns for calculations.'},
+    {type:'tf', text:'Excel files are called workbooks', answer:'True', explanation:'A workbook contains one or more sheets (worksheets).'},
+    {type:'fg', text:'The small boxes where you type are called ___', answer:'Cells', explanation:'Cells are where rows and columns meet. Each cell has an address.'},
+    {type:'mo', text:'What does a cell address look like?', options:['A1 (column letter + row number)','1A','Cell 1','Box A'], answer:'A1 (column letter + row number)', explanation:'A1 means column A, row 1. Like a map for your spreadsheet!'},
+    {type:'tf', text:'Rows go across (left to right)', answer:'False', explanation:'Rows go up and down (numbered). Columns go across (lettered).'},
+    {type:'fg', text:'To add numbers, you start with the ___ sign', answer:'=', explanation:'All formulas start with =. Example: =2+2'},
+    {type:'mo', text:'Which function adds numbers together?', options:['=SUM()','=ADD()','=TOTAL()','=PLUS()'], answer:'=SUM()', explanation:'SUM adds a range. Example: =SUM(A1:A5)'},
+    {type:'tf', text:'A cell can contain text, numbers, or formulas', answer:'True', explanation:'Cells can store different types of information.'},
+    {type:'fg', text:'The bar at the top where you see cell content is the ___ bar', answer:'Formula', explanation:'The Formula Bar shows and lets you edit cell contents.'},
+    {type:'mo', text:'How do you select multiple cells?', options:['Click and drag','Double click','Right click','Press Space'], answer:'Click and drag', explanation:'Drag to select a range of cells at once.'},
+    {type:'tf', text:'A worksheet can have many rows', answer:'True', explanation:'Modern Excel has over 1 million rows per sheet!'},
+    {type:'fg', text:'To make text bold in Excel, press Ctrl + ___', answer:'B', explanation:'Ctrl+B works in Excel just like in Word.'},
+    {type:'mo', text:'What is the name box?', options:['Shows the active cell address','Shows your name','Shows file name','Shows date'], answer:'Shows the active cell address', explanation:'The Name Box is left of the Formula Bar.'},
+    {type:'tf', text:'You can rename worksheet tabs', answer:'True', explanation:'Double-click a sheet tab to rename it.'},
+    {type:'fg', text:'Columns are labeled with ___', answer:'Letters', explanation:'A, B, C... then AA, AB, etc. Rows use numbers.'},
+  ],
+  Intermediate: [
+    {type:'mo', text:'What does =AVERAGE(B1:B10) do?', options:['Calculates the mean of values','Adds all values','Counts cells','Finds the highest'], answer:'Calculates the mean of values', explanation:'AVERAGE sums and divides by count of numbers.'},
+    {type:'tf', text:'A cell reference like $A$1 is called absolute', answer:'True', explanation:'$ locks the column and/or row when copying formulas.'},
+    {type:'fg', text:'The function to count cells with numbers is ___', answer:'COUNT', explanation:'COUNT only counts cells with numeric values.'},
+    {type:'mo', text:'What is the difference between A1 and $A$1?', options:['$A$1 does not change when copied','Nothing','A1 is absolute','$A$1 is faster'], answer:'$A$1 does not change when copied', explanation:'Absolute references ($) stay fixed when you copy formulas.'},
+    {type:'tf', text:'VLOOKUP searches for a value in a table', answer:'True', explanation:'VLOOKUP finds data in vertical columns.'},
+    {type:'fg', text:'The IF function needs ___ parts: condition, value if true, value if false', answer:'3', explanation:'=IF(A1>10,"Yes","No") checks a condition.'},
+    {type:'mo', text:'What does CONCATENATE do?', options:['Joins text together','Splits text','Formats numbers','Creates charts'], answer:'Joins text together', explanation:'It combines text from multiple cells into one.'},
+    {type:'tf', text:'A pivot table summarizes large amounts of data', answer:'True', explanation:'PivotTables group and aggregate data for analysis.'},
+    {type:'fg', text:'To freeze the top row, go to ___ tab', answer:'View', explanation:'View > Freeze Panes keeps headers visible while scrolling.'},
+    {type:'mo', text:'Which chart type shows parts of a whole?', options:['Pie chart','Line chart','Bar chart','Scatter plot'], answer:'Pie chart', explanation:'Pie charts show proportions of a total.'},
+    {type:'tf', text:'Conditional formatting changes cell color based on rules', answer:'True', explanation:'Highlight cells based on their values automatically.'},
+    {type:'fg', text:'The shortcut to insert current date is Ctrl + ___', answer:';', explanation:'Ctrl+; inserts today\'s date. Ctrl+Shift+; inserts time.'},
+    {type:'mo', text:'What is a named range?', options:['A custom name for cell references','A type of chart','A file name','A worksheet tab'], answer:'A custom name for cell references', explanation:'Name ranges like "SalesData" instead of A1:B10.'},
+    {type:'tf', text:'You can protect sheets with a password', answer:'True', explanation:'Review > Protect Sheet prevents unwanted changes.'},
+    {type:'fg', text:'The function to find the largest number is ___', answer:'MAX', explanation:'=MAX(range) returns the highest value.'},
+  ],
+  Advanced: [
+    {type:'mo', text:'What is Power Query used for?', options:['Import and transform data','Create charts','Format cells','Send emails'], answer:'Import and transform data', explanation:'Power Query cleans and shapes data from various sources.'},
+    {type:'tf', text:'XLOOKUP replaces VLOOKUP with more features', answer:'True', explanation:'XLOOKUP can search left or right and has better error handling.'},
+    {type:'fg', text:'The formula to count unique values is ___', answer:'UNIQUE', explanation:'=UNIQUE(range) returns distinct values from a range.'},
+    {type:'mo', text:'What does a macro do?', options:['Automates repetitive tasks','Makes charts','Saves files','Prints documents'], answer:'Automates repetitive tasks', explanation:'Macros record and replay actions to save time.'},
+    {type:'tf', text:'INDEX-MATCH is an alternative to VLOOKUP', answer:'True', explanation:'INDEX-MATCH is more flexible than VLOOKUP for lookups.'},
+    {type:'fg', text:'The ___ function filters a range based on criteria', answer:'FILTER', explanation:'=FILTER(range, condition) returns matching rows dynamically.'},
+    {type:'mo', text:'What is a dynamic array?', options:['Formula that returns multiple values','A moving chart','A sorted list','A type of macro'], answer:'Formula that returns multiple values', explanation:'Dynamic arrays spill results into adjacent cells automatically.'},
+    {type:'tf', text:'Power Pivot can handle millions of rows', answer:'True', explanation:'Power Pivot works with large datasets beyond sheet limits.'},
+    {type:'fg', text:'To create a dropdown list, use Data ___', answer:'Validation', explanation:'Data Validation restricts what users can enter in cells.'},
+    {type:'mo', text:'What is the LAMBDA function?', options:['Create custom functions','Calculate lambda','Sort data','Filter rows'], answer:'Create custom functions', explanation:'LAMBDA lets you create reusable formulas without VBA.'},
+    {type:'tf', text:'Excel can connect to SQL databases', answer:'True', explanation:'Data > Get Data allows connections to databases.'},
+    {type:'fg', text:'The ___ function joins arrays horizontally', answer:'HSTACK', explanation:'HSTACK combines arrays side by side.'},
+    {type:'mo', text:'What does the LET function do?', options:['Assign names to calculation results','Let cells edit','Allow changes','Letter formatting'], answer:'Assign names to calculation results', explanation:'LET stores intermediate values for cleaner formulas.'},
+    {type:'tf', text:'Sensitivity labels can protect Excel files', answer:'True', explanation:'Microsoft Information Protection labels secure sensitive data.'},
+    {type:'fg', text:'To remove duplicates, use the ___ tab', answer:'Data', explanation:'Data > Remove Duplicates cleans repeated entries.'},
+  ],
+  Expert: [
+    {type:'mo', text:'What is the purpose of Power Automate with Excel?', options:['Create automated workflows','Make charts','Format cells','Print documents'], answer:'Create automated workflows', explanation:'Power Automate connects Excel to other apps and triggers actions.'},
+    {type:'tf', text:'Excel JavaScript API allows custom add-ins', answer:'True', explanation:'Office Add-ins use web technologies to extend Excel.'},
+    {type:'fg', text:'The ___ function creates a sequence of numbers', answer:'SEQUENCE', explanation:'=SEQUENCE(rows, columns, start, step) generates number arrays.'},
+    {type:'mo', text:'What is a cube function in Excel?', options:['Query OLAP data models','Draw 3D shapes','Calculate volume','Make pie charts'], answer:'Query OLAP data models', explanation:'Cube functions retrieve data from Analysis Services cubes.'},
+    {type:'tf', text:'DAX is a formula language for Power Pivot', answer:'True', explanation:'Data Analysis Expressions power calculated columns and measures.'},
+    {type:'fg', text:'___ queries combine data from multiple sources', answer:'Merge', explanation:'Merge queries join tables based on matching columns.'},
+    {type:'mo', text:'What is the WEBSERVICE function?', options:['Get data from web APIs','Browse internet','Create website','Send email'], answer:'Get data from web APIs', explanation:'WEBSERVICE fetches data from REST APIs directly into cells.'},
+    {type:'tf', text:'Excel supports regular expressions in formulas', answer:'True', explanation:'REGEX functions are available in newer Excel versions.'},
+    {type:'fg', text:'The ___ function returns an array of sheet names', answer:'SHEETS', explanation:'SHEETS counts all sheets; SHEET returns sheet number.'},
+    {type:'mo', text:'What is the key benefit of using Data Model?', options:['Relate multiple tables without formulas','Faster calculations','Smaller file size','Better charts'], answer:'Relate multiple tables without formulas', explanation:'Data Model creates relationships between tables like a database.'},
+    {type:'tf', text:'Custom functions can be shared across workbooks', answer:'True', explanation:'LAMBDA functions in named ranges work in any sheet.'},
+    {type:'fg', text:'___ parameters let users input values into Power Query', answer:'Parameter', explanation:'Parameters make queries dynamic without editing M code.'},
+    {type:'mo', text:'What does M language do in Excel?', options:['Power Query formula language','Macro recorder','Mail merge','Math calculations'], answer:'Power Query formula language', explanation:'M is the code behind Power Query transformations.'},
+    {type:'tf', text:'Excel can run Python code natively', answer:'True', explanation:'New Excel versions support Python in cells for analysis.'},
+    {type:'fg', text:'The ___ function groups data by categories and calculates', answer:'GROUPBY', explanation:'GROUPBY with aggregation functions summarizes data.'},
+  ]
+};
+
+let state = {
+  userName: '',
+  currentLevel: 'Beginner',
+  questions: [],
+  currentIndex: 0,
+  answers: [],
+  startTime: 0,
+  questionStartTime: 0,
+  retryMode: false,
+  selectedOption: '',
+};
+
+function selectQuestions(level) {
+  const bank = QUESTION_BANK[level];
+  const shuffled = [...bank].sort(() => Math.random() - 0.5);
+  const tf = shuffled.filter(q => q.type === 'tf').slice(0, 3);
+  const fg = shuffled.filter(q => q.type === 'fg').slice(0, 2);
+  const mo = shuffled.filter(q => q.type === 'mo').slice(0, 5);
+  let selected = [...tf, ...fg, ...mo];
+  if (selected.length < 10) {
+    const remaining = shuffled.filter(q => !selected.includes(q));
+    selected = [...selected, ...remaining].slice(0, 10);
+  }
+  return selected.sort(() => Math.random() - 0.5).map((q, i) => ({...q, id: i}));
+}
+
+function renderWelcome() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Excel Basics Quiz</div>
+    <div style="padding:5px;">
+      <p style="font-size:1.1em; margin:10px 0; text-align:center;">👋 Learn Excel step by step!</p>
+      <input type="text" id="nameInput" class="input-box" placeholder="Your name">
+      <p style="margin:12px 0; font-weight:bold; color:#228B22;">📊 Choose your level:</p>
+      <select id="levelSelect">
+        <option value="Beginner">⭐ Beginner (Cells & basics)</option>
+        <option value="Intermediate">⭐⭐ Intermediate (Functions)</option>
+        <option value="Advanced">⭐⭐⭐ Advanced (Power tools)</option>
+        <option value="Expert">🏆 Expert (Advanced features)</option>
+      </select>
+      <button class="btn btn-green" onclick="startQuiz()" style="margin-top:15px;">▶️ START LEARNING</button>
+    </div>
+  `;
+}
+
+function startQuiz() {
+  state.userName = document.getElementById('nameInput').value.trim();
+  if (!state.userName) { alert('Please enter your name!'); return; }
+  state.currentLevel = document.getElementById('levelSelect').value;
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+function renderGreeting() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Excel Basics</div>
+    <div class="header-purple">Level: ${state.currentLevel}</div>
+    <div style="background:#F5E6FF; padding:18px; border-radius:20px; margin:12px 0;">
+      <p>👋 Hi ${state.userName}!</p>
+      <p>📝 <strong>10 questions</strong></p>
+      <p>📊 Level: <span class="badge badge-purple">${state.currentLevel}</span></p>
+    </div>
+    <button class="btn btn-orange" onclick="showQuestion()">👍 START!</button>
+  `;
+}
+
+function showQuestion() {
+  if (state.currentIndex >= state.questions.length) { showResults(); return; }
+  const q = state.questions[state.currentIndex];
+  state.questionStartTime = Date.now();
+  state.selectedOption = '';
+  const typeLabel = q.type === 'mo' ? '🔘 Multiple Choice' : q.type === 'tf' ? '✅ True/False' : '✏️ Type Answer';
+  
+  let optionsHtml = '';
+  if (q.type === 'mo') {
+    optionsHtml = q.options.map(opt => `<button class="option-btn" onclick="selectOption(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`).join('');
+  } else if (q.type === 'tf') {
+    optionsHtml = `<button class="option-btn" onclick="selectOption(this, 'True')">✅ True</button><button class="option-btn" onclick="selectOption(this, 'False')">❌ False</button>`;
+  } else {
+    optionsHtml = `<input type="text" id="fillAnswer" class="input-box" placeholder="Type your answer" autocomplete="off">`;
+  }
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Excel Quiz</div>
+    <div class="header-purple">Q${state.currentIndex+1}/10 • ${state.currentLevel}</div>
+    <div class="timer">⏱️ <span id="liveTimer">0s</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${((state.currentIndex)/10)*100}%"></div></div>
+    <div class="question-box">
+      <p style="color:#228B22; font-weight:bold;">${typeLabel}</p>
+      <p class="question-text">${q.text}</p>
+      ${state.retryMode ? '<p style="color:#FF8C00;">🔄 Try once more!</p>' : ''}
+      ${optionsHtml}
+      <div id="feedbackArea"></div>
+      <button class="btn btn-green" onclick="submitAnswer('${q.type}', '${q.answer.replace(/'/g, "\\'")}', ${q.id})">✅ SUBMIT</button>
+      ${state.retryMode ? '<button class="btn" style="background:#666;" onclick="skipQuestion()">⏭️ SKIP</button>' : ''}
+    </div>
+  `;
+  
+  window.liveTimerInterval = setInterval(() => {
+    const elapsed = Math.round((Date.now() - state.questionStartTime)/1000);
+    const el = document.getElementById('liveTimer');
+    if (el) el.textContent = elapsed + 's';
+  }, 500);
+}
+
+function selectOption(btn, value) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedOption = value;
+}
+
+function submitAnswer(type, correctAnswer, questionId) {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  const feedback = document.getElementById('feedbackArea');
+  let userAnswer = '';
+  if (type === 'fg') {
+    userAnswer = document.getElementById('fillAnswer').value.trim();
+    if (!userAnswer) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please type an answer!</div>'; return; }
+  } else {
+    if (!state.selectedOption) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please select an option!</div>'; return; }
+    userAnswer = state.selectedOption;
+  }
+  
+  const isCorrect = userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+  const q = state.questions[state.currentIndex];
+  
+  if (isCorrect) {
+    feedback.innerHTML = '<div class="feedback correct">✅ CORRECT!</div>';
+    state.answers.push({id: questionId, correct: true});
+    state.retryMode = false;
+    setTimeout(() => { state.currentIndex++; showQuestion(); }, 1000);
+  } else {
+    if (!state.retryMode) {
+      feedback.innerHTML = '<div class="feedback wrong">❌ Not quite. Try again!</div>';
+      state.retryMode = true;
+      state.selectedOption = '';
+      setTimeout(() => showQuestion(), 800);
+    } else {
+      feedback.innerHTML = `<div class="feedback wrong">❌ Answer: <strong>${correctAnswer}</strong></div><div class="learn">💡 ${q.explanation}</div>`;
+      state.answers.push({id: questionId, correct: false});
+      state.retryMode = false;
+      setTimeout(() => { state.currentIndex++; showQuestion(); }, 2500);
+    }
+  }
+}
+
+function skipQuestion() {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  state.answers.push({id: state.questions[state.currentIndex].id, correct: false, skipped: true});
+  state.retryMode = false;
+  state.selectedOption = '';
+  state.currentIndex++;
+  showQuestion();
+}
+
+function showResults() {
+  const correct = state.answers.filter(a => a.correct).length;
+  const wrong = state.answers.filter(a => !a.correct).length;
+  const percent = Math.round((correct/10)*100);
+  const totalTime = Math.round((Date.now() - state.startTime)/1000);
+  const min = Math.floor(totalTime/60);
+  const sec = totalTime % 60;
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Results</div>
+    <div class="results">
+      <p>${state.userName} • <span class="badge badge-purple">${state.currentLevel}</span></p>
+      <div style="margin:15px 0;"><span class="big-number">${percent}%</span></div>
+      <p>✅ Correct: <strong>${correct}</strong> | ❌ Wrong: <strong>${wrong}</strong></p>
+      <p>⏱️ Time: <strong>${min}m ${sec}s</strong></p>
+      <div style="max-width:200px; margin:15px auto;"><canvas id="pieChart"></canvas></div>
+      <button class="btn btn-orange" onclick="retrySameLevel()">🔁 TRY AGAIN</button>
+      <button class="btn" onclick="renderWelcome()">🔄 CHANGE LEVEL</button>
+    </div>
+  `;
+  
+  new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: { labels: ['Correct', 'Wrong'], datasets: [{ data: [correct, wrong], backgroundColor: ['#228B22', '#FF8C00'], borderColor: 'white', borderWidth: 2 }] },
+    options: { plugins: { title: { display: true, text: 'Your Score', color: '#228B22', font: {size: 14} } } }
+  });
+}
+
+function retrySameLevel() {
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+renderWelcome();
+</script>
+</body>
+</html>

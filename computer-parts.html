@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Learn Computer Parts</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #FFF5E6; min-height: 100vh; padding: 10px; font-size: 16px; }
+    .app { max-width: 500px; margin: 0 auto; background: white; border-radius: 25px; padding: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+    .header { background: #FF8C00; color: white; padding: 18px; border-radius: 20px; text-align: center; margin-bottom: 15px; font-size: 1.3em; font-weight: bold; }
+    .header-purple { background: #800080; color: white; padding: 12px; border-radius: 15px; text-align: center; margin-bottom: 12px; font-size: 1em; font-weight: bold; }
+    .header-green { background: #228B22; color: white; padding: 12px; border-radius: 15px; text-align: center; margin-bottom: 12px; font-size: 1em; font-weight: bold; }
+    .btn { background: #800080; color: white; border: none; padding: 14px 20px; border-radius: 30px; font-size: 1.05em; font-weight: bold; width: 100%; margin: 7px 0; cursor: pointer; }
+    .btn-orange { background: #FF8C00; }
+    .btn-green { background: #228B22; }
+    .btn:active { opacity: 0.85; transform: scale(0.97); }
+    .input-box, select { width: 100%; padding: 14px; border: 3px solid #800080; border-radius: 30px; font-size: 1.05em; margin: 7px 0; background: white; }
+    select { border-color: #FF8C00; }
+    .question-box { background: #F5E6FF; padding: 18px; border-radius: 20px; margin: 12px 0; border: 3px solid #800080; }
+    .question-text { font-size: 1.2em; font-weight: bold; margin: 10px 0; color: #333; line-height: 1.4; }
+    .option-btn { background: white; border: 2px solid #FF8C00; padding: 13px 15px; border-radius: 15px; margin: 6px 0; font-size: 1em; text-align: left; cursor: pointer; width: 100%; display: block; }
+    .option-btn.selected { background: #FF8C00; color: white; border-color: #800080; font-weight: bold; }
+    .feedback { padding: 12px; margin: 10px 0; border-radius: 12px; font-weight: bold; text-align: center; }
+    .correct { background: #90EE90; color: #006400; }
+    .wrong { background: #FFB6C1; color: #8B0000; }
+    .learn { background: #FFF9E6; border-left: 4px solid #FF8C00; padding: 12px; margin: 8px 0; border-radius: 8px; font-size: 0.95em; }
+    .results { text-align: center; padding: 15px; }
+    .big-number { font-size: 2.5em; font-weight: bold; color: #800080; }
+    .badge { display: inline-block; background: #FF8C00; color: white; padding: 5px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9em; margin: 3px; }
+    .badge-purple { background: #800080; }
+    .badge-green { background: #228B22; }
+    .progress-bar { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 8px 0; overflow: hidden; }
+    .progress-fill { background: #228B22; height: 100%; transition: width 0.3s; border-radius: 10px; }
+    .timer { font-size: 1em; font-weight: bold; color: #FF8C00; text-align: right; padding: 5px; }
+    .word-box { background: #2d2d2d; color: #fff; padding: 4px 10px; border-radius: 6px; font-family: monospace; font-weight: bold; display: inline-block; margin: 2px; }
+  </style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+const QUESTION_BANK = {
+  Beginner: [
+    {type:'mo', text:'Which part shows you images and text?', options:['Monitor (screen)','Keyboard','Mouse','Printer'], answer:'Monitor (screen)', explanation:'The monitor displays everything. It is an OUTPUT device.'},
+    {type:'tf', text:'A keyboard is used to type words', answer:'True', explanation:'Keyboards are INPUT devices. They send information INTO the computer.'},
+    {type:'fg', text:'The device you move with your hand to click is a ___', answer:'Mouse', explanation:'A mouse controls the cursor (arrow) on the screen.'},
+    {type:'mo', text:'What is a printer?', options:['Prints on paper','Shows pictures','Types letters','Plays music'], answer:'Prints on paper', explanation:'Printers put digital documents onto physical paper.'},
+    {type:'tf', text:'Speakers let you hear sound from the computer', answer:'True', explanation:'Speakers and headphones are OUTPUT devices for audio.'},
+    {type:'fg', text:'The "brain" inside the computer is the ___', answer:'CPU', explanation:'CPU = Central Processing Unit. It does all the thinking and math.'},
+    {type:'mo', text:'Where do you plug in a USB memory stick?', options:['USB port','HDMI port','Power plug','Headphone jack'], answer:'USB port', explanation:'USB ports connect many devices: flash drives, mice, keyboards.'},
+    {type:'tf', text:'A laptop has a battery inside', answer:'True', explanation:'Laptops have rechargeable batteries for portable use.'},
+    {type:'fg', text:'The flat surface on a laptop with keys is the ___', answer:'Keyboard', explanation:'Laptop keyboards are built into the device.'},
+    {type:'mo', text:'Which stores your files forever?', options:['Hard drive / SSD','RAM','CPU','Fan'], answer:'Hard drive / SSD', explanation:'Storage keeps files even when power is off. RAM forgets everything.'},
+    {type:'tf', text:'A webcam captures video of you', answer:'True', explanation:'Webcams are cameras connected to or built into computers.'},
+    {type:'fg', text:'The computer case that holds all parts is the ___', answer:'Tower', explanation:'The tower (or case) protects all internal components.'},
+    {type:'mo', text:'What does RAM do?', options:['Temporary memory for running programs','Permanent file storage','Display graphics','Print documents'], answer:'Temporary memory for running programs', explanation:'RAM is fast memory that programs use while running. It clears when off.'},
+    {type:'tf', text:'A microphone lets you record your voice', answer:'True', explanation:'Microphones are INPUT devices that capture audio.'},
+    {type:'fg', text:'The main board inside that connects everything is the ___', answer:'Motherboard', explanation:'The motherboard connects CPU, RAM, storage, and all parts together.'},
+  ],
+  Intermediate: [
+    {type:'mo', text:'What is the difference between HDD and SSD?', options:['SSD is faster, no moving parts','HDD is always smaller','SSD uses magnets','No difference'], answer:'SSD is faster, no moving parts', explanation:'SSDs use flash memory chips. HDDs use spinning disks. SSDs are faster.'},
+    {type:'tf', text:'A graphics card (GPU) helps with games and video', answer:'True', explanation:'The GPU processes images, video, and 3D graphics.'},
+    {type:'fg', text:'The part that cools the CPU is called a ___ sink', answer:'Heat', explanation:'A heat sink (with a fan) pulls heat away from the CPU.'},
+    {type:'mo', text:'What does the power supply unit (PSU) do?', options:['Converts wall power for components','Stores electricity','Charges the battery only','Controls the fan'], answer:'Converts wall power for components', explanation:'The PSU changes AC wall power to DC power for computer parts.'},
+    {type:'tf', text:'All RAM is the same speed', answer:'False', explanation:'RAM has different speeds (MHz) and types (DDR3, DDR4, DDR5).'},
+    {type:'fg', text:'The small battery on the motherboard is the ___ battery', answer:'CMOS', explanation:'The CMOS battery keeps date, time, and BIOS settings saved.'},
+    {type:'mo', text:'Which port connects to a modern monitor?', options:['HDMI','VGA','Serial','Parallel'], answer:'HDMI', explanation:'HDMI carries both high-quality video and audio in one cable.'},
+    {type:'tf', text:'A network card connects to the internet', answer:'True', explanation:'Network cards (Ethernet or Wi-Fi) handle internet connections.'},
+    {type:'fg', text:'The slot where you insert a graphics card is called ___', answer:'PCIe', explanation:'PCIe (PCI Express) slots are for graphics cards and other expansion cards.'},
+    {type:'mo', text:'What is BIOS?', options:['Firmware that starts the computer','A type of virus','A programming language','An operating system'], answer:'Firmware that starts the computer', explanation:'BIOS/UEFI initializes hardware when you first turn on the computer.'},
+    {type:'tf', text:'More RAM always makes a computer faster', answer:'False', explanation:'Having enough RAM helps, but too much extra RAM does not help.'},
+    {type:'fg', text:'Thermal ___ helps transfer heat between CPU and cooler', answer:'Paste', explanation:'Thermal paste fills tiny gaps for better heat transfer.'},
+    {type:'mo', text:'What does an optical drive read?', options:['CDs and DVDs','USB drives','Hard drives','Memory cards'], answer:'CDs and DVDs', explanation:'Optical drives use lasers to read discs. Many new computers do not have them.'},
+    {type:'tf', text:'A sound card can be built into the motherboard', answer:'True', explanation:'Most motherboards have built-in (integrated) sound.'},
+    {type:'fg', text:'USB stands for Universal ___ Bus', answer:'Serial', explanation:'USB connects many types of devices with the same port shape.'},
+  ],
+  Advanced: [
+    {type:'mo', text:'What is the purpose of a CPU cache?', options:['Speed up data access for CPU','Store permanent files','Cool the processor','Connect to internet'], answer:'Speed up data access for CPU', explanation:'Cache is ultra-fast memory inside or near the CPU for quick data access.'},
+    {type:'tf', text:'NVMe SSDs are faster than SATA SSDs', answer:'True', explanation:'NVMe uses PCIe lanes directly for much faster speeds than SATA.'},
+    {type:'fg', text:'The chipset on a motherboard manages ___ flow', answer:'Data', explanation:'The chipset controls communication between CPU, RAM, storage, and peripherals.'},
+    {type:'mo', text:'What does VRM stand for?', options:['Voltage Regulator Module','Virtual Random Memory','Video Rendering Module','Variable Rate Monitor'], answer:'Voltage Regulator Module', explanation:'VRMs deliver precise, stable power to the CPU.'},
+    {type:'tf', text:'A dual-channel RAM setup uses two identical sticks', answer:'True', explanation:'Dual-channel doubles the data path between RAM and CPU.'},
+    {type:'fg', text:'M.2 is a small form factor for ___ drives', answer:'SSD', explanation:'M.2 SSDs plug directly into the motherboard without cables.'},
+    {type:'mo', text:'What is overclocking?', options:['Running components faster than rated','Setting the computer clock','Replacing parts','Adding more RAM'], answer:'Running components faster than rated', explanation:'Overclocking increases speed beyond factory settings. Needs good cooling.'},
+    {type:'tf', text:'Liquid cooling is only for expert users', answer:'False', explanation:'All-in-one liquid coolers are easy to install for anyone.'},
+    {type:'fg', text:'The connector from PSU to motherboard is the ___ pin', answer:'24', explanation:'The main 24-pin ATX connector powers the motherboard.'},
+    {type:'mo', text:'What does a UPS do?', options:['Provides backup battery power','Speeds up computer','Connects to internet','Prints documents'], answer:'Provides backup battery power', explanation:'Uninterruptible Power Supply keeps computer running during power cuts.'},
+    {type:'tf', text:'Integrated graphics share system RAM', answer:'True', explanation:'Integrated GPUs use part of your regular RAM for video memory.'},
+    {type:'fg', text:'The speed of RAM is measured in ___', answer:'MHz', explanation:'Megahertz (MHz) tells how many cycles per second the RAM can do.'},
+    {type:'mo', text:'What is the northbridge?', options:['Part of chipset for fast connections','A type of CPU','A cooling fan','A power cable'], answer:'Part of chipset for fast connections', explanation:'The northbridge connects CPU to RAM and graphics (now often inside CPU).'},
+    {type:'tf', text:'SATA cables connect storage drives to motherboard', answer:'True', explanation:'SATA is the standard cable for HDDs and older SSDs.'},
+    {type:'fg', text:'80 Plus certification measures PSU ___', answer:'Efficiency', explanation:'Higher ratings (Bronze to Titanium) mean less wasted electricity.'},
+  ],
+  Expert: [
+    {type:'mo', text:'What is the primary advantage of ECC RAM?', options:['Detects and corrects data errors','Faster speed','Lower cost','Smaller size'], answer:'Detects and corrects data errors', explanation:'Error-Correcting Code RAM prevents data corruption. Used in servers.'},
+    {type:'tf', text:'PCIe 5.0 doubles bandwidth of PCIe 4.0', answer:'True', explanation:'Each PCIe generation roughly doubles the data transfer rate.'},
+    {type:'fg', text:'3D ___ technology stacks memory cells vertically', answer:'NAND', explanation:'3D NAND layers memory cells for higher capacity in smaller space.'},
+    {type:'mo', text:'What is the purpose of a JTAG header?', options:['Hardware debugging and testing','Audio output','Video connection','Power delivery'], answer:'Hardware debugging and testing', explanation:'JTAG provides low-level access to test and debug circuit boards.'},
+    {type:'tf', text:'Thunderbolt 4 uses the USB-C connector', answer:'True', explanation:'Thunderbolt 4 provides very high speed data and video over USB-C.'},
+    {type:'fg', text:'The ___ layer in a PCB provides power distribution', answer:'Power', explanation:'Multi-layer PCBs have dedicated power and ground planes.'},
+    {type:'mo', text:'What is chiplet architecture?', options:['Multiple small chips on one package','Single large chip','Software design','Cooling method'], answer:'Multiple small chips on one package', explanation:'Chiplets combine smaller dies for better yields and flexibility.'},
+    {type:'tf', text:'Signal integrity becomes more important at higher speeds', answer:'True', explanation:'Faster signals are more sensitive to interference and degradation.'},
+    {type:'fg', text:'The smallest manufacturing process for chips is measured in ___', answer:'Nanometers', explanation:'Current leading-edge chips use 3nm or similar process technology.'},
+    {type:'mo', text:'What is the purpose of a substrate in chip packaging?', options:['Connect die to motherboard electrically','Cool the chip','Store data','Display output'], answer:'Connect die to motherboard electrically', explanation:'The substrate routes signals from the tiny chip to the larger socket.'},
+    {type:'tf', text:'All transistors at a given node are exactly the same size', answer:'False', explanation:'Node names are marketing terms. Actual gate lengths vary.'},
+    {type:'fg', text:'___ vias connect stacked silicon dies vertically', answer:'Through-silicon', explanation:'TSVs enable 3D chip stacking for higher density and bandwidth.'},
+    {type:'mo', text:'What limits maximum CPU clock speed?', options:['Heat and power density','Software limitations','RAM capacity','Storage speed'], answer:'Heat and power density', explanation:'Higher frequencies generate exponentially more heat.'},
+    {type:'tf', text:'Optical computing uses light instead of electricity', answer:'True', explanation:'Photonic computing is an emerging technology for faster processing.'},
+    {type:'fg', text:'The ___ effect causes atoms to move in conductors over time', answer:'Electromigration', explanation:'Electromigration can eventually break connections in chips.'},
+  ]
+};
+
+let state = {
+  userName: '',
+  currentLevel: 'Beginner',
+  questions: [],
+  currentIndex: 0,
+  answers: [],
+  startTime: 0,
+  questionStartTime: 0,
+  retryMode: false,
+  selectedOption: '',
+};
+
+function selectQuestions(level) {
+  const bank = QUESTION_BANK[level];
+  const shuffled = [...bank].sort(() => Math.random() - 0.5);
+  const tf = shuffled.filter(q => q.type === 'tf').slice(0, 3);
+  const fg = shuffled.filter(q => q.type === 'fg').slice(0, 2);
+  const mo = shuffled.filter(q => q.type === 'mo').slice(0, 5);
+  let selected = [...tf, ...fg, ...mo];
+  if (selected.length < 10) {
+    const remaining = shuffled.filter(q => !selected.includes(q));
+    selected = [...selected, ...remaining].slice(0, 10);
+  }
+  return selected.sort(() => Math.random() - 0.5).map((q, i) => ({...q, id: i}));
+}
+
+function renderWelcome() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">🖥️ Computer Parts Quiz</div>
+    <div style="padding:5px;">
+      <p style="font-size:1.1em; margin:10px 0; text-align:center;">👋 Learn about computer hardware!</p>
+      <input type="text" id="nameInput" class="input-box" placeholder="Your name">
+      <p style="margin:12px 0; font-weight:bold; color:#800080;">📊 Choose your level:</p>
+      <select id="levelSelect">
+        <option value="Beginner">⭐ Beginner (Basic parts)</option>
+        <option value="Intermediate">⭐⭐ Intermediate (Inside the computer)</option>
+        <option value="Advanced">⭐⭐⭐ Advanced (How parts work)</option>
+        <option value="Expert">🏆 Expert (Deep technology)</option>
+      </select>
+      <button class="btn btn-green" onclick="startQuiz()" style="margin-top:15px;">▶️ START LEARNING</button>
+      <p style="text-align:center; margin-top:10px; font-size:0.9em; color:#666;">🖥️ Learn the names and jobs of computer parts!</p>
+    </div>
+  `;
+}
+
+function startQuiz() {
+  state.userName = document.getElementById('nameInput').value.trim();
+  if (!state.userName) { alert('Please enter your name!'); return; }
+  state.currentLevel = document.getElementById('levelSelect').value;
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+function renderGreeting() {
+  document.getElementById('app').innerHTML = `
+    <div class="header">🖥️ Computer Parts</div>
+    <div class="header-purple">Level: ${state.currentLevel}</div>
+    <div style="background:#F5E6FF; padding:18px; border-radius:20px; margin:12px 0;">
+      <p>👋 Hi ${state.userName}!</p>
+      <p>📝 <strong>10 questions</strong> about computer hardware</p>
+      <p>📊 Level: <span class="badge badge-purple">${state.currentLevel}</span></p>
+    </div>
+    <button class="btn btn-orange" onclick="showQuestion()">👍 START!</button>
+  `;
+}
+
+function showQuestion() {
+  if (state.currentIndex >= state.questions.length) { showResults(); return; }
+  const q = state.questions[state.currentIndex];
+  state.questionStartTime = Date.now();
+  state.selectedOption = '';
+  const typeLabel = q.type === 'mo' ? '🔘 Multiple Choice' : q.type === 'tf' ? '✅ True/False' : '✏️ Type Answer';
+  
+  let optionsHtml = '';
+  if (q.type === 'mo') {
+    optionsHtml = q.options.map(opt => `<button class="option-btn" onclick="selectOption(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`).join('');
+  } else if (q.type === 'tf') {
+    optionsHtml = `<button class="option-btn" onclick="selectOption(this, 'True')">✅ True</button><button class="option-btn" onclick="selectOption(this, 'False')">❌ False</button>`;
+  } else {
+    optionsHtml = `<input type="text" id="fillAnswer" class="input-box" placeholder="Type your answer" autocomplete="off">`;
+  }
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">🖥️ Computer Parts</div>
+    <div class="header-purple">Q${state.currentIndex+1}/10 • ${state.currentLevel}</div>
+    <div class="timer">⏱️ <span id="liveTimer">0s</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${((state.currentIndex)/10)*100}%"></div></div>
+    <div class="question-box">
+      <p style="color:#800080; font-weight:bold;">${typeLabel}</p>
+      <p class="question-text">${q.text}</p>
+      ${state.retryMode ? '<p style="color:#FF8C00;">🔄 Try once more!</p>' : ''}
+      ${optionsHtml}
+      <div id="feedbackArea"></div>
+      <button class="btn btn-green" onclick="submitAnswer('${q.type}', '${q.answer.replace(/'/g, "\\'")}', ${q.id})">✅ SUBMIT</button>
+      ${state.retryMode ? '<button class="btn" style="background:#666;" onclick="skipQuestion()">⏭️ SKIP</button>' : ''}
+    </div>
+  `;
+  
+  window.liveTimerInterval = setInterval(() => {
+    const elapsed = Math.round((Date.now() - state.questionStartTime)/1000);
+    const el = document.getElementById('liveTimer');
+    if (el) el.textContent = elapsed + 's';
+  }, 500);
+}
+
+function selectOption(btn, value) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedOption = value;
+}
+
+function submitAnswer(type, correctAnswer, questionId) {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  const feedback = document.getElementById('feedbackArea');
+  let userAnswer = '';
+  if (type === 'fg') {
+    userAnswer = document.getElementById('fillAnswer').value.trim();
+    if (!userAnswer) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please type an answer!</div>'; return; }
+  } else {
+    if (!state.selectedOption) { feedback.innerHTML = '<div class="feedback wrong">⚠️ Please select an option!</div>'; return; }
+    userAnswer = state.selectedOption;
+  }
+  
+  const isCorrect = userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+  const q = state.questions[state.currentIndex];
+  
+  if (isCorrect) {
+    feedback.innerHTML = '<div class="feedback correct">✅ CORRECT!</div>';
+    state.answers.push({id: questionId, correct: true});
+    state.retryMode = false;
+    setTimeout(() => { state.currentIndex++; showQuestion(); }, 1000);
+  } else {
+    if (!state.retryMode) {
+      feedback.innerHTML = '<div class="feedback wrong">❌ Not quite. Try again!</div>';
+      state.retryMode = true;
+      state.selectedOption = '';
+      setTimeout(() => showQuestion(), 800);
+    } else {
+      feedback.innerHTML = `<div class="feedback wrong">❌ Answer: <strong>${correctAnswer}</strong></div><div class="learn">💡 ${q.explanation}</div>`;
+      state.answers.push({id: questionId, correct: false});
+      state.retryMode = false;
+      setTimeout(() => { state.currentIndex++; showQuestion(); }, 2500);
+    }
+  }
+}
+
+function skipQuestion() {
+  if (window.liveTimerInterval) clearInterval(window.liveTimerInterval);
+  state.answers.push({id: state.questions[state.currentIndex].id, correct: false, skipped: true});
+  state.retryMode = false;
+  state.selectedOption = '';
+  state.currentIndex++;
+  showQuestion();
+}
+
+function showResults() {
+  const correct = state.answers.filter(a => a.correct).length;
+  const wrong = state.answers.filter(a => !a.correct).length;
+  const percent = Math.round((correct/10)*100);
+  const totalTime = Math.round((Date.now() - state.startTime)/1000);
+  const min = Math.floor(totalTime/60);
+  const sec = totalTime % 60;
+  
+  document.getElementById('app').innerHTML = `
+    <div class="header">📊 Results</div>
+    <div class="results">
+      <p>${state.userName} • <span class="badge badge-purple">${state.currentLevel}</span></p>
+      <div style="margin:15px 0;"><span class="big-number">${percent}%</span></div>
+      <p>✅ Correct: <strong>${correct}</strong> | ❌ Wrong: <strong>${wrong}</strong></p>
+      <p>⏱️ Time: <strong>${min}m ${sec}s</strong></p>
+      <div style="max-width:200px; margin:15px auto;"><canvas id="pieChart"></canvas></div>
+      <button class="btn btn-orange" onclick="retrySameLevel()">🔁 TRY AGAIN</button>
+      <button class="btn" onclick="renderWelcome()">🔄 CHANGE LEVEL</button>
+    </div>
+  `;
+  
+  new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: { labels: ['Correct', 'Wrong'], datasets: [{ data: [correct, wrong], backgroundColor: ['#228B22', '#FF8C00'], borderColor: 'white', borderWidth: 2 }] },
+    options: { plugins: { title: { display: true, text: 'Your Score', color: '#800080', font: {size: 14} } } }
+  });
+}
+
+function retrySameLevel() {
+  state.questions = selectQuestions(state.currentLevel);
+  state.currentIndex = 0;
+  state.answers = [];
+  state.startTime = Date.now();
+  state.retryMode = false;
+  renderGreeting();
+}
+
+renderWelcome();
+</script>
+</body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Ethical Hacking Scaffolding Worksheet | 5 Levels | ESOL Friendly</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Noto Sans', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* main card */
+        .worksheet-container {
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .header {
+            background: #0a1f2e;
+            color: white;
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.9rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .content-pane {
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        /* screener & level sections */
+        .card {
+            background: #f9fafc;
+            border-radius: 32px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2edf2;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .level-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            margin: 20px 0 10px;
+        }
+
+        .level-btn {
+            background: #eef2f8;
+            border: none;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1e2f3e;
+            border: 1px solid transparent;
+        }
+
+        .level-btn:hover {
+            background: #dce5ef;
+            transform: scale(0.97);
+        }
+
+        .level-active {
+            background: #0f3b5c;
+            color: white;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            border-color: #2c5a7a;
+        }
+
+        .question-box {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            border-left: 8px solid #2c7da0;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #0a2e42;
+        }
+
+        .option {
+            display: block;
+            margin: 12px 0;
+            background: #f2f6f9;
+            padding: 12px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid #dee7ef;
+        }
+
+        .option.selected {
+            background: #cbdde9;
+            border-color: #2c7da0;
+            font-weight: 500;
+        }
+
+        .feedback {
+            margin: 15px 0 0;
+            padding: 12px 18px;
+            border-radius: 24px;
+            background: #fef5e7;
+            border-left: 5px solid #f4a261;
+            font-size: 0.95rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            background: #1f6392;
+            border: none;
+            padding: 12px 24px;
+            color: white;
+            font-weight: bold;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button.secondary {
+            background: #5f7f9e;
+        }
+
+        button:hover {
+            background: #0f4a6f;
+            transform: translateY(-2px);
+        }
+
+        .result-area {
+            background: #e6f4ea;
+            border-radius: 28px;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .explain-demo {
+            background: #eef2fa;
+            border-radius: 28px;
+            padding: 1.3rem 1.6rem;
+            margin: 1rem 0;
+            border: 1px solid #dce5ed;
+        }
+
+        hr {
+            margin: 25px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #2c7da0;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            margin-bottom: 12px;
+        }
+        footer {
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 1rem;
+            background: #f0f4f9;
+            color: #3a5a78;
+        }
+        @media (max-width: 650px) {
+            .content-pane { padding: 1.2rem; }
+            .question-text { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="worksheet-container">
+    <div class="header">
+        <h1>🧠 HACKING INTO THINKING MACHINES</h1>
+        <p>Interactive scaffolding • 5 levels • ESOL friendly • based on Yash Sawarkar (2015)</p>
+        <p style="font-size:0.85rem;">⚠️ Educational purpose only — develop a defence attitude</p>
+    </div>
+    <div class="content-pane" id="appRoot">
+        <!-- dynamic rendering via JS -->
+        <div style="text-align: center;">Loading interactive worksheet...</div>
+    </div>
+    <footer>
+        📘 Disclaimer: All techniques for defensive learning only. Never attack systems without permission.
+    </footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 5 LEVEL QUIZ DATA + EXPLANATIONS / DEMOS (derived from document)
+    // each level: { name, explain, demo, questions: [{text, type, options, correctIndex, correctText}] }
+    // type: 'mc' (multiple choice 3-4 options), 'tf' (true/false), 'complete' (sentence with 3 options)
+    // For complete the sentence: we provide 3 options, correctIndex 0..2
+    // --------------------------------------------------------------
+    const levelsData = {
+        1: {
+            name: "Beginner",
+            explain: "🔐 System hacking means gaining access to computers to view or create data. A <strong>vulnerability</strong> is a weakness in a system. <strong>Default passwords</strong> like 'admin' or '123456' are made by factories and are very easy to guess. Hackers exploit these flaws.",
+            demo: "📌 From the book (page 15 & 30): Default passwords for cameras: 'admin' / '1111'. Attackers scan for such weak entries. Always change default credentials.",
+            questions: [
+                { text: "What is a vulnerability in a system?", type: "mc", options: ["A strong password", "A weakness in a system", "A type of antivirus"], correctIndex: 1, correctText: "A weakness in a system" },
+                { text: "The password '123456' is considered safe according to the book.", type: "tf", options: ["True", "False"], correctIndex: 1, correctText: "False" },
+                { text: "A _______ password is supplied by the manufacturer with new equipment.", type: "complete", options: ["strong", "default", "encrypted"], correctIndex: 1, correctText: "default" }
+            ]
+        },
+        2: {
+            name: "Elementary",
+            explain: "💻 You can view system reboot date using CMD: <code>systeminfo | find /i \"boot time\"</code>. Also, tools like MessenPass, Mail PassView recover saved passwords from Windows. The book shows USB auto-run tricks to gather stored credentials.",
+            demo: "📖 From page 17 & 22: Open Command Prompt → type <code>systeminfo | find /i \"boot time\"</code>. It shows last boot. Also, PasswordFox recovers Firefox saved logins.",
+            questions: [
+                { text: "Which command shows the last boot time of a Windows system?", type: "mc", options: ["ipconfig", "systeminfo | find /i \"boot time\"", "netstat -a"], correctIndex: 1, correctText: "systeminfo | find /i \"boot time\"" },
+                { text: "The book mentions 'PasswordFox' can recover passwords stored in Mozilla Firefox.", type: "tf", options: ["True", "False"], correctIndex: 0, correctText: "True" },
+                { text: "An auto-run USB stick prepared with password tools can _______ stored passwords from a computer.", type: "complete", options: ["delete permanently", "sniff / recover", "encrypt"], correctIndex: 1, correctText: "sniff / recover" }
+            ]
+        },
+        3: {
+            name: "Intermediate",
+            explain: "🎭 Social Engineering tricks people – Phishing uses fake login pages. Steganography hides messages inside images. In Kali Linux: <code>steghide embed -cf image.jpg -ef secret.txt</code>. The Social-Engineer Toolkit (SET) can clone Facebook to harvest credentials.",
+            demo: "🧪 From pages 26–29 & 35-36: Using setoolkit: 1) 'setoolkit' → Social-Engineering Attacks → Website Attack Vectors → Credential Harvester → Site Cloner. Enter IP and clone facebook.com. Victim logs in → credentials captured.",
+            questions: [
+                { text: "What is 'phishing' in the context of social engineering?", type: "mc", options: ["Antivirus update", "Fake website that steals passwords", "A hardware firewall"], correctIndex: 1, correctText: "Fake website that steals passwords" },
+                { text: "Steghide is a tool to hide data behind images (steganography).", type: "tf", options: ["True", "False"], correctIndex: 0, correctText: "True" },
+                { text: "To clone a login page in Kali Linux, the book uses _______ toolkit.", type: "complete", options: ["Metasploit", "Social-Engineer Toolkit (SET)", "Nmap"], correctIndex: 1, correctText: "Social-Engineer Toolkit (SET)" }
+            ]
+        },
+        4: {
+            name: "Advanced",
+            explain: "⚙️ SQL injection with sqlmap extracts database info. Rainbow tables (winrtgen) precompute hashes to crack passwords faster. Metasploit can exploit Java vulnerabilities (Windows XP / 7). Commands: <code>sqlmap -u url -dbs</code> → list databases, then dump tables/columns.",
+            demo: "📄 Page 31-32 & 40-44: Rainbow tables for NTLM hashes. Metasploit Java applet hack: use exploit/multi/browser/java_signed_applet + reverse_tcp. sqlmap: <code>sqlmap -u 'http://site?id=1' -D dbname -T users -C username,password -dump</code>.",
+            questions: [
+                { text: "What does the sqlmap option <code>-dbs</code> do?", type: "mc", options: ["Deletes the current database", "Lists all database names", "Dumps table content"], correctIndex: 1, correctText: "Lists all database names" },
+                { text: "Rainbow tables store plain text passwords directly for immediate lookup.", type: "tf", options: ["True", "False"], correctIndex: 1, correctText: "False (they store precomputed hash chains)" },
+                { text: "After successful exploitation on Windows XP using Metasploit, command _______ records keystrokes.", type: "complete", options: ["keyscan_start", "record_mic", "screenshot"], correctIndex: 0, correctText: "keyscan_start" }
+            ]
+        },
+        5: {
+            name: "Expert",
+            explain: "🌐 Man-in-the-Middle (MITM) – attacker inserts between client & server using ARP spoofing. Tools: arpspoof, dsniff. Biggest historical hacks: eBay 233 million users, Albert Gonzalez 170 million credit cards. Defenses: no default passwords, rotation every 30 days, audits, complex policies.",
+            demo: "📡 Pages 25-26 and 15: MITM steps: <code>echo 1 > /proc/sys/net/ipv4/ip_forward</code>, then <code>arpspoof -t clientIP serverIP</code> and reverse, then <code>dsniff</code> to sniff passwords. Always use HTTPS and endpoint authentication.",
+            questions: [
+                { text: "A Man-in-the-Middle (MITM) attack allows the attacker to:", type: "mc", options: ["Only monitor bandwidth", "Intercept and modify communication between parties", "Permanently delete server files"], correctIndex: 1, correctText: "Intercept and modify communication between parties" },
+                { text: "According to the book, a teenager hacked US military systems and left a message 'your security is crap'.", type: "tf", options: ["True", "False"], correctIndex: 0, correctText: "True" },
+                { text: "The book recommends changing passwords every _______ days to defend against cracking.", type: "complete", options: ["7", "30", "90"], correctIndex: 1, correctText: "30" }
+            ]
+        }
+    };
+
+    // Prerequisite screener (3 questions) -> returns recommended level
+    const screenerQuestions = [
+        { text: "What does 'system hacking' mean in this book?", options: ["Breaking into computers to steal money", "Gaining access to computers and viewing/creating data", "Building a new operating system"], correct: 1 },
+        { text: "Which tool does the book use for password cracking on Kali Linux?", options: ["Photoshop", "Hydra", "WordPad"], correct: 1 },
+        { text: "Steganography hides data:", options: ["Inside other files like images", "By deleting files", "Only in emails"], correct: 0 }
+    ];
+
+    // Application state
+    let currentStep = 'screener';   // 'screener' or 'levelQuiz'
+    let selectedLevel = null;       // 1..5
+    let userAnswers = [];            // for current level quiz: array of {selectedIdx, isCorrect?}
+    let quizLock = false;            // prevent double submission
+    let screenerScore = 0;
+    let screenerTaken = false;
+
+    const appRoot = document.getElementById('appRoot');
+
+    function render() {
+        if (currentStep === 'screener') {
+            renderScreener();
+        } else if (currentStep === 'levelQuiz' && selectedLevel) {
+            renderLevelQuiz(selectedLevel);
+        } else {
+            // fallback: show level selection after screener maybe
+            renderLevelSelectionAfterScreener();
+        }
+    }
+
+    function renderScreener() {
+        let html = `<div class="card"><h2>🔍 Initial Prerequisite Screener</h2>
+        <p>Answer 3 simple questions based on the document. This helps suggest your starting level.</p>`;
+        screenerQuestions.forEach((q, idx) => {
+            const stored = window._screenerSelections ? window._screenerSelections[idx] : null;
+            html += `<div class="question-box" data-qidx="${idx}">
+                        <div class="question-text">${idx+1}. ${q.text}</div>`;
+            q.options.forEach((opt, optIdx) => {
+                const isChecked = (stored === optIdx);
+                html += `<label class="option" style="display:flex; align-items:center; gap:12px;">
+                            <input type="radio" name="screener_${idx}" value="${optIdx}" ${isChecked ? 'checked' : ''}> 
+                            <span>${opt}</span>
+                         </label>`;
+            });
+            html += `</div>`;
+        });
+        html += `<div class="btn-group"><button id="submitScreenerBtn">📊 Submit & get recommended level</button></div>
+                <div id="screenerFeedback" class="feedback" style="display:none;"></div>`;
+        html += `</div>`;
+        appRoot.innerHTML = html;
+
+        // attach event listener after render
+        document.getElementById('submitScreenerBtn')?.addEventListener('click', () => {
+            let score = 0;
+            const selections = [];
+            for (let i=0; i<screenerQuestions.length; i++) {
+                const radios = document.querySelectorAll(`input[name="screener_${i}"]`);
+                let selectedVal = -1;
+                for (let r of radios) {
+                    if (r.checked) selectedVal = parseInt(r.value);
+                }
+                selections.push(selectedVal);
+                if (selectedVal === screenerQuestions[i].correct) score++;
+            }
+            screenerScore = score;
+            window._screenerSelections = selections;
+            let recommended = 1;
+            if (score === 0) recommended = 1;
+            else if (score === 1) recommended = 2;
+            else if (score >= 2) recommended = 3;   // 2 or 3 correct => start level 3 or can pick higher
+            const feedbackDiv = document.getElementById('screenerFeedback');
+            feedbackDiv.style.display = 'block';
+            feedbackDiv.innerHTML = `✅ You answered ${score} out of 3 correctly.<br>
+            📌 <strong>Recommended starting level: ${recommended} (${levelsData[recommended].name})</strong><br>
+            You can now choose ANY level below (1 to 5). The system will adapt to your choice.`;
+            // show level selection buttons after screener
+            renderLevelSelectionAfterScreener(true);
+        });
+    }
+
+    function renderLevelSelectionAfterScreener(keepScreenerResults = false) {
+        if (!keepScreenerResults && currentStep !== 'screener') {
+            // just show level selection
+        }
+        const levelHtml = `<div class="card" style="margin-top:20px;">
+            <h2>🎯 Choose your learning level</h2>
+            <p>Select the complexity that matches your goal. Each level includes: Explanation, Demonstration, 3 Quiz questions with feedback.</p>
+            <div class="level-buttons" id="levelSelector">
+                ${[1,2,3,4,5].map(lvl => `<button class="level-btn" data-level="${lvl}">Level ${lvl} : ${levelsData[lvl].name}</button>`).join('')}
+            </div>
+            <div id="levelInfo" style="margin-top:15px;"></div>
+        </div>`;
+        if (keepScreenerResults) {
+            const container = appRoot;
+            const existing = container.querySelector('#levelSelectorBlock');
+            if (existing) existing.remove();
+            const newDiv = document.createElement('div');
+            newDiv.id = 'levelSelectorBlock';
+            newDiv.innerHTML = levelHtml;
+            container.appendChild(newDiv);
+            attachLevelButtons();
+        } else {
+            // replace main content
+            appRoot.innerHTML = levelHtml;
+            attachLevelButtons();
+        }
+    }
+
+    function attachLevelButtons() {
+        document.querySelectorAll('.level-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const lvl = parseInt(btn.dataset.level);
+                if (isNaN(lvl)) return;
+                selectedLevel = lvl;
+                currentStep = 'levelQuiz';
+                // reset answers for new quiz
+                userAnswers = [];
+                quizLock = false;
+                render();
+            });
+        });
+    }
+
+    function renderLevelQuiz(level) {
+        const levelData = levelsData[level];
+        if (!levelData) return;
+        const savedAnswers = userAnswers.length ? userAnswers : new Array(levelData.questions.length).fill(null);
+        
+        let html = `<div class="card">
+            <span class="badge">🔐 Level ${level} – ${levelData.name}</span>
+            <div class="explain-demo"><strong>📖 EXPLAIN:</strong><br> ${levelData.explain}</div>
+            <div class="explain-demo"><strong>🧪 DEMONSTRATE (from the book):</strong><br> ${levelData.demo}</div>
+            <hr>
+            <h3>📝 Quiz – ${levelData.name} level</h3>
+            <p>Answer each question. You'll get feedback and a chance to reconsider before final results.</p>`;
+        
+        levelData.questions.forEach((q, idx) => {
+            const currentSaved = savedAnswers[idx];
+            let selectedOptIdx = (currentSaved && typeof currentSaved.selectedIdx === 'number') ? currentSaved.selectedIdx : -1;
+            html += `<div class="question-box" data-qidx="${idx}">
+                        <div class="question-text">❓ ${idx+1}. ${q.text}</div>`;
+            if (q.type === 'mc' || q.type === 'complete') {
+                q.options.forEach((opt, optIdx) => {
+                    const isChecked = (selectedOptIdx === optIdx);
+                    html += `<label class="option" style="display:flex; align-items:center; gap:10px;">
+                                <input type="radio" name="q_${idx}" value="${optIdx}" ${isChecked ? 'checked' : ''}>
+                                <span>${opt}</span>
+                            </label>`;
+                });
+            } else if (q.type === 'tf') {
+                q.options.forEach((opt, optIdx) => {
+                    const isChecked = (selectedOptIdx === optIdx);
+                    html += `<label class="option" style="display:flex; align-items:center; gap:10px;">
+                                <input type="radio" name="q_${idx}" value="${optIdx}" ${isChecked ? 'checked' : ''}>
+                                <span>${opt}</span>
+                            </label>`;
+                });
+            }
+            // show feedback if already answered and incorrect might be shown later, but we will show after "Check Answers" temporarily
+            if (currentSaved && currentSaved.feedbackShown) {
+                html += `<div class="feedback">ℹ️ Your previous choice: ${currentSaved.selectedText}. ${currentSaved.correct ? '✅ Correct!' : '❌ Incorrect. ' + currentSaved.explanation}</div>`;
+            }
+            html += `</div>`;
+        });
+        
+        html += `<div class="btn-group">
+                    <button id="checkQuizBtn">✔️ Check my answers & get feedback</button>
+                    <button id="resetLevelBtn" class="secondary">🔄 Reset this level</button>
+                    <button id="backToLevelsBtn" class="secondary">🔙 Choose different level</button>
+                 </div>
+                 <div id="finalResultPanel" style="margin-top:20px;"></div>
+                </div>`;
+        appRoot.innerHTML = html;
+        
+        // event listeners
+        document.getElementById('checkQuizBtn')?.addEventListener('click', () => evaluateLevelQuiz(level));
+        document.getElementById('resetLevelBtn')?.addEventListener('click', () => {
+            userAnswers = [];
+            renderLevelQuiz(level);
+        });
+        document.getElementById('backToLevelsBtn')?.addEventListener('click', () => {
+            currentStep = 'screener';
+            selectedLevel = null;
+            userAnswers = [];
+            render();
+        });
+        // auto-save radio changes temporarily
+        const radios = document.querySelectorAll('input[type="radio"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const name = radio.getAttribute('name');
+                const qIdx = parseInt(name.split('_')[1]);
+                const selectedVal = parseInt(radio.value);
+                if (!isNaN(qIdx)) {
+                    if (!userAnswers[qIdx]) userAnswers[qIdx] = {};
+                    userAnswers[qIdx].selectedIdx = selectedVal;
+                    // do not store full text now, will recompute on evaluation
+                }
+            });
+        });
+    }
+    
+    function evaluateLevelQuiz(level) {
+        const levelData = levelsData[level];
+        if (!levelData) return;
+        // gather latest radio selections
+        for (let i=0; i<levelData.questions.length; i++) {
+            const radios = document.querySelectorAll(`input[name="q_${i}"]`);
+            let selected = -1;
+            for (let r of radios) {
+                if (r.checked) selected = parseInt(r.value);
+            }
+            if (!userAnswers[i]) userAnswers[i] = {};
+            userAnswers[i].selectedIdx = selected !== -1 ? selected : null;
+        }
+        
+        let score = 0;
+        const resultsPerQ = [];
+        for (let i=0; i<levelData.questions.length; i++) {
+            const q = levelData.questions[i];
+            const answerObj = userAnswers[i];
+            const selectedIdx = (answerObj && answerObj.selectedIdx !== undefined) ? answerObj.selectedIdx : -1;
+            let isCorrect = false;
+            let correctAnswerText = "";
+            let userChoiceText = "";
+            if (selectedIdx !== -1) {
+                if (q.type === 'tf' || q.type === 'mc' || q.type === 'complete') {
+                    if (selectedIdx === q.correctIndex) isCorrect = true;
+                    userChoiceText = q.options[selectedIdx] || "";
+                    correctAnswerText = q.options[q.correctIndex];
+                }
+                if (isCorrect) score++;
+            } else {
+                userChoiceText = "(no answer selected)";
+                correctAnswerText = q.options[q.correctIndex];
+            }
+            resultsPerQ.push({ isCorrect, userChoiceText, correctAnswerText, questionText: q.text, feedbackMsg: isCorrect ? "Great! That's correct." : `Incorrect. The right answer: ${correctAnswerText}. Review the explanation above.` });
+            // store feedback details
+            if (userAnswers[i]) {
+                userAnswers[i].correct = isCorrect;
+                userAnswers[i].selectedText = userChoiceText;
+                userAnswers[i].explanation = resultsPerQ[i].feedbackMsg;
+                userAnswers[i].feedbackShown = true;
+            }
+        }
+        
+        // Render feedback per question again
+        renderLevelQuiz(level); // re-render to show feedback
+        // additional final result panel
+        const finalPanel = document.getElementById('finalResultPanel');
+        if (finalPanel) {
+            const passMark = score >= 2 ? "✅ Ready to advance!" : "📚 Consider reviewing this level again.";
+            let nextAdvice = "";
+            if (score === 3) nextAdvice = ` Excellent! You may try Level ${Math.min(5, level+1)}.`;
+            else if (score === 0) nextAdvice = ` We recommend restarting this level or going one level down.`;
+            else nextAdvice = ` Review the Explain/Demo sections and try again.`;
+            finalPanel.innerHTML = `<div class="result-area">
+                <strong>📊 Your score: ${score} / 3</strong><br>
+                ${passMark} ${nextAdvice}<br>
+                <span style="font-size:0.85rem;">💡 Use "Reset this level" to retry quizzes or choose another level.</span>
+            </div>`;
+        }
+        // scroll to results
+        finalPanel?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    // Initial render
+    render();
+</script>
+</body>
+</html>
