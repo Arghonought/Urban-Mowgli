@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>HarmonyTrack: ADHD & ASD Behavior Guide</title>
+    <!-- Chart.js CDN for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- html2canvas for optional report snapshots (simple) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Nunito', 'Quicksand', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f9f2e7 0%, #ffe6f0 100%);
+            margin: 0;
+            padding: 20px;
+            color: #1e2a3e;
+        }
+        .app-container {
+            max-width: 650px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(2px);
+            border-radius: 48px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            padding: 20px 18px 30px;
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 1.9rem;
+            margin: 0 0 5px;
+            background: linear-gradient(135deg, #D96C6C, #F4A261);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+        }
+        .sub {
+            text-align: center;
+            color: #5e6b7c;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .area-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+        .area-btn {
+            background: #f4f1ea;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            color: #3d2b1f;
+        }
+        .area-btn.active {
+            background: #FFB347;
+            color: white;
+            box-shadow: 0 6px 12px rgba(255,180,70,0.3);
+            transform: scale(0.98);
+        }
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: 0.2s;
+            border: 1px solid #ffe0c0;
+        }
+        .card h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #c44536;
+            font-weight: 700;
+        }
+        .rating-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        .rating-option {
+            background: #f0f2f5;
+            border-radius: 40px;
+            padding: 6px 18px;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid transparent;
+        }
+        .rating-option.selected {
+            background: #F4A261;
+            color: white;
+            border-color: #e07c2c;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            background: #fef9f0;
+            border: 1px solid #ffd9b5;
+            border-radius: 28px;
+            padding: 10px 16px;
+            width: 100%;
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+        button.record-btn {
+            background: #2A9D8F;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+            margin-top: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 5px 0 #1e6b5e;
+        }
+        button.record-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1e6b5e;
+        }
+        .report-area {
+            background: #fff9ef;
+            border-radius: 28px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        canvas {
+            max-height: 220px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .summary-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        .sm-btn {
+            background: #e7e2d4;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .download-btn {
+            background: #6c4e3e;
+            color: white;
+        }
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #8b7a6b;
+        }
+        .flex-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .badge-icon {
+            font-size: 1.5rem;
+        }
+        hr {
+            margin: 12px 0;
+            border-color: #ffddbb;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <h1>🧠 HarmonyTrack</h1>
+    <div class="sub">✨ your daily compass · ADHD+ASD friendly ✨</div>
+
+    <!-- area selector -->
+    <div class="area-grid">
+        <button class="area-btn" data-area="emotional">❤️ Emotional</button>
+        <button class="area-btn" data-area="mental">🧘 Mental</button>
+        <button class="area-btn" data-area="physical">💪 Physical</button>
+        <button class="area-btn" data-area="social">👥 Social</button>
+        <button class="area-btn" data-area="diet">🥗 Diet</button>
+    </div>
+
+    <!-- DYNAMIC FORM PANEL -->
+    <div id="formPanel" class="card"></div>
+
+    <!-- quick action record -->
+    <button id="recordEntryBtn" class="record-btn">📝 SAVE TODAY'S ENTRY ➕</button>
+
+    <!-- report & graphs section -->
+    <div class="report-area">
+        <h3>📊 Behaviour Map & Report</h3>
+        <canvas id="trendChart" width="400" height="200" style="max-height: 200px;"></canvas>
+        <div id="reportText" style="background:#faeedb; border-radius: 24px; padding: 12px; margin: 8px 0;">✨ Select a period summary below ✨</div>
+        <div class="summary-buttons">
+            <button class="sm-btn" data-period="week">🗓️ Weekly summary</button>
+            <button class="sm-btn" data-period="month">📆 Monthly summary</button>
+            <button class="sm-btn" data-period="quarter">📅 3 Months</button>
+            <button class="sm-btn" data-period="year">🌟 Yearly</button>
+            <button class="sm-btn download-btn" id="saveReportBtn">💾 Save report & data (JSON)</button>
+        </div>
+        <div style="font-size: 12px; text-align:center;">⭐ Tip: record multiple times per day — each entry keeps date & time.</div>
+    </div>
+    <footer>gentle reminder: each period ends, download your file and store safely ❤️</footer>
+</div>
+
+<script>
+    // ---------- DATA MODEL ----------
+    let entries = [];  // each entry: { timestamp, dateStr, timeStr, fullDataObj }
+    
+    // load from localStorage
+    function loadData() {
+        const stored = localStorage.getItem("HarmonyTrack_ADHD_data");
+        if(stored) {
+            try{
+                entries = JSON.parse(stored);
+            }catch(e){}
+        }
+        if(!entries.length) addDemoEntry();
+        renderChartAndReport("week"); // default chart week trends
+        updateCurrentForm();
+    }
+    
+    function addDemoEntry() {
+        const demo = {
+            timestamp: Date.now() - 2*24*3600*1000,
+            dateStr: new Date(Date.now() - 2*24*3600*1000).toLocaleDateString(),
+            timeStr: "09:32",
+            data: {
+                emotional: { mood: 3, dog: { fed: true, walked: true, played: false } },
+                mental: { anxiety: 2 },
+                physical: { sleep: 3, menstruation: { phase: "follicular", wellbeing: 3, discomfort: 1 }, relaxation: { durationMin: 20, activity: "meditation" } },
+                diet: { water: 3, healthyMeals: 2, protein: { amount: "moderate", what: "chicken" }, sugar: { amount: "low", what: "cookie" }, fruit: { amount: "1 portion", what: "apple" }, salads: { amount: "1", what: "garden" }, pulses: { amount: "0", what: "" }, rootVeg: { amount: "small", what: "carrot" } },
+                social: { meetingFriends: { did: "call", feeling: 4 }, partner: { did: "cooking", feeling: 5 }, meetingOthers: { did: "therapy group", feeling: 3 }, work: { did: "focus session", feeling: 3 } }
+            }
+        };
+        const demo2 = {
+            timestamp: Date.now() - 1*24*3600*1000,
+            dateStr: new Date(Date.now() - 1*24*3600*1000).toLocaleDateString(),
+            timeStr: "18:15",
+            data: {
+                emotional: { mood: 4, dog: { fed: true, walked: false, played: true } },
+                mental: { anxiety: 3 },
+                physical: { sleep: 4, menstruation: { phase: "luteal", wellbeing: 2, discomfort: 2 }, relaxation: { durationMin: 10, activity: "breathing" } },
+                diet: { water: 4, healthyMeals: 3, protein: { amount: "high", what: "fish" }, sugar: { amount: "moderate", what: "cake" }, fruit: { amount: "2", what: "berries" }, salads: { amount: "1", what: "kale" }, pulses: { amount: "1", what: "lentils" }, rootVeg: { amount: "1", what: "sweet potato" } },
+                social: { meetingFriends: { did: "video chat", feeling: 4 }, partner: { did: "walk", feeling: 5 }, meetingOthers: { did: "none", feeling: 3 }, work: { did: "meeting", feeling: 2 } }
+            }
+        };
+        entries = [demo, demo2];
+        saveToLocal();
+    }
+    
+    function saveToLocal() {
+        localStorage.setItem("HarmonyTrack_ADHD_data", JSON.stringify(entries));
+    }
+    
+    // ---- helper: get numeric scores for graph (composite wellbeing) ----
+    function getWellbeingScore(entryData) {
+        let total = 0;
+        let parts = 0;
+        if(entryData.emotional?.mood) { total += entryData.emotional.mood; parts++; }
+        if(entryData.mental?.anxiety) { total += (6 - entryData.mental.anxiety); parts++; } // invert anxiety (1=high anxiety-> low score)
+        if(entryData.physical?.sleep) { total += entryData.physical.sleep; parts++; }
+        if(entryData.diet?.water) { total += entryData.diet.water; parts++; }
+        if(entryData.diet?.healthyMeals) { total += entryData.diet.healthyMeals; parts++; }
+        // social average feeling
+        if(entryData.social) {
+            let feelings = [];
+            if(entryData.social.meetingFriends?.feeling) feelings.push(entryData.social.meetingFriends.feeling);
+            if(entryData.social.partner?.feeling) feelings.push(entryData.social.partner.feeling);
+            if(entryData.social.meetingOthers?.feeling) feelings.push(entryData.social.meetingOthers.feeling);
+            if(entryData.social.work?.feeling) feelings.push(entryData.social.work.feeling);
+            if(feelings.length) { total += (feelings.reduce((a,b)=>a+b,0)/feelings.length); parts++; }
+        }
+        return parts ? total / parts : 3;
+    }
+    
+    // ---- CHART rendering (last 7 days trend) ----
+    let chart;
+    function renderChartAndReport(periodType = "week") {
+        if(entries.length === 0) return;
+        const sorted = [...entries].sort((a,b)=>a.timestamp - b.timestamp);
+        let filtered = [];
+        const now = Date.now();
+        if(periodType === "week") filtered = sorted.filter(e => e.timestamp > now - 7*24*3600*1000);
+        else if(periodType === "month") filtered = sorted.filter(e => e.timestamp > now - 30*24*3600*1000);
+        else if(periodType === "quarter") filtered = sorted.filter(e => e.timestamp > now - 90*24*3600*1000);
+        else filtered = sorted.filter(e => e.timestamp > now - 365*24*3600*1000);
+        
+        if(filtered.length === 0) {
+            document.getElementById("reportText").innerHTML = `⚠️ No entries in this ${periodType} period. Add some logs!`;
+            if(chart) chart.destroy();
+            return;
+        }
+        const labels = filtered.map(e => `${e.dateStr} ${e.timeStr}`);
+        const scores = filtered.map(e => getWellbeingScore(e.data));
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Wellbeing Score (higher = better)',
+                    data: scores,
+                    borderColor: '#E9A56D',
+                    backgroundColor: 'rgba(244,162,97,0.1)',
+                    tension: 0.2,
+                    fill: true,
+                    pointBackgroundColor: '#c44536',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: { y: { min: 0, max: 6, title: { display: true, text: 'Balance Score' } } }
+            }
+        });
+        
+        // generate detailed report text based on period + aggregated info
+        let avgScore = (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1);
+        let reportHtml = `<strong>📋 ${periodType.toUpperCase()} REPORT</strong> · ${filtered.length} records<br>⭐ Average Wellbeing Score: ${avgScore}/6<br>✨ Highlights: `;
+        let lastEntry = filtered[filtered.length-1].data;
+        reportHtml += `Recent mood: ${lastEntry.emotional?.mood ? getMoodLabel(lastEntry.emotional.mood) : 'N/A'}, Anxiety: ${lastEntry.mental?.anxiety || '?'}/5 (lower better).<br>💡 Tip: view daily notes in graph. Save file periodically.`;
+        document.getElementById("reportText").innerHTML = reportHtml;
+    }
+    
+    function getMoodLabel(val) { const moods = ["Gloomy","Low","Balanced","Good","Over-excited"]; return moods[val-1] || "ok"; }
+    
+    // ---- dynamic form based on active area ----
+    let currentArea = "emotional";
+    let currentFormData = {}; // holds temporary unsaved (but we will capture on record)
+    
+    function updateCurrentForm() {
+        const container = document.getElementById("formPanel");
+        if(currentArea === "emotional") container.innerHTML = getEmotionalForm();
+        else if(currentArea === "mental") container.innerHTML = getMentalForm();
+        else if(currentArea === "physical") container.innerHTML = getPhysicalForm();
+        else if(currentArea === "social") container.innerHTML = getSocialForm();
+        else if(currentArea === "diet") container.innerHTML = getDietForm();
+        attachRatingEvents();
+    }
+    
+    function getEmotionalForm() {
+        return `<h3>❤️ Emotional check 🐾</h3>
+                <label>Mood (1 Gloomy → 5 Over-excited)</label><div class="rating-group" id="moodGroup">${generateRating(5, "mood")}</div>
+                <label>🐕 My Dog:</label>
+                <div><input type="checkbox" id="dogFed"> 🍽️ Fed dog &nbsp;&nbsp;<input type="checkbox" id="dogWalk"> 🚶 Walked dog &nbsp;&nbsp;<input type="checkbox" id="dogPlay"> 🎾 Played with dog</div>`;
+    }
+    function getMentalForm() {
+        return `<h3>🧠 Mental clarity</h3>
+                <label>Anxiety level (1 = calm, 5 = very high)</label><div class="rating-group" id="anxietyGroup">${generateRating(5, "anxiety")}</div>`;
+    }
+    function getPhysicalForm() {
+        return `<h3>💪 Physical rhythm</h3>
+                <label>Sleep quality (1 terrible → 5 amazing)</label><div class="rating-group" id="sleepGroup">${generateRating(5, "sleep")}</div>
+                <label>🩸 Menstruation phase:</label><select id="menstrualPhase"><option value="follicular">Follicular</option><option value="luteal">Luteal</option><option value="menstruation">Menstruation</option><option value="ovulation">Ovulation</option></select>
+                <label>Wellbeing (1 low → 5 great)</label><div class="rating-group" id="menWellGroup">${generateRating(5, "menWell")}</div>
+                <label>Discomfort (1 none → 5 severe)</label><div class="rating-group" id="menDisGroup">${generateRating(5, "menDis")}</div>
+                <label>Relaxation activity: duration (min) <input type="number" id="relaxDuration" placeholder="minutes"></label>
+                <label>Activity: <input type="text" id="relaxActivity" placeholder="e.g., yoga, bath"></label>`;
+    }
+    function getSocialForm() {
+        return `<h3>👥 Social connections</h3>
+                ${socialItem("meetingFriends", "👭 Meeting friends")}
+                ${socialItem("partner", "💑 Partner nice activity")}
+                ${socialItem("meetingOthers", "🌍 Meeting others")}
+                ${socialItem("work", "💼 Work interactions")}`;
+    }
+    function socialItem(key, label) {
+        return `<div style="border-bottom:1px solid #ffe0c0; margin:10px 0"><strong>${label}</strong><br>
+        <input type="text" id="${key}_what" placeholder="what did you do?"><br>
+        <label>How did it make you feel? (1-5)</label><div class="rating-group" id="${key}_feelGroup">${generateRating(5, `${key}_feel`)}</div></div>`;
+    }
+    function getDietForm() {
+        return `<h3>🥗 Nourishment log</h3>
+                <label>💧 Water intake (1 very low → 5 optimal)</label><div class="rating-group" id="waterGroup">${generateRating(5, "water")}</div>
+                <label>🥦 Healthy meals/snacks (0 to 5)</label><div class="rating-group" id="healthyMealsGroup">${generateRating(6, "healthyMeals")}</div>
+                <label>Protein: amount <input id="proteinAmt" placeholder="low/med/high"> & what? <input id="proteinWhat"></label>
+                <label>Sugar/carbs: amount <input id="sugarAmt" placeholder="low/med/high"> & what? <input id="sugarWhat"></label>
+                <label>Fruit: amount <input id="fruitAmt"> & what? <input id="fruitWhat"></label>
+                <label>Salads: amount <input id="saladAmt"> & what? <input id="saladWhat"></label>
+                <label>Pulses: amount <input id="pulseAmt"> & what? <input id="pulseWhat"></label>
+                <label>Root vegetables: amount <input id="rootAmt"> & what? <input id="rootWhat"></label>`;
+    }
+    
+    function generateRating(max, groupIdPrefix) {
+        let html = "";
+        for(let i=1; i<=max; i++) {
+            html += `<div class="rating-option" data-value="${i}" data-group="${groupIdPrefix}">${i}</div>`;
+        }
+        return html;
+    }
+    
+    function attachRatingEvents() {
+        document.querySelectorAll('.rating-option').forEach(el => {
+            el.removeEventListener('click', ratingHandler);
+            el.addEventListener('click', ratingHandler);
+        });
+    }
+    function ratingHandler(e) {
+        const group = e.currentTarget.dataset.group;
+        const val = e.currentTarget.dataset.value;
+        document.querySelectorAll(`.rating-option[data-group="${group}"]`).forEach(opt => opt.classList.remove('selected'));
+        e.currentTarget.classList.add('selected');
+    }
+    
+    // Collect form data into an object according to current active area plus merge with existing unsaved? We'll build full entry snapshot from all current UI fields
+    function gatherCurrentEntry() {
+        let entryData = {
+            emotional: { mood: 3, dog: { fed: false, walked: false, played: false } },
+            mental: { anxiety: 3 },
+            physical: { sleep: 3, menstruation: { phase: "follicular", wellbeing: 3, discomfort: 1 }, relaxation: { durationMin: 0, activity: "" } },
+            diet: { water: 3, healthyMeals: 2, protein: { amount: "", what: "" }, sugar: { amount: "", what: "" }, fruit: { amount: "", what: "" }, salads: { amount: "", what: "" }, pulses: { amount: "", what: "" }, rootVeg: { amount: "", what: "" } },
+            social: { meetingFriends: { did: "", feeling: 3 }, partner: { did: "", feeling: 3 }, meetingOthers: { did: "", feeling: 3 }, work: { did: "", feeling: 3 } }
+        };
+        // emotional mood
+        const moodSelected = document.querySelector('.rating-option.selected[data-group="mood"]');
+        if(moodSelected) entryData.emotional.mood = parseInt(moodSelected.dataset.value);
+        if(document.getElementById("dogFed")) entryData.emotional.dog.fed = document.getElementById("dogFed").checked;
+        if(document.getElementById("dogWalk")) entryData.emotional.dog.walked = document.getElementById("dogWalk").checked;
+        if(document.getElementById("dogPlay")) entryData.emotional.dog.played = document.getElementById("dogPlay").checked;
+        // mental
+        const anxSel = document.querySelector('.rating-option.selected[data-group="anxiety"]');
+        if(anxSel) entryData.mental.anxiety = parseInt(anxSel.dataset.value);
+        // physical
+        const sleepSel = document.querySelector('.rating-option.selected[data-group="sleep"]');
+        if(sleepSel) entryData.physical.sleep = parseInt(sleepSel.dataset.value);
+        const menstrualPhase = document.getElementById("menstrualPhase");
+        if(menstrualPhase) entryData.physical.menstruation.phase = menstrualPhase.value;
+        const wellSel = document.querySelector('.rating-option.selected[data-group="menWell"]');
+        if(wellSel) entryData.physical.menstruation.wellbeing = parseInt(wellSel.dataset.value);
+        const disSel = document.querySelector('.rating-option.selected[data-group="menDis"]');
+        if(disSel) entryData.physical.menstruation.discomfort = parseInt(disSel.dataset.value);
+        if(document.getElementById("relaxDuration")) entryData.physical.relaxation.durationMin = parseInt(document.getElementById("relaxDuration").value)||0;
+        if(document.getElementById("relaxActivity")) entryData.physical.relaxation.activity = document.getElementById("relaxActivity").value;
+        // diet
+        const waterSel = document.querySelector('.rating-option.selected[data-group="water"]');
+        if(waterSel) entryData.diet.water = parseInt(waterSel.dataset.value);
+        const healthSel = document.querySelector('.rating-option.selected[data-group="healthyMeals"]');
+        if(healthSel) entryData.diet.healthyMeals = parseInt(healthSel.dataset.value);
+        if(document.getElementById("proteinAmt")) entryData.diet.protein = { amount: document.getElementById("proteinAmt").value, what: document.getElementById("proteinWhat").value };
+        if(document.getElementById("sugarAmt")) entryData.diet.sugar = { amount: document.getElementById("sugarAmt").value, what: document.getElementById("sugarWhat").value };
+        if(document.getElementById("fruitAmt")) entryData.diet.fruit = { amount: document.getElementById("fruitAmt").value, what: document.getElementById("fruitWhat").value };
+        if(document.getElementById("saladAmt")) entryData.diet.salads = { amount: document.getElementById("saladAmt").value, what: document.getElementById("saladWhat").value };
+        if(document.getElementById("pulseAmt")) entryData.diet.pulses = { amount: document.getElementById("pulseAmt").value, what: document.getElementById("pulseWhat").value };
+        if(document.getElementById("rootAmt")) entryData.diet.rootVeg = { amount: document.getElementById("rootAmt").value, what: document.getElementById("rootWhat").value };
+        // social dynamic fields
+        for(let key of ["meetingFriends","partner","meetingOthers","work"]) {
+            const whatInput = document.getElementById(`${key}_what`);
+            if(whatInput) entryData.social[key].did = whatInput.value;
+            const feelGroup = document.querySelector(`.rating-option.selected[data-group="${key}_feel"]`);
+            if(feelGroup) entryData.social[key].feeling = parseInt(feelGroup.dataset.value);
+        }
+        return entryData;
+    }
+    
+    function saveCurrentEntry() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString();
+        const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        const fullData = gatherCurrentEntry();
+        const newEntry = {
+            timestamp: Date.now(),
+            dateStr: dateStr,
+            timeStr: timeStr,
+            data: fullData
+        };
+        entries.push(newEntry);
+        saveToLocal();
+        renderChartAndReport("week");
+        alert(`✅ Recorded on ${dateStr} at ${timeStr} ! Keep tracking 🌈`);
+        // optional reset visual feedback
+        updateCurrentForm(); // reset selection visuals
+    }
+    
+    function generateFullPeriodReport(periodType) {
+        let nowTime = Date.now();
+        let filtered = entries.filter(e => {
+            if(periodType === "week") return e.timestamp > nowTime - 7*86400000;
+            if(periodType === "month") return e.timestamp > nowTime - 30*86400000;
+            if(periodType === "quarter") return e.timestamp > nowTime - 90*86400000;
+            if(periodType === "year") return e.timestamp > nowTime - 365*86400000;
+            return true;
+        });
+        const summary = `HARMONYTRACK REPORT — ${periodType.toUpperCase()} (${filtered.length} entries)\n`+
+            `Generated: ${new Date().toLocaleString()}\n`+
+            `Avg wellbeing: ${(filtered.map(e=>getWellbeingScore(e.data)).reduce((a,b)=>a+b,0)/(filtered.length||1)).toFixed(2)}/6\n`+
+            `Recent moods: ${filtered.slice(-3).map(e=>e.data.emotional?.mood||'-').join(', ')}\n`+
+            `Anxiety last: ${filtered[filtered.length-1]?.data.mental?.anxiety||'N/A'}\n`+
+            `Full logs: ${JSON.stringify(filtered.map(e=>({date:e.dateStr, time:e.timeStr, mood:e.data.emotional?.mood, anxiety:e.data.mental?.anxiety})), null, 2)}`;
+        return summary;
+    }
+    
+    function downloadReport(periodType) {
+        const content = generateFullPeriodReport(periodType);
+        const blob = new Blob([content], {type:"text/plain"});
+        const a = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = `harmonytrack_${periodType}_${new Date().toISOString().slice(0,19)}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+        alert(`📁 ${periodType} report saved. Please store safely.`);
+    }
+    
+    function saveAllDataFile() {
+        const fullExport = { exportDate: new Date().toISOString(), totalEntries: entries.length, entries: entries };
+        const blob = new Blob([JSON.stringify(fullExport, null, 2)], {type:"application/json"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `HarmonyTrack_full_backup_${new Date().toISOString().slice(0,19)}.json`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        alert("💾 Full behaviour data saved! Keep in a safe folder.");
+    }
+    
+    // event listeners
+    document.querySelectorAll(".area-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            document.querySelectorAll(".area-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentArea = btn.dataset.area;
+            updateCurrentForm();
+        });
+    });
+    document.getElementById("recordEntryBtn").addEventListener("click", saveCurrentEntry);
+    document.querySelectorAll(".sm-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            if(btn.id === "saveReportBtn") saveAllDataFile();
+            else {
+                let period = btn.dataset.period;
+                renderChartAndReport(period);
+                downloadReport(period);
+            }
+        });
+    });
+    
+    loadData();
+    document.querySelector(".area-btn[data-area='emotional']").classList.add("active");
+</script>
+</body>
+</html>
