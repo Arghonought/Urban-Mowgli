@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>True Prompt Builder - Learn to Ask, Learn to Learn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Warm, accessible color palette */
+        :root {
+            --cream: #FFF8F0;
+            --sage-light: #E8F0E8;
+            --sage: #C5D5C5;
+            --terracotta: #E07A5F;
+            --terracotta-light: #F0A68B;
+            --teal: #2C6E6B;
+            --teal-light: #4A8E8B;
+            --gold: #F4D58D;
+            --rust: #BC4A2C;
+            --text-dark: #2C2C2C;
+            --text-soft: #4A4A4A;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: var(--cream);
+            color: var(--text-dark);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Quote header - unmissable */
+        .quote-header {
+            text-align: center;
+            padding: 32px 20px;
+            background: linear-gradient(135deg, var(--sage-light) 0%, var(--cream) 100%);
+            border-radius: 24px;
+            margin-bottom: 32px;
+            border-left: 8px solid var(--terracotta);
+        }
+
+        .quote-header p {
+            font-size: 1.6rem;
+            font-weight: 500;
+            color: var(--teal);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.4;
+        }
+
+        .quote-header small {
+            display: block;
+            margin-top: 12px;
+            color: var(--text-soft);
+            font-style: italic;
+        }
+
+        /* Level selector - simple, visual */
+        .level-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--sage);
+        }
+
+        .level-label {
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: block;
+            color: var(--teal);
+        }
+
+        .level-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .level-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            border: 2px solid var(--sage);
+            background: var(--cream);
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-dark);
+        }
+
+        .level-btn.active {
+            background: var(--terracotta);
+            border-color: var(--terracotta);
+            color: white;
+        }
+
+        .level-btn:hover:not(.active) {
+            background: var(--sage-light);
+            border-color: var(--teal);
+        }
+
+        /* Two column layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid var(--sage);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--teal);
+            border-left: 4px solid var(--terracotta);
+            padding-left: 14px;
+        }
+
+        /* Form groups */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--sage);
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: var(--cream);
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--terracotta);
+            box-shadow: 0 0 0 3px rgba(224,122,95,0.2);
+        }
+
+        /* Sliders */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            padding: 0;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--sage);
+            border-radius: 10px;
+        }
+
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--terracotta);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            min-width: 45px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--teal);
+        }
+
+        /* Preview box */
+        .preview-box {
+            background: var(--cream);
+            border: 2px solid var(--sage);
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 200px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .reflection-box {
+            background: var(--sage-light);
+            border-left: 6px solid var(--gold);
+            padding: 18px;
+            border-radius: 18px;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        .resources-box {
+            background: var(--white);
+            border: 2px solid var(--gold);
+            border-radius: 18px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .resources-box a {
+            color: var(--teal);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-block;
+            margin: 6px 12px 6px 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .btn-primary {
+            background: var(--terracotta);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn-secondary {
+            background: var(--teal);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .history-list {
+            margin-top: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: var(--cream);
+            padding: 12px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid var(--sage);
+            transition: all 0.1s;
+        }
+
+        .history-item:hover {
+            background: var(--sage-light);
+            border-color: var(--terracotta);
+        }
+
+        .history-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--teal);
+        }
+
+        .field-note {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .voice-icon {
+            font-size: 1.2rem;
+            margin-left: 8px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        [contenteditable="true"]:focus, input:focus {
+            outline: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- QUOTE HEADER: unmissable, sets the mission -->
+    <div class="quote-header">
+        <p>✨ "A good prompt comes from knowing what you know — and knowing what you don't know yet." ✨</p>
+        <small>You know more than you think. Let's find it together.</small>
+    </div>
+
+    <!-- LEVEL SELECTOR - changes difficulty, remembered -->
+    <div class="level-section">
+        <span class="level-label">🧠 How comfortable are you with asking questions?</span>
+        <div class="level-buttons" id="levelButtons">
+            <button data-level="beginner" class="level-btn">🌱 Just starting<br><span style="font-size:0.75rem;">Guide me a lot</span></button>
+            <button data-level="intermediate" class="level-btn">📘 Done this before<br><span style="font-size:0.75rem;">Guide me some</span></button>
+            <button data-level="advanced" class="level-btn">⚡ I know what I'm doing<br><span style="font-size:0.75rem;">Full toolbox</span></button>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <!-- LEFT: FORM -->
+        <div class="card">
+            <h2>📝 Build your question</h2>
+            <form id="promptForm">
+                <!-- Topic -->
+                <div class="form-group">
+                    <label>🔍 What topic are you exploring?</label>
+                    <select id="topicSelect">
+                        <option value="Internet Safety">🌐 Internet Safety & Digital Footprint</option>
+                        <option value="Budget Diet">🥗 Good Diet on a Budget</option>
+                        <option value="Other">📚 Other (type below)</option>
+                    </select>
+                    <input type="text" id="customTopic" placeholder="Or write your own topic..." style="margin-top: 8px;">
+                </div>
+
+                <!-- Core question (always visible) -->
+                <div class="form-group">
+                    <label>💬 Your main question or goal</label>
+                    <textarea id="mainQuestion" rows="3" placeholder="What do you want to know or figure out? Try to be specific..."></textarea>
+                    <div class="field-note">🎤 You can type or click the microphone on your keyboard (voice input)</div>
+                </div>
+
+                <!-- KNOWLEDGE SLIDER (critical) -->
+                <div class="form-group">
+                    <label>📊 How much do you already know about this topic?</label>
+                    <div class="slider-container">
+                        <span>😕 Newbie</span>
+                        <input type="range" id="knowledgeSlider" min="1" max="10" value="5">
+                        <span>🧠 Expert</span>
+                        <span class="slider-value" id="knowledgeValue">5</span>
+                    </div>
+                </div>
+
+                <!-- INTEREST SLIDER -->
+                <div class="form-group">
+                    <label>🔥 How curious are you about this right now?</label>
+                    <div class="slider-container">
+                        <span>😐 Not curious</span>
+                        <input type="range" id="interestSlider" min="1" max="10" value="7">
+                        <span>🤩 Super curious!</span>
+                        <span class="slider-value" id="interestValue">7</span>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC FIELDS (level-dependent) -->
+                <div id="dynamicFields">
+                    <!-- Beginner fields: minimal -->
+                    <div id="beginnerFields">
+                        <div class="form-group">
+                            <label>📌 Format (how would you like the answer?)</label>
+                            <select id="formatSelect">
+                                <option value="simple bullets">Simple bullets (easy to read)</option>
+                                <option value="step by step">Step by step</option>
+                                <option value="friendly explanation">Friendly explanation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="intermediateFields" class="hidden">
+                        <div class="form-group">
+                            <label>🎨 Tone</label>
+                            <select id="toneSelect">
+                                <option value="encouraging">Encouraging and kind</option>
+                                <option value="direct">Direct and practical</option>
+                                <option value="technical">Detailed but clear</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>📖 Extra context (optional)</label>
+                            <textarea id="contextField" rows="2" placeholder="Anything else that might help? Your situation, what you've tried..."></textarea>
+                        </div>
+                    </div>
+                    <div id="advancedFields" class="hidden">
+                        <div class="form-group">
+                            <label>🎯 Advanced tone & style</label>
+                            <select id="advancedTone">
+                                <option value="analytical">Analytical & deep</option>
+                                <option value="critical">Critical thinking</option>
+                                <option value="creative">Creative brainstorming</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>⚙️ Constraints (word limit, sources, etc.)</label>
+                            <textarea id="constraintsField" rows="2" placeholder="e.g., 'no jargon', '~300 words', 'peer-reviewed'"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- RIGHT: OUTPUT + REFLECTION + HISTORY -->
+        <div class="card">
+            <h2>✨ Your AI Prompt</h2>
+            <div class="preview-box" id="previewBox">Your prompt will appear as you type...</div>
+            
+            <div class="button-group">
+                <button class="btn-primary" id="copyBtn">📋 Copy Prompt</button>
+                <button class="btn-secondary" id="downloadTxtBtn">💾 Download as .txt</button>
+            </div>
+
+            <div id="reflectionBox" class="reflection-box">
+                ⭐ Your personal reflection will appear here...
+            </div>
+
+            <div id="resourcesBox" class="resources-box hidden">
+                <strong>📚 Free resources to learn more:</strong>
+                <div id="resourceLinks"></div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <h3 style="font-size:1rem; color:var(--teal);">📂 Your previous prompts</h3>
+                <div id="historyList" class="history-list">
+                    <div style="opacity:0.6;">Nothing saved yet. Build a prompt and it will appear here.</div>
+                </div>
+                <button id="clearHistoryBtn" class="btn-small" style="margin-top:8px; background:var(--sage); border:none; padding:6px 12px; border-radius:40px;">🗑️ Clear history</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- STATE & PERSISTENCE ----------
+    let currentLevel = localStorage.getItem('promptLevel') || 'beginner';
+    let history = JSON.parse(localStorage.getItem('promptHistory')) || [];
+    let autoSaveTimer = null;
+
+    // DOM Elements
+    const levelBtns = document.querySelectorAll('.level-btn');
+    const topicSelect = document.getElementById('topicSelect');
+    const customTopic = document.getElementById('customTopic');
+    const mainQuestion = document.getElementById('mainQuestion');
+    const knowledgeSlider = document.getElementById('knowledgeSlider');
+    const interestSlider = document.getElementById('interestSlider');
+    const knowledgeVal = document.getElementById('knowledgeValue');
+    const interestVal = document.getElementById('interestValue');
+    const formatSelect = document.getElementById('formatSelect');
+    const toneSelect = document.getElementById('toneSelect');
+    const contextField = document.getElementById('contextField');
+    const advancedTone = document.getElementById('advancedTone');
+    const constraintsField = document.getElementById('constraintsField');
+    const previewBox = document.getElementById('previewBox');
+    const reflectionBox = document.getElementById('reflectionBox');
+    const resourcesBox = document.getElementById('resourcesBox');
+    const resourceLinksDiv = document.getElementById('resourceLinks');
+    const historyDiv = document.getElementById('historyList');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadTxtBtn');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+    // Resource library
+    const resourcesDB = {
+        "Internet Safety": [
+            { name: "BBC Own It - Online Safety", url: "https://www.bbc.com/ownit" },
+            { name: "Citizens Advice - Scams & Phishing", url: "https://www.citizensadvice.org.uk/consumer/scams/" },
+            { name: "Google Safety Center (simple guide)", url: "https://safety.google/" }
+        ],
+        "Budget Diet": [
+            { name: "BBC Good Food - Eat well on a budget", url: "https://www.bbcgoodfood.com/how-to/guide/healthy-eating-on-a-budget" },
+            { name: "MoneySavingExpert - Food shopping tips", url: "https://www.moneysavingexpert.com/family/money-saving-food-tips/" },
+            { name: "Eat Well for Less (recipes & planning)", url: "https://www.bbc.co.uk/programmes/articles/5ykL2jKjyFZ9gy1MYDcKDbP/eat-well-for-less-tips" }
+        ],
+        "Other": [
+            { name: "Khan Academy (free learning)", url: "https://www.khanacademy.org/" },
+            { name: "OpenLearn by Open University", url: "https://www.open.edu/openlearn/" }
+        ]
+    };
+
+    // Helper: update slider displays
+    knowledgeSlider.addEventListener('input', () => { knowledgeVal.innerText = knowledgeSlider.value; updateEverything(); });
+    interestSlider.addEventListener('input', () => { interestVal.innerText = interestSlider.value; updateEverything(); });
+    topicSelect.addEventListener('change', updateEverything);
+    customTopic.addEventListener('input', updateEverything);
+    mainQuestion.addEventListener('input', updateEverything);
+    formatSelect.addEventListener('change', updateEverything);
+    toneSelect.addEventListener('change', updateEverything);
+    contextField.addEventListener('input', updateEverything);
+    advancedTone.addEventListener('change', updateEverything);
+    constraintsField.addEventListener('input', updateEverything);
+
+    // Level switching
+    function setLevel(level) {
+        currentLevel = level;
+        localStorage.setItem('promptLevel', level);
+        levelBtns.forEach(btn => {
+            if (btn.dataset.level === level) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+        // Show/hide dynamic fields
+        document.getElementById('beginnerFields').classList.add('hidden');
+        document.getElementById('intermediateFields').classList.add('hidden');
+        document.getElementById('advancedFields').classList.add('hidden');
+        if (level === 'beginner') document.getElementById('beginnerFields').classList.remove('hidden');
+        else if (level === 'intermediate') document.getElementById('intermediateFields').classList.remove('hidden');
+        else if (level === 'advanced') document.getElementById('advancedFields').classList.remove('hidden');
+        updateEverything();
+    }
+
+    levelBtns.forEach(btn => {
+        btn.addEventListener('click', () => setLevel(btn.dataset.level));
+    });
+
+    // Build prompt text dynamically
+    function buildPrompt() {
+        let topic = topicSelect.value === "Other" ? (customTopic.value.trim() || "other topic") : topicSelect.value;
+        let question = mainQuestion.value.trim();
+        if (!question) return "";
+        
+        let prompt = question + "\n\n";
+        prompt += `Topic: ${topic}\n`;
+        prompt += `My knowledge level (1-10): ${knowledgeSlider.value}\n`;
+        prompt += `My curiosity level (1-10): ${interestSlider.value}\n`;
+        
+        if (currentLevel === 'beginner') {
+            let format = formatSelect.value;
+            prompt += `Format: ${format}\n`;
+            prompt += `Tone: Encourage me and be clear. I want to learn step by step.`;
+        } else if (currentLevel === 'intermediate') {
+            let tone = toneSelect.value;
+            let context = contextField.value.trim();
+            prompt += `Tone: ${tone}\n`;
+            if (context) prompt += `Context: ${context}\n`;
+            prompt += `I'm comfortable with some details but not overwhelmed.`;
+        } else { // advanced
+            let toneAdv = advancedTone.value;
+            let constraints = constraintsField.value.trim();
+            prompt += `Tone: ${toneAdv}\n`;
+            if (constraints) prompt += `Constraints: ${constraints}\n`;
+            prompt += `I'm ready for depth, nuance, and thorough answers.`;
+        }
+        return prompt;
+    }
+
+    // Generate reflection (non-judgmental, empowering)
+    function generateReflection() {
+        let topic = topicSelect.value === "Other" ? (customTopic.value.trim() || "your chosen topic") : topicSelect.value;
+        let knowledge = parseInt(knowledgeSlider.value);
+        let interest = parseInt(interestSlider.value);
+        let questionText = mainQuestion.value.trim();
+        let isQuestionShort = questionText.length < 15;
+        
+        let reflection = "";
+        
+        // Validate & empower
+        if (!questionText) return "✨ Start typing your question above — I'll help you reflect.";
+        
+        reflection = `🧠 **Your reflection**\n\n`;
+        
+        // Knowledge insight
+        if (knowledge <= 3) {
+            reflection += `• You rated your knowledge ${knowledge}/10. That's honest and brave. Everyone starts somewhere! The fact that you're asking shows curiosity. What you already know matters — even small things like "I know how to turn on a device" or "I've bought groceries before" are real expertise. 🌱\n\n`;
+        } else if (knowledge <= 7) {
+            reflection += `• You rated yourself ${knowledge}/10 — you know some things, but there's more to explore. That's the sweet spot for learning. You already have a foundation to build on. Trust what you already know, and let's fill the gaps. 💪\n\n`;
+        } else {
+            reflection += `• You said ${knowledge}/10 — you know a lot! But even experts discover new angles. Your experience is valuable. Could you teach someone else the basics? That's real expertise. 🌟\n\n`;
+        }
+        
+        // Interest insight
+        if (interest <= 3) {
+            reflection += `• You're not very curious right now (${interest}/10). That's okay. Can you connect this topic to something you do care about? Sometimes learning finds us when we least expect it. 💭\n\n`;
+        } else if (interest >= 7) {
+            reflection += `• Your curiosity is high (${interest}/10)! That's powerful. Follow that spark — it will help you learn faster and remember more. 🔥\n\n`;
+        }
+        
+        // Question quality tip
+        if (isQuestionShort) {
+            reflection += `• Your question is short. Try adding one specific detail — like what's confusing you or what you've tried. The more specific you are, the better answer you'll get. ✍️\n\n`;
+        } else {
+            reflection += `• Great detail in your question! Specific questions lead to precise answers. You're on the right track. 🎯\n\n`;
+        }
+        
+        // Level match
+        if (knowledge <= 3 && currentLevel === 'advanced') {
+            reflection += `• You're using 'advanced mode' but rated your knowledge low. Consider switching to 'Just starting' mode — it will show fewer options and guide you more. No shame in that. Learning is a journey. 🧭\n\n`;
+        } else if (knowledge >= 7 && currentLevel === 'beginner') {
+            reflection += `• You know more than you think! You could try 'Done this before' mode to add tone or context options. Challenge yourself a little. 🚀\n\n`;
+        }
+        
+        reflection += `✅ Remember: A good prompt comes from knowing what you know — and what you don't. You just did that.`;
+        
+        return reflection;
+    }
+    
+    // Resources based on topic
+    function updateResources() {
+        let topicKey = topicSelect.value === "Other" ? "Other" : topicSelect.value;
+        let resources = resourcesDB[topicKey] || resourcesDB["Other"];
+        resourceLinksDiv.innerHTML = "";
+        resources.forEach(res => {
+            let link = document.createElement('a');
+            link.href = res.url;
+            link.target = "_blank";
+            link.textContent = `📖 ${res.name}`;
+            link.style.marginRight = "12px";
+            resourceLinksDiv.appendChild(link);
+        });
+        resourcesBox.classList.remove("hidden");
+        if (!mainQuestion.value.trim()) resourcesBox.classList.add("hidden");
+    }
+    
+    // Auto-save to history (last 5)
+    function saveCurrentToHistory() {
+        let promptText = buildPrompt();
+        if (!promptText || !mainQuestion.value.trim()) return;
+        let topic = topicSelect.value === "Other" ? (customTopic.value.trim() || "Other") : topicSelect.value;
+        let timestamp = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        let historyItem = {
+            id: Date.now(),
+            date: timestamp,
+            topic: topic,
+            question: mainQuestion.value.trim().substring(0, 60),
+            fullPrompt: promptText,
+            knowledge: knowledgeSlider.value,
+            interest: interestSlider.value,
+            level: currentLevel,
+            format: formatSelect?.value || '',
+            tone: toneSelect?.value || '',
+            context: contextField?.value || '',
+            advancedTone: advancedTone?.value || '',
+            constraints: constraintsField?.value || ''
+        };
+        // Avoid duplicate identical if same within 2sec? simple: add and keep last 5
+        history.unshift(historyItem);
+        if (history.length > 5) history.pop();
+        localStorage.setItem('promptHistory', JSON.stringify(history));
+        renderHistory();
+    }
+    
+    function renderHistory() {
+        if (!history.length) {
+            historyDiv.innerHTML = '<div style="opacity:0.6;">Nothing saved yet. Build a prompt and it will appear here.</div>';
+            return;
+        }
+        historyDiv.innerHTML = "";
+        history.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            div.innerHTML = `<div class="history-title">📌 ${item.topic} — ${item.date}</div>
+                             <div style="font-size:0.85rem;">"${item.question.substring(0, 50)}..."</div>
+                             <div style="font-size:0.7rem; color:var(--teal);">Knowledge: ${item.knowledge}/10 | Curiosity: ${item.interest}/10</div>`;
+            div.addEventListener('click', () => loadHistoryItem(item));
+            historyDiv.appendChild(div);
+        });
+    }
+    
+    function loadHistoryItem(item) {
+        topicSelect.value = (item.topic === "Internet Safety" || item.topic === "Budget Diet") ? item.topic : "Other";
+        if (topicSelect.value === "Other") customTopic.value = item.topic;
+        mainQuestion.value = item.question;
+        knowledgeSlider.value = item.knowledge;
+        interestSlider.value = item.interest;
+        knowledgeVal.innerText = item.knowledge;
+        interestVal.innerText = item.interest;
+        if (item.level) setLevel(item.level);
+        if (formatSelect && item.format) formatSelect.value = item.format;
+        if (toneSelect && item.tone) toneSelect.value = item.tone;
+        if (contextField) contextField.value = item.context || '';
+        if (advancedTone && item.advancedTone) advancedTone.value = item.advancedTone;
+        if (constraintsField) constraintsField.value = item.constraints || '';
+        updateEverything();
+    }
+    
+    function updateEverything() {
+        let prompt = buildPrompt();
+        previewBox.innerText = prompt || "👆 Start typing your question above...";
+        let reflection = generateReflection();
+        reflectionBox.innerHTML = reflection.replace(/\n/g, '<br>');
+        updateResources();
+        // auto-save debounced
+        if (autoSaveTimer) clearTimeout(autoSaveTimer);
+        if (mainQuestion.value.trim()) {
+            autoSaveTimer = setTimeout(() => saveCurrentToHistory(), 1200);
+        }
+    }
+    
+    // Copy & Download
+    copyBtn.addEventListener('click', () => {
+        let text = previewBox.innerText;
+        if (text && !text.includes("Start typing")) {
+            navigator.clipboard.writeText(text);
+            alert("✅ Copied to clipboard!");
+        } else alert("Build a prompt first.");
+    });
+    
+    downloadBtn.addEventListener('click', () => {
+        let promptText = buildPrompt();
+        if (!promptText || !mainQuestion.value.trim()) {
+            alert("Please write a question first.");
+            return;
+        }
+        let finalContent = `PROMPT BUILDER\n${"=".repeat(40)}\n\n${promptText}\n\n--- Reflection ---\n${generateReflection()}`;
+        const blob = new Blob([finalContent], {type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `prompt_${Date.now()}.txt`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+    });
+    
+    clearHistoryBtn.addEventListener('click', () => {
+        if (confirm("Delete all saved prompts?")) {
+            history = [];
+            localStorage.setItem('promptHistory', JSON.stringify(history));
+            renderHistory();
+        }
+    });
+    
+    // Voice input: add attributes to textareas for native speech
+    function enableVoiceInput() {
+        const textareas = [mainQuestion, contextField, constraintsField, customTopic];
+        textareas.forEach(ta => {
+            if (ta) ta.setAttribute('x-webkit-speech', '');
+            ta.setAttribute('speech', '');
+        });
+    }
+    
+    // initial load
+    setLevel(currentLevel);
+    renderHistory();
+    enableVoiceInput();
+    updateEverything();
+</script>
+</body>
+</html>

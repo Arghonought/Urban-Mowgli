@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Builder - Ask Better Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-light: #FAFAFA;
+            --text-light: #1A1A1A;
+            --orange: #FF8C00;
+            --purple: #7B5BA3;
+            --gray-light: #E0E0E0;
+            --green: #6BA376;
+            --white: #FFFFFF;
+        }
+
+        body.dark-mode {
+            --bg-light: #1A1A1A;
+            --text-light: #FAFAFA;
+            --gray-light: #3A3A3A;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--orange);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            margin-bottom: 20px;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .mode-selector label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: 2px solid var(--orange);
+            background-color: transparent;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        button:hover {
+            background-color: var(--orange);
+            color: var(--white);
+        }
+
+        button.active {
+            background-color: var(--orange);
+            color: var(--white);
+        }
+
+        .dark-mode-toggle {
+            padding: 10px 14px;
+            background-color: var(--purple);
+            color: var(--white);
+            border: none;
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: #6A4D8F;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-section, .preview-section {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .form-section,
+        body.dark-mode .preview-section {
+            background-color: #2A2A2A;
+        }
+
+        .form-section h2, .preview-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: var(--orange);
+        }
+
+        .preview-section h2 {
+            color: var(--purple);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--gray-light);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(123, 91, 163, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .preview-section {
+            position: sticky;
+            top: 20px;
+        }
+
+        .preview-box {
+            background-color: var(--bg-light);
+            border: 2px solid var(--gray-light);
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            min-height: 200px;
+            margin-bottom: 20px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .preview-empty {
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--orange);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #E67E00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--purple);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: #6A4D8F;
+            transform: translateY(-2px);
+        }
+
+        .next-steps {
+            background-color: var(--bg-light);
+            border: 2px solid var(--green);
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .next-steps h3 {
+            color: var(--green);
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .next-steps ol {
+            margin-left: 20px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .next-steps li {
+            margin-bottom: 8px;
+        }
+
+        .saved-templates {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid var(--gray-light);
+        }
+
+        .saved-templates h3 {
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .template-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .template-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: var(--bg-light);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .template-item-name {
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .template-item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-small {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            background-color: var(--gray-light);
+            color: var(--text-light);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-small:hover {
+            background-color: var(--orange);
+            color: var(--white);
+        }
+
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--green);
+            color: var(--white);
+            padding: 14px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .guided-step {
+            display: none;
+        }
+
+        .guided-step.active {
+            display: block;
+        }
+
+        .step-indicator {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .step-navigation {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            justify-content: space-between;
+        }
+
+        .btn-nav {
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background-color: var(--purple);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background-color: #6A4D8F;
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-section {
+                position: relative;
+                top: 0;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>Prompt Builder</h1>
+            <p>Ask better questions. Get better answers.</p>
+            
+            <div class="header-controls">
+                <div class="mode-selector">
+                    <label>Mode:</label>
+                    <button class="mode-btn active" data-mode="quick">Quick Start</button>
+                    <button class="mode-btn" data-mode="full">Full Template</button>
+                    <button class="mode-btn" data-mode="guided">Guided</button>
+                </div>
+
+                <select id="presetTemplate" style="padding: 10px 12px; border: 2px solid var(--orange); border-radius: 6px; cursor: pointer; background-color: var(--bg-light); color: var(--text-light);">
+                    <option value="">Blank</option>
+                    <option value="teaching">Teaching a Concept</option>
+                    <option value="research">Research & Analysis</option>
+                    <option value="phytochemistry">Phytochemistry Query</option>
+                    <option value="code">Code Problem-Solving</option>
+                    <option value="creative">Creative Brainstorm</option>
+                </select>
+
+                <button class="dark-mode-toggle" id="darkModeToggle">🌙 Dark Mode</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-layout">
+            <!-- FORM SECTION -->
+            <div class="form-section">
+                <h2>Build Your Prompt</h2>
+                <form id="promptForm">
+                    <!-- QUICK START FIELDS -->
+                    <div id="quickStartFields">
+                        <div class="form-group">
+                            <label for="question">What do you want to know?</label>
+                            <input type="text" id="question" placeholder="e.g., How do pivot tables work in Excel?" required>
+                            <div class="help-text">Be specific. Vague questions get vague answers.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="topic">Topic or Subject</label>
+                            <select id="topic" required>
+                                <option value="">Select a topic...</option>
+                                <option value="Excel">Excel</option>
+                                <option value="Drawing">Drawing (draw.io)</option>
+                                <option value="Computing">Computing</option>
+                                <option value="Phytochemistry">Phytochemistry</option>
+                                <option value="Teaching">Teaching & Learning</option>
+                                <option value="Science">Science</option>
+                                <option value="History">History</option>
+                                <option value="Math">Math</option>
+                                <option value="Code">Code</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="help-text">What's the main subject area?</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="format">How should the answer look?</label>
+                            <select id="format" required>
+                                <option value="">Select a format...</option>
+                                <option value="Bullets">Bullets (scannable points)</option>
+                                <option value="Numbered list">Numbered list (step-by-step)</option>
+                                <option value="Table">Table (compare data)</option>
+                                <option value="Essay">Essay (narrative flow)</option>
+                                <option value="Code">Code (with examples)</option>
+                                <option value="Outline">Outline (hierarchical)</option>
+                            </select>
+                            <div class="help-text">Choose based on how you'll use this.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tone">Tone or style</label>
+                            <select id="tone" required>
+                                <option value="">Select a tone...</option>
+                                <option value="Direct and clear">Direct and clear</option>
+                                <option value="Formal and academic">Formal and academic</option>
+                                <option value="Conversational and friendly">Conversational and friendly</option>
+                                <option value="Technical">Technical</option>
+                                <option value="Beginner-friendly">Beginner-friendly</option>
+                            </select>
+                            <div class="help-text">How should it sound?</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="audience">Who is this for?</label>
+                            <select id="audience" required>
+                                <option value="">Select audience...</option>
+                                <option value="Myself">Myself (personal learning)</option>
+                                <option value="Beginners">Beginners (no prior knowledge)</option>
+                                <option value="Mixed ability">Mixed ability (some experience)</option>
+                                <option value="Experts">Experts or specialists</option>
+                                <option value="Students">Students (in a class)</option>
+                            </select>
+                            <div class="help-text">Tailor the answer to your audience.</div>
+                        </div>
+                    </div>
+
+                    <!-- FULL TEMPLATE FIELDS -->
+                    <div id="fullTemplateFields" class="hidden">
+                        <div class="form-group">
+                            <label for="queryType">Query type</label>
+                            <select id="queryType">
+                                <option value="">Select...</option>
+                                <option value="Question">Question</option>
+                                <option value="Request">Request</option>
+                                <option value="Task">Task</option>
+                                <option value="Analysis">Analysis</option>
+                                <option value="Comparison">Comparison</option>
+                                <option value="Brainstorm">Brainstorm</option>
+                                <option value="Debug">Debug/Troubleshoot</option>
+                                <option value="Explain">Explain</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fullQuestion">Your question or request</label>
+                            <textarea id="fullQuestion" placeholder="What exactly do you want to know or do?"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="context">Context or background</label>
+                            <textarea id="context" placeholder="What should the model know about your situation? (optional)"></textarea>
+                            <div class="help-text">Example: "I'm teaching adults with no Excel experience"</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="scope">Scope or depth</label>
+                            <select id="scope">
+                                <option value="">Select...</option>
+                                <option value="Quick overview">Quick overview (2-3 min read)</option>
+                                <option value="Moderate depth">Moderate depth (5-10 min read)</option>
+                                <option value="Comprehensive">Comprehensive (detailed, thorough)</option>
+                                <option value="Beginner-friendly">Beginner-friendly (no jargon)</option>
+                                <option value="Expert-level">Expert-level (assume knowledge)</option>
+                                <option value="Mechanism-focused">Mechanism-focused (how/why it works)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fullFormat">Output format</label>
+                            <select id="fullFormat">
+                                <option value="">Select...</option>
+                                <option value="Bullets">Bullets (scannable)</option>
+                                <option value="Numbered list">Numbered list (steps)</option>
+                                <option value="Table">Table (comparison)</option>
+                                <option value="Essay">Essay (narrative)</option>
+                                <option value="Code">Code (with examples)</option>
+                                <option value="Outline">Outline (hierarchical)</option>
+                                <option value="FAQ">FAQ (Q&A format)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fullTone">Tone and style</label>
+                            <select id="fullTone">
+                                <option value="">Select...</option>
+                                <option value="Direct and blunt">Direct and blunt</option>
+                                <option value="Formal and academic">Formal and academic</option>
+                                <option value="Conversational">Conversational</option>
+                                <option value="Technical">Technical</option>
+                                <option value="Beginner-friendly">Beginner-friendly</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="constraints">Constraints or rules</label>
+                            <textarea id="constraints" placeholder="Any limits? (e.g., 'No jargon', 'Peer-reviewed only', '~300 words')"></textarea>
+                            <div class="help-text">Examples: "~300 words," "No technical jargon," "Include examples"</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fullAudience">Audience</label>
+                            <select id="fullAudience">
+                                <option value="">Select...</option>
+                                <option value="Myself">Myself</option>
+                                <option value="Beginners">Beginners</option>
+                                <option value="Mixed ability">Mixed ability</option>
+                                <option value="Experts">Experts</option>
+                                <option value="Students">Students</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="wordCount">Preferred length</label>
+                            <select id="wordCount">
+                                <option value="">Select...</option>
+                                <option value="~100 words">~100 words (very brief)</option>
+                                <option value="~300 words">~300 words (short)</option>
+                                <option value="~500 words">~500 words (medium)</option>
+                                <option value="~1000 words">~1000 words (long)</option>
+                                <option value="As long as needed">As long as needed</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="examples">Include examples?</label>
+                            <select id="examples">
+                                <option value="">Select...</option>
+                                <option value="Yes, specific worked examples">Yes, specific worked examples</option>
+                                <option value="Yes, general examples">Yes, general examples</option>
+                                <option value="Only if clarifying">Only if clarifying</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="citations">Citations or sources?</label>
+                            <select id="citations">
+                                <option value="">Select...</option>
+                                <option value="Yes, include citations">Yes, include citations</option>
+                                <option value="Peer-reviewed only">Peer-reviewed only</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- GUIDED MODE FIELDS -->
+                    <div id="guidedModeFields" class="hidden">
+                        <div class="step-indicator">Step <span id="stepNumber">1</span> of 5</div>
+
+                        <div class="guided-step active" id="step1">
+                            <div class="form-group">
+                                <label for="guidedQuestion">What do you want to know or do?</label>
+                                <textarea id="guidedQuestion" placeholder="Be as specific as you can. What's your actual goal?"></textarea>
+                                <div class="help-text">Example: "I want to teach my students how to use pivot tables in Excel, but they're intimidated by the interface."</div>
+                            </div>
+                        </div>
+
+                        <div class="guided-step" id="step2">
+                            <div class="form-group">
+                                <label for="guidedContext">Tell me about your situation</label>
+                                <textarea id="guidedContext" placeholder="Who are you? What's your background? What do they need to know?"></textarea>
+                                <div class="help-text">Example: "I'm a teacher. My students are adults with mixed confidence levels. Some have ADHD."</div>
+                            </div>
+                        </div>
+
+                        <div class="guided-step" id="step3">
+                            <div class="form-group">
+                                <label for="guidedFormat">How do you want the answer?</label>
+                                <select id="guidedFormat">
+                                    <option value="">Select...</option>
+                                    <option value="Bullets">Bullets (easy to scan)</option>
+                                    <option value="Numbered list">Numbered list (step-by-step)</option>
+                                    <option value="Essay">Essay (tell me a story)</option>
+                                    <option value="Table">Table (compare options)</option>
+                                    <option value="Code">Code (with examples)</option>
+                                </select>
+                                <div class="help-text">Think: How will you actually use this?</div>
+                            </div>
+                        </div>
+
+                        <div class="guided-step" id="step4">
+                            <div class="form-group">
+                                <label for="guidedTone">What tone feels right?</label>
+                                <select id="guidedTone">
+                                    <option value="">Select...</option>
+                                    <option value="Direct">Direct (no fluff, just facts)</option>
+                                    <option value="Friendly">Friendly (warm, encouraging)</option>
+                                    <option value="Formal">Formal (professional, academic)</option>
+                                    <option value="Technical">Technical (detailed, precise)</option>
+                                </select>
+                                <div class="help-text">How should it sound to your audience?</div>
+                            </div>
+                        </div>
+
+                        <div class="guided-step" id="step5">
+                            <div class="form-group">
+                                <label for="guidedConstraints">Any special requests?</label>
+                                <textarea id="guidedConstraints" placeholder="(optional) E.g., 'Keep it under 300 words', 'Include examples', 'No jargon'"></textarea>
+                                <div class="help-text">Anything else the model should know?</div>
+                            </div>
+                        </div>
+
+                        <div class="step-navigation">
+                            <button type="button" class="btn-nav" id="prevBtn" onclick="changeStep(-1)" disabled>← Back</button>
+                            <button type="button" class="btn-nav" id="nextBtn" onclick="changeStep(1)">Next →</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- PREVIEW SECTION -->
+            <div class="preview-section">
+                <h2>Your Prompt</h2>
+                <div class="preview-box" id="previewBox">
+                    <span class="preview-empty">Your prompt will appear here as you fill in the fields.</span>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-primary" id="copyBtn" onclick="copyToClipboard()">📋 Copy Prompt</button>
+                    <button class="btn-secondary" id="saveBtn" onclick="openSaveDialog()">💾 Save Template</button>
+                </div>
+
+                <div class="next-steps" id="nextStepsBox" style="display: none;">
+                    <h3>✓ Next Steps</h3>
+                    <ol>
+                        <li>Click <strong>"Copy Prompt"</strong> above</li>
+                        <li>Open your preferred AI tool (ChatGPT, Claude, Gemini, etc.)</li>
+                        <li>Paste your prompt (Ctrl+V or Cmd+V)</li>
+                        <li>Hit Enter and wait for your answer</li>
+                        <li>If the answer isn't quite right, come back here and tweak one field, then try again</li>
+                    </ol>
+                </div>
+
+                <div class="saved-templates" id="savedTemplatesBox" style="display: none;">
+                    <h3>📚 Your Saved Templates</h3>
+                    <div class="template-list" id="templateList"></div>
+                    <button class="btn-small" onclick="exportTemplates()" style="margin-top: 12px; width: 100%;">📥 Export All Templates</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // STATE
+        let currentMode = 'quick';
+        let currentStep = 1;
+        let savedTemplates = JSON.parse(localStorage.getItem('promptTemplates')) || {};
+
+        // PRESET TEMPLATES
+        const presetTemplates = {
+            teaching: {
+                queryType: 'Task',
+                fullQuestion: 'Design a lesson plan for teaching [TOPIC] to [AUDIENCE].',
+                context: 'I am a teacher. My students have mixed confidence levels, some with prior negative experiences in education.',
+                scope: 'Beginner-friendly',
+                fullFormat: 'Numbered list',
+                fullTone: 'Beginner-friendly',
+                constraints: 'Include a worked example. Build confidence first, then complexity. No jargon.',
+                fullAudience: 'Students',
+                wordCount: '~500 words',
+                examples: 'Yes, specific worked examples',
+                citations: 'No'
+            },
+            research: {
+                queryType: 'Analysis',
+                fullQuestion: 'Analyze [TOPIC]. What are the key findings, implications, and gaps in current knowledge?',
+                context: 'I am conducting research. I need evidence-based information.',
+                scope: 'Comprehensive',
+                fullFormat: 'Essay',
+                fullTone: 'Formal and academic',
+                constraints: 'Peer-reviewed sources only. Cite your sources.',
+                fullAudience: 'Experts',
+                wordCount: 'As long as needed',
+                examples: 'Only if clarifying',
+                citations: 'Yes, include citations'
+            },
+            phytochemistry: {
+                queryType: 'Analysis',
+                fullQuestion: 'Explain the mechanism of action for [COMPOUND]. How does it interact with [SYSTEM/ORGANISM]? What is the evidence?',
+                context: 'I am studying phytochemistry. I want to understand mechanisms, not just facts.',
+                scope: 'Mechanism-focused',
+                fullFormat: 'Essay',
+                fullTone: 'Technical',
+                constraints: 'Include molecular mechanisms. Cite peer-reviewed research. Mention dosage/concentration if relevant.',
+                fullAudience: 'Experts',
+                wordCount: '~500 words',
+                examples: 'Yes, specific worked examples',
+                citations: 'Yes, include citations'
+            },
+            code: {
+                queryType: 'Debug',
+                fullQuestion: 'I have a problem with my code: [DESCRIBE PROBLEM]. How do I fix it?',
+                context: 'I am a [SKILL LEVEL] programmer. I am using [LANGUAGE/FRAMEWORK].',
+                scope: 'Mechanism-focused',
+                fullFormat: 'Code',
+                fullTone: 'Direct and blunt',
+                constraints: 'Include working code example. Explain the fix, not just the code.',
+                fullAudience: 'Myself',
+                wordCount: '~300 words',
+                examples: 'Yes, specific worked examples',
+                citations: 'No'
+            },
+            creative: {
+                queryType: 'Brainstorm',
+                fullQuestion: 'I need ideas for [PROJECT]. What are creative approaches?',
+                context: 'I am working on [CONTEXT]. My constraints are [CONSTRAINTS].',
+                scope: 'Comprehensive',
+                fullFormat: 'Bullets',
+                fullTone: 'Conversational',
+                constraints: 'Generate at least 5 ideas. Be specific and actionable.',
+                fullAudience: 'Myself',
+                wordCount: '~500 words',
+                examples: 'Yes, general examples',
+                citations: 'No'
+            }
+        };
+
+        // DARK MODE
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        });
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // MODE SWITCHING
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                currentMode = this.dataset.mode;
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                switchMode(currentMode);
+            });
+        });
+
+        function switchMode(mode) {
+            document.getElementById('quickStartFields').classList.add('hidden');
+            document.getElementById('fullTemplateFields').classList.add('hidden');
+            document.getElementById('guidedModeFields').classList.add('hidden');
+
+            if (mode === 'quick') {
+                document.getElementById('quickStartFields').classList.remove('hidden');
+            } else if (mode === 'full') {
+                document.getElementById('fullTemplateFields').classList.remove('hidden');
+            } else if (mode === 'guided') {
+                document.getElementById('guidedModeFields').classList.remove('hidden');
+                currentStep = 1;
+                showStep(1);
+            }
+
+            generatePreview();
+        }
+
+        // PRESET TEMPLATE LOADING
+        document.getElementById('presetTemplate').addEventListener('change', function() {
+            if (this.value && presetTemplates[this.value]) {
+                const template = presetTemplates[this.value];
+                Object.keys(template).forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el) el.value = template[key];
+                });
+                generatePreview();
+            }
+        });
+
+        // LIVE PREVIEW
+        const formInputs = document.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('input', generatePreview);
+            input.addEventListener('change', generatePreview);
+        });
+
+        function generatePreview() {
+            let prompt = '';
+
+            if (currentMode === 'quick') {
+                const q = document.getElementById('question').value;
+                const t = document.getElementById('topic').value;
+                const f = document.getElementById('format').value;
+                const tone = document.getElementById('tone').value;
+                const aud = document.getElementById('audience').value;
+
+                if (q) {
+                    prompt = `${q}\n\n`;
+                    if (t) prompt += `Topic: ${t}\n`;
+                    if (f) prompt += `Format: ${f}\n`;
+                    if (tone) prompt += `Tone: ${tone}\n`;
+                    if (aud) prompt += `Audience: ${aud}`;
+                }
+            } else if (currentMode === 'full') {
+                const qt = document.getElementById('queryType').value;
+                const q = document.getElementById('fullQuestion').value;
+                const ctx = document.getElementById('context').value;
+                const sc = document.getElementById('scope').value;
+                const f = document.getElementById('fullFormat').value;
+                const tone = document.getElementById('fullTone').value;
+                const con = document.getElementById('constraints').value;
+                const aud = document.getElementById('fullAudience').value;
+                const wc = document.getElementById('wordCount').value;
+                const ex = document.getElementById('examples').value;
+                const cit = document.getElementById('citations').value;
+
+                if (q) {
+                    prompt = `${q}\n\n`;
+                    if (ctx) prompt += `Context: ${ctx}\n`;
+                    if (sc) prompt += `Scope: ${sc}\n`;
+                    if (f) prompt += `Format: ${f}\n`;
+                    if (tone) prompt += `Tone: ${tone}\n`;
+                    if (wc) prompt += `Length: ${wc}\n`;
+                    if (ex) prompt += `Examples: ${ex}\n`;
+                    if (cit) prompt += `Citations: ${cit}\n`;
+                    if (con) prompt += `Constraints: ${con}`;
+                }
+            } else if (currentMode === 'guided') {
+                const q = document.getElementById('guidedQuestion').value;
+                const ctx = document.getElementById('guidedContext').value;
+                const f = document.getElementById('guidedFormat').value;
+                const tone = document.getElementById('guidedTone').value;
+                const con = document.getElementById('guidedConstraints').value;
+
+                if (q) {
+                    prompt = `${q}\n\n`;
+                    if (ctx) prompt += `Context: ${ctx}\n`;
+                    if (f) prompt += `Format: ${f}\n`;
+                    if (tone) prompt += `Tone: ${tone}\n`;
+                    if (con) prompt += `Additional requests: ${con}`;
+                }
+            }
+
+            const previewBox = document.getElementById('previewBox');
+            if (prompt.trim()) {
+                previewBox.textContent = prompt;
+                previewBox.classList.remove('preview-empty');
+                document.getElementById('nextStepsBox').style.display = 'block';
+            } else {
+                previewBox.innerHTML = '<span class="preview-empty">Your prompt will appear here as you fill in the fields.</span>';
+                document.getElementById('nextStepsBox').style.display = 'none';
+            }
+        }
+
+        // COPY TO CLIPBOARD
+        function copyToClipboard() {
+            const text = document.getElementById('previewBox').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.textContent = '✓ Copied to clipboard!';
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            });
+        }
+
+        // SAVE TEMPLATE
+        function openSaveDialog() {
+            const name = prompt('Save this template as:', '');
+            if (name) {
+                saveTemplate(name);
+            }
+        }
+
+        function saveTemplate(name) {
+            const data = {};
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if (el.id) data[el.id] = el.value;
+            });
+            savedTemplates[name] = data;
+            localStorage.setItem('promptTemplates', JSON.stringify(savedTemplates));
+            loadSavedTemplates();
+            alert(`Template "${name}" saved!`);
+        }
+
+        // LOAD SAVED TEMPLATES
+        function loadSavedTemplates() {
+            const templateList = document.getElementById('templateList');
+            templateList.innerHTML = '';
+
+            if (Object.keys(savedTemplates).length === 0) {
+                document.getElementById('savedTemplatesBox').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('savedTemplatesBox').style.display = 'block';
+
+                                Object.keys(savedTemplates).forEach(name => {
+                        const item = document.createElement('div');
+                        item.className = 'template-item';
+                        item.innerHTML = `
+                            <span class="template-item-name">${name}</span>
+                            <div class="template-item-actions">
+                                <button class="btn-small" onclick="loadTemplate('${name}')">Load</button>
+                                <button class="btn-small" onclick="deleteTemplate('${name}')">Delete</button>
+                            </div>
+                        `;
+                        templateList.appendChild(item);
+                    });
+                }
+
+                function loadTemplate(name) {
+                    const data = savedTemplates[name];
+                    Object.keys(data).forEach(key => {
+                        const el = document.getElementById(key);
+                        if (el) el.value = data[key];
+                    });
+                    generatePreview();
+                }
+
+                function deleteTemplate(name) {
+                    if (confirm(`Delete template "${name}"?`)) {
+                        delete savedTemplates[name];
+                        localStorage.setItem('promptTemplates', JSON.stringify(savedTemplates));
+                        loadSavedTemplates();
+                    }
+                }
+
+                function exportTemplates() {
+                    const dataStr = JSON.stringify(savedTemplates, null, 2);
+                    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(dataBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'prompt-templates.json';
+                    link.click();
+                }
+
+                // GUIDED MODE STEP NAVIGATION
+                function showStep(step) {
+                    document.querySelectorAll('.guided-step').forEach(s => s.classList.remove('active'));
+                    document.getElementById(`step${step}`).classList.add('active');
+                    document.getElementById('stepNumber').textContent = step;
+                    
+                    document.getElementById('prevBtn').disabled = step === 1;
+                    document.getElementById('nextBtn').textContent = step === 5 ? 'Finish →' : 'Next →';
+                }
+
+                function changeStep(direction) {
+                    currentStep += direction;
+                    if (currentStep < 1) currentStep = 1;
+                    if (currentStep > 5) currentStep = 5;
+                    showStep(currentStep);
+                    generatePreview();
+                }
+
+                // INITIALIZE
+                loadSavedTemplates();
+                generatePreview();
+    </script>
+</body>
+</html>
