@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>AI Knowledge Assessment</title>
+    <style>
+        /* ----- RESET & BASE (same as original) ----- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            margin: 0;
+        }
+        .app {
+            max-width: 480px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
+            padding: 24px 20px 32px;
+            position: relative;
+            min-height: 600px;
+            transition: all 0.2s;
+        }
+
+        /* ----- TYPOGRAPHY ----- */
+        h1,
+        h2,
+        h3,
+        p {
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .text-small {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .helper-text {
+            font-size: 15px;
+            color: #475569;
+            margin: 4px 0 12px;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+        }
+
+        /* ----- BUTTONS (same) ----- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 60px;
+            font-size: 18px;
+            font-weight: 600;
+            background: #e2e8f0;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.15s;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 56px;
+            min-width: 56px;
+            width: 100%;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.30);
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+            background: #1d4ed8;
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .btn-secondary:active {
+            background: #cbd5e1;
+        }
+        .btn-success {
+            background: #16a34a;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.30);
+        }
+        .btn-success:active {
+            transform: scale(0.97);
+            background: #15803d;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.30);
+        }
+        .btn-warning:active {
+            transform: scale(0.97);
+            background: #d97706;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.30);
+        }
+        .btn-danger:active {
+            transform: scale(0.97);
+            background: #b91c1c;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .btn-group .btn {
+            flex: 1;
+        }
+        .btn-group-sm .btn {
+            min-height: 44px;
+            font-size: 15px;
+            padding: 10px 16px;
+        }
+
+        /* ----- SCREENS (same) ----- */
+        .screen {
+            display: none;
+            animation: fadeUp 0.35s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ----- LOGIN (same) ----- */
+        .login-icon {
+            font-size: 64px;
+            text-align: center;
+            margin: 4px 0 8px;
+        }
+        .login-desc {
+            font-size: 16px;
+            opacity: 0.8;
+            margin: 8px 0 20px;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            background: #fafcff;
+            font-size: 18px;
+            transition: border 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .form-group .helper {
+            font-size: 14px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+
+        /* ----- PROGRESS BAR (same) ----- */
+        .progress-wrap {
+            background: #e2e8f0;
+            border-radius: 60px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            border-radius: 60px;
+            transition: width 0.4s ease;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        /* ----- CATEGORY BADGE (same) ----- */
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eef2ff;
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 12px;
+        }
+
+        /* ----- QUESTION (same) ----- */
+        .question-text {
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 1.5;
+            margin: 8px 0 12px;
+        }
+
+        /* ----- OPTIONS (adapted for quiz) ----- */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 8px 0 4px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            background: #fafcff;
+            cursor: pointer;
+            transition: all 0.12s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 60px;
+        }
+        .option:active {
+            transform: scale(0.98);
+        }
+        .option.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        .option.correct {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+        .option.wrong {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+        .option.disabled {
+            cursor: default;
+            opacity: 0.9;
+        }
+        .option .radio {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .option.selected .radio {
+            border-color: #2563eb;
+            background: #2563eb;
+        }
+        .option.correct .radio {
+            border-color: #16a34a;
+            background: #16a34a;
+        }
+        .option.wrong .radio {
+            border-color: #dc2626;
+            background: #dc2626;
+        }
+        .option.selected .radio::after,
+        .option.correct .radio::after,
+        .option.wrong .radio::after {
+            content: "✓";
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .option .label {
+            font-size: 16px;
+            font-weight: 500;
+            flex: 1;
+        }
+        .option .sub {
+            font-size: 14px;
+            opacity: 0.6;
+            font-weight: 400;
+        }
+
+        /* Feedback */
+        .feedback-box {
+            margin-top: 16px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            display: none;
+        }
+        .feedback-box.show {
+            display: block;
+        }
+        .feedback-box.correct {
+            background: #f0fdf4;
+            border: 2px solid #16a34a;
+            color: #14532d;
+        }
+        .feedback-box.wrong {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+            color: #7f1d1d;
+        }
+        .feedback-box .fb-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* ----- RESULTS (adapted) ----- */
+        .result-level {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 8px 0 20px;
+        }
+        .level-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: #1e293b;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            transition: background 0.4s;
+        }
+        .level-circle .num {
+            font-size: 48px;
+            line-height: 1;
+        }
+        .level-circle .lbl {
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        .level-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        .level-sub {
+            font-size: 16px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .cat-chart {
+            margin: 16px 0 8px;
+        }
+        .cat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .cat-row .cat-icon {
+            font-size: 22px;
+            width: 36px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .cat-row .cat-name {
+            font-size: 15px;
+            font-weight: 500;
+            flex: 1;
+            min-width: 60px;
+        }
+        .cat-row .bar-bg {
+            flex: 2;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 60px;
+            overflow: hidden;
+        }
+        .cat-row .bar-fill {
+            height: 100%;
+            border-radius: 60px;
+            background: #2563eb;
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+        .cat-row .cat-score {
+            font-size: 15px;
+            font-weight: 600;
+            width: 44px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .sw-list {
+            list-style: none;
+            padding: 0;
+            margin: 4px 0 12px;
+        }
+        .sw-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 16px;
+        }
+        .sw-list li:last-child {
+            border-bottom: none;
+        }
+        .sw-list .sw-icon {
+            font-size: 20px;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .tip-box {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin: 8px 0 4px;
+            border-left: 4px solid #2563eb;
+        }
+        .tip-box p {
+            margin: 4px 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .tip-box .tip-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 20px 0;
+        }
+
+        /* ----- DASHBOARD TABLE (same) ----- */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th,
+        td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        .record-row {
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .record-row:hover {
+            background: #f8fafc;
+        }
+        .badge-level {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 60px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #e2e8f0;
+        }
+
+        /* ----- UTILITY (same) ----- */
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .mt-20 {
+            margin-top: 20px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* ----- RESPONSIVE (same) ----- */
+        @media (max-width: 420px) {
+            .app {
+                padding: 18px 14px 24px;
+            }
+            .question-text {
+                font-size: 18px;
+            }
+            .option {
+                padding: 12px 14px;
+                min-height: 52px;
+            }
+            .option .label {
+                font-size: 15px;
+            }
+            .level-circle {
+                width: 120px;
+                height: 120px;
+                font-size: 40px;
+            }
+            .level-circle .num {
+                font-size: 40px;
+            }
+            .btn {
+                font-size: 16px;
+                padding: 12px 20px;
+                min-height: 48px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .table-wrap {
+                font-size: 12px;
+            }
+            th,
+            td {
+                padding: 6px 4px;
+            }
+        }
+
+        /* ----- ACCESSIBILITY (same) ----- */
+        .option:focus-visible,
+        .btn:focus-visible,
+        input:focus-visible,
+        select:focus-visible {
+            outline: 3px solid #2563eb;
+            outline-offset: 2px;
+        }
+        .option {
+            outline: none;
+        }
+
+        /* ----- PRINT (same) ----- */
+        @media print {
+            .btn,
+            .btn-group,
+            .no-print {
+                display: none !important;
+            }
+            .app {
+                box-shadow: none !important;
+                padding: 16px !important;
+                max-width: 100% !important;
+            }
+            .screen {
+                display: block !important;
+            }
+            .screen:not(.active) {
+                display: none !important;
+            }
+            #screen-results {
+                display: block !important;
+            }
+            .level-circle {
+                border: 2px solid #ccc;
+            }
+            .cat-row .bar-fill {
+                background: #2563eb !important;
+            }
+            .divider {
+                background: #ccc !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app" id="app" role="main">
+
+        <!-- ========== LOGIN SCREEN ========== -->
+        <div class="screen active" id="screen-login">
+            <div class="login-icon">🧠</div>
+            <h1 class="text-center">AI Knowledge Assessment</h1>
+            <p class="login-desc">Test your understanding of AI concepts. Enter your name and choose the week.</p>
+            <div class="form-group">
+                <label for="student-name">👤 Your Name</label>
+                <input type="text" id="student-name" placeholder="e.g., Maria" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label for="week-select">📅 Week</label>
+                <select id="week-select">
+                    <option value="Week 1">Week 1</option>
+                    <option value="Week 6">Week 6</option>
+                    <option value="Week 10" selected>Week 10</option>
+                </select>
+                <div class="helper">Today's date: <span id="today-date"></span></div>
+            </div>
+            <button class="btn btn-primary mt-12" id="btn-login">Start Quiz →</button>
+            <button class="btn btn-secondary mt-8 no-print" id="btn-dashboard">📚 View All Records</button>
+        </div>
+
+        <!-- ========== QUESTION SCREEN ========== -->
+        <div class="screen" id="screen-question">
+            <div class="progress-label">
+                <span id="q-progress-text">1 / 28</span>
+                <span id="q-category-label">🌟 Level 1</span>
+            </div>
+            <div class="progress-wrap">
+                <div class="progress-fill" id="q-progress-fill" style="width:0%;"></div>
+            </div>
+
+            <div class="category-badge" id="q-category-badge">🌟 Level 1</div>
+            <div class="helper-text" id="q-helper">Learning outcome: …</div>
+            <div class="question-text" id="q-text">Loading…</div>
+
+            <div class="options" id="q-options" role="radiogroup">
+                <!-- injected -->
+            </div>
+
+            <div id="q-feedback" class="feedback-box"></div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="btn-back">← Back</button>
+                <button class="btn btn-primary" id="btn-next" disabled>Next →</button>
+            </div>
+        </div>
+
+        <!-- ========== RESULTS SCREEN ========== -->
+        <div class="screen" id="screen-results">
+            <h2 class="text-center">📊 Your Assessment Report</h2>
+            <p class="text-center text-small" style="margin-bottom:12px;" id="result-student-info"></p>
+
+            <div class="result-level" id="result-level">
+                <div class="level-circle" id="level-circle">
+                    <span class="num" id="level-num">—</span>
+                    <span class="lbl" id="level-lbl">Level</span>
+                </div>
+                <div class="level-name" id="level-name">—</div>
+                <div class="level-sub" id="level-sub">Overall score</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h3>📊 Achievement by Level</h3>
+            <div class="cat-chart" id="cat-chart">
+                <!-- injected -->
+            </div>
+
+            <div class="divider"></div>
+
+            <div id="result-strengths">
+                <h3>💪 Strengths</h3>
+                <ul class="sw-list" id="strengths-list"></ul>
+            </div>
+
+            <div id="result-weaknesses">
+                <h3>📝 Areas to Grow</h3>
+                <ul class="sw-list" id="weaknesses-list"></ul>
+            </div>
+
+            <div id="result-tips">
+                <h3>🧠 How to Improve</h3>
+                <div id="tips-container"></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-success" id="btn-save-record">💾 Save Record</button>
+                <button class="btn btn-primary" id="btn-print-report">🖨️ Print / PDF</button>
+            </div>
+            <button class="btn btn-secondary mt-8 no-print" id="btn-back-to-login">← Back to Login</button>
+        </div>
+
+        <!-- ========== DASHBOARD SCREEN ========== -->
+        <div class="screen" id="screen-dashboard">
+            <div class="flex-between">
+                <h2>📚 Quiz Dashboard</h2>
+                <button class="btn btn-secondary no-print" id="btn-close-dashboard" style="width:auto; padding:8px 16px; min-height:auto;">✕</button>
+            </div>
+            <p class="text-small">Click a row to see full details. Import CSV to restore records.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Week</th>
+                            <th>Date</th>
+                            <th>Overall</th>
+                            <th>L1</th>
+                            <th>L2</th>
+                            <th>L3</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-body">
+                        <tr><td colspan="7">No records yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-warning" id="btn-export-csv">📥 Export CSV</button>
+                <button class="btn btn-success" id="btn-import-csv">📤 Import CSV</button>
+            </div>
+            <input type="file" id="csv-import-input" accept=".csv" style="display:none;" />
+            <button class="btn btn-secondary mt-8 no-print" id="btn-back-from-dashboard">← Back to Login</button>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA – QUIZ QUESTIONS (AI Learning Outcomes)
+        // ============================================================
+
+        const LEVEL_META = [
+            { id: 'level1', icon: '🌟', label: 'Level 1: Foundations' },
+            { id: 'level2', icon: '🌿', label: 'Level 2: Data & Ethics' },
+            { id: 'level3', icon: '🚀', label: 'Level 3: Advanced' },
+        ];
+
+        const QUESTIONS = [{
+            id: 'q1',
+            category: 'level1',
+            lo: 'Basic concept of AI and its relation to computing',
+            text: 'What is Artificial Intelligence (AI)?',
+            options: ['A) A type of advanced calculator', 'B) A machine that thinks and learns like humans',
+                'C) A programming language', 'D) A social media platform'
+            ],
+            correct: 1,
+            explanation: 'AI is about creating machines that can think, learn, and make decisions, mimicking human intelligence.'
+        }, {
+            id: 'q2',
+            category: 'level1',
+            lo: 'Basic concept of AI and its relation to computing',
+            text: 'AI is a subset of computer science.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'AI is indeed a branch of computer science focused on building intelligent agents.'
+        }, {
+            id: 'q3',
+            category: 'level1',
+            lo: 'Examples of AI in everyday life and its applications',
+            text: 'Which of these uses AI in everyday life?',
+            options: ['A) Washing machine', 'B) Smart speaker', 'C) Bicycle', 'D) Microwave'],
+            correct: 1,
+            explanation: 'Smart speakers like Alexa or Google Home use AI to understand voice commands.'
+        }, {
+            id: 'q4',
+            category: 'level1',
+            lo: 'Examples of AI in everyday life and its applications',
+            text: 'AI is only used in self-driving cars.',
+            options: ['True', 'False'],
+            correct: 1,
+            explanation: 'AI is used in many areas, including social media, healthcare, and finance.'
+        }, {
+            id: 'q5',
+            category: 'level1',
+            lo: 'Role of AI in various industries and its impact on society',
+            text: 'AI can help doctors detect diseases earlier.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Yes, AI is used in medical imaging and diagnosis to assist doctors.'
+        }, {
+            id: 'q6',
+            category: 'level1',
+            lo: 'Role of AI in various industries and its impact on society',
+            text: 'Which industry uses AI for fraud detection?',
+            options: ['A) Agriculture', 'B) Banking', 'C) Construction', 'D) Mining'],
+            correct: 1,
+            explanation: 'Banks use AI to detect unusual transactions and prevent fraud.'
+        }, {
+            id: 'q7',
+            category: 'level1',
+            lo: 'Critical thinking to evaluate AI information and biases',
+            text: 'AI systems are always completely objective and unbiased.',
+            options: ['True', 'False'],
+            correct: 1,
+            explanation: 'AI systems can inherit biases from their training data, so they are not always objective.'
+        }, {
+            id: 'q8',
+            category: 'level1',
+            lo: 'Critical thinking to evaluate AI information and biases',
+            text: 'What is a potential source of bias in AI?',
+            options: ['A) It always gives correct answers', 'B) It may reflect biases in its training data',
+                'C) It prefers one programming language', 'D) It cannot make mistakes'
+            ],
+            correct: 1,
+            explanation: 'If the training data is biased, the AI model will likely reflect those biases.'
+        }, {
+            id: 'q9',
+            category: 'level1',
+            lo: 'Prompting concepts: definition, purpose, and types',
+            text: 'A prompt is an input given to an AI to get a specific output.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'A prompt is exactly that – the instruction or question you give to an AI.'
+        }, {
+            id: 'q10',
+            category: 'level1',
+            lo: 'Prompting concepts: definition, purpose, and types',
+            text: 'Which of these is a type of prompt?',
+            options: ['A) Text-based', 'B) Image-based', 'C) Conversational', 'D) All of the above'],
+            correct: 3,
+            explanation: 'All these are valid types of prompts used in different AI systems.'
+        }, {
+            id: 'q11',
+            category: 'level2',
+            lo: 'Importance of data in AI and its different types',
+            text: 'AI models learn from large amounts of data.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Data is the foundation of AI. More data usually leads to better learning.'
+        }, {
+            id: 'q12',
+            category: 'level2',
+            lo: 'Importance of data in AI and its different types',
+            text: 'Structured data is organized in rows and columns.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Yes, structured data like spreadsheets is organized in rows and columns.'
+        }, {
+            id: 'q13',
+            category: 'level2',
+            lo: 'How prompts are used in AI applications',
+            text: 'Chatbots use prompts to understand and generate responses.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Prompts are the primary way users interact with chatbots like ChatGPT.'
+        }, {
+            id: 'q14',
+            category: 'level2',
+            lo: 'How prompts are used in AI applications',
+            text: 'Image generation models do NOT use text prompts.',
+            options: ['True', 'False'],
+            correct: 1,
+            explanation: 'Image generation models like DALL‑E or Midjourney use text prompts to create images.'
+        }, {
+            id: 'q15',
+            category: 'level2',
+            lo: 'Importance of well‑designed prompts for desired AI outcomes',
+            text: 'A well-designed prompt leads to better AI outcomes.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Clear, specific prompts give the AI the right context, leading to better outputs.'
+        }, {
+            id: 'q16',
+            category: 'level2',
+            lo: 'Importance of well‑designed prompts for desired AI outcomes',
+            text: 'Which is important for a good prompt?',
+            options: ['A) Being specific and clear', 'B) Being very long', 'C) Using complex language',
+                'D) Avoiding context'
+            ],
+            correct: 0,
+            explanation: 'Being specific helps the AI understand exactly what you need.'
+        }, {
+            id: 'q17',
+            category: 'level2',
+            lo: 'Ethical implications of AI on jobs and daily life',
+            text: 'AI will have no impact on the job market.',
+            options: ['True', 'False'],
+            correct: 1,
+            explanation: 'AI will automate some jobs, but it will also create new ones. It definitely has an impact.'
+        }, {
+            id: 'q18',
+            category: 'level2',
+            lo: 'Ethical implications of AI on jobs and daily life',
+            text: 'What is a major ethical concern regarding AI?',
+            options: ['A) Faster calculations', 'B) Job displacement', 'C) Better weather forecasts',
+                'D) Faster internet'
+            ],
+            correct: 1,
+            explanation: 'Job displacement is a well-documented ethical and social concern.'
+        }, {
+            id: 'q19',
+            category: 'level3',
+            lo: 'Basic concepts of algorithms and programming',
+            text: 'An algorithm is a set of steps to solve a problem.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'An algorithm is like a recipe – a sequence of steps to achieve a goal.'
+        }, {
+            id: 'q20',
+            category: 'level3',
+            lo: 'Basic concepts of algorithms and programming',
+            text: 'Programming is the act of writing code for a computer.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Programming involves writing code in languages like Python or JavaScript.'
+        }, {
+            id: 'q21',
+            category: 'level3',
+            lo: 'Machine learning types: supervised, unsupervised, reinforcement',
+            text: 'Supervised learning uses labeled data.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Supervised learning uses labeled input-output pairs to learn.'
+        }, {
+            id: 'q22',
+            category: 'level3',
+            lo: 'Machine learning types: supervised, unsupervised, reinforcement',
+            text: 'Which ML type learns by trial and error?',
+            options: ['A) Supervised', 'B) Unsupervised', 'C) Reinforcement', 'D) Transfer'],
+            correct: 2,
+            explanation: 'Reinforcement learning learns by receiving rewards or penalties for actions.'
+        }, {
+            id: 'q23',
+            category: 'level3',
+            lo: 'Basic concepts of neural networks and deep learning',
+            text: 'Neural networks are inspired by the human brain.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Neural networks were designed to loosely mimic the structure of biological neural networks.'
+        }, {
+            id: 'q24',
+            category: 'level3',
+            lo: 'Basic concepts of neural networks and deep learning',
+            text: 'Deep learning uses many layers in neural networks.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Deep learning models have many hidden layers, allowing them to learn complex patterns.'
+        }, {
+            id: 'q25',
+            category: 'level3',
+            lo: 'Design a simple AI‑powered solution using basic programming',
+            text: 'You need to be an expert programmer to design a basic AI solution.',
+            options: ['True', 'False'],
+            correct: 1,
+            explanation: 'Many tools and platforms exist that allow non-programmers to build simple AI models.'
+        }, {
+            id: 'q26',
+            category: 'level3',
+            lo: 'Design a simple AI‑powered solution using basic programming',
+            text: 'What is the first step in designing an AI solution?',
+            options: ['A) Writing code', 'B) Defining the problem', 'C) Buying a computer',
+            'D) Hiring a manager'],
+            correct: 1,
+            explanation: 'Understanding the problem you are trying to solve is always the first step.'
+        }, {
+            id: 'q27',
+            category: 'level3',
+            lo: 'Design and evaluation of effective prompts for AI systems',
+            text: 'Evaluating prompts helps improve AI responses.',
+            options: ['True', 'False'],
+            correct: 0,
+            explanation: 'Evaluation and iteration are key to crafting effective prompts.'
+        }, {
+            id: 'q28',
+            category: 'level3',
+            lo: 'Design and evaluation of effective prompts for AI systems',
+            text: 'Which technique helps in effective prompting?',
+            options: ['A) Give clear context and examples', 'B) Use ambiguous language', 'C) Avoid examples',
+                'D) Use only one word'
+            ],
+            correct: 0,
+            explanation: 'Providing context and examples gives the AI a clear framework to respond correctly.'
+        }];
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+
+        let userAnswers = {}; // { qId: selectedIndex }
+        let currentIndex = 0;
+        let totalQuestions = QUESTIONS.length;
+        let currentStudent = { name: '', week: '', date: '' };
+
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+
+        const $ = id => document.getElementById(id);
+        const screens = {
+            login: $('screen-login'),
+            question: $('screen-question'),
+            results: $('screen-results'),
+            dashboard: $('screen-dashboard'),
+        };
+
+        const qText = $('q-text');
+        const qOptions = $('q-options');
+        const qProgressText = $('q-progress-text');
+        const qProgressFill = $('q-progress-fill');
+        const qCategoryBadge = $('q-category-badge');
+        const qCategoryLabel = $('q-category-label');
+        const qHelper = $('q-helper');
+        const qFeedback = $('q-feedback');
+        const btnBack = $('btn-back');
+        const btnNext = $('btn-next');
+        const btnLogin = $('btn-login');
+        const btnDashboard = $('btn-dashboard');
+        const btnCloseDashboard = $('btn-close-dashboard');
+        const btnBackFromDashboard = $('btn-back-from-dashboard');
+        const btnBackToLogin = $('btn-back-to-login');
+        const btnSaveRecord = $('btn-save-record');
+        const btnPrintReport = $('btn-print-report');
+        const btnExportCSV = $('btn-export-csv');
+        const btnImportCSV = $('btn-import-csv');
+        const csvImportInput = $('csv-import-input');
+        const studentNameInput = $('student-name');
+        const weekSelect = $('week-select');
+        const todayDateSpan = $('today-date');
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+
+        const now = new Date();
+        todayDateSpan.textContent = now.toLocaleDateString();
+
+        function showScreen(name) {
+            Object.keys(screens).forEach(key => {
+                screens[key].classList.toggle('active', key === name);
+            });
+        }
+
+        // ============================================================
+        //  RENDER QUESTION
+        // ============================================================
+
+        function renderQuestion(index) {
+            const q = QUESTIONS[index];
+            const catMeta = LEVEL_META.find(c => c.id === q.category);
+            const total = totalQuestions;
+
+            qProgressText.textContent = `${index + 1} / ${total}`;
+            qProgressFill.style.width = `${((index + 1) / total) * 100}%`;
+
+            const catLabel = `${catMeta.icon} ${catMeta.label}`;
+            qCategoryBadge.textContent = catLabel;
+            qCategoryLabel.textContent = catLabel;
+            qText.textContent = q.text;
+            qHelper.textContent = `📘 Learning outcome: ${q.lo}`;
+
+            // Clear feedback
+            qFeedback.className = 'feedback-box';
+            qFeedback.textContent = '';
+
+            const selected = userAnswers[q.id] !== undefined ? userAnswers[q.id] : null;
+            qOptions.innerHTML = '';
+
+            q.options.forEach((optText, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                if (selected !== null) {
+                    div.classList.add('disabled');
+                    if (idx === q.correct) div.classList.add('correct');
+                    if (selected === idx && idx !== q.correct) div.classList.add('wrong');
+                    if (selected === idx) div.classList.add('selected');
+                }
+                div.setAttribute('role', 'radio');
+                div.dataset.index = idx;
+
+                div.innerHTML = `
+              <span class="radio"></span>
+              <span class="label">${optText}</span>
+            `;
+
+                if (selected === null) {
+                    div.addEventListener('click', () => {
+                        selectOption(q.id, idx);
+                    });
+                }
+
+                qOptions.appendChild(div);
+            });
+
+            // Show feedback if already answered
+            if (selected !== null) {
+                showFeedback(q, selected);
+            }
+
+            btnNext.disabled = (selected === null);
+            btnBack.style.visibility = index === 0 ? 'hidden' : 'visible';
+        }
+
+        function selectOption(qId, selectedIndex) {
+            userAnswers[qId] = selectedIndex;
+            const q = QUESTIONS.find(item => item.id === qId);
+            renderQuestion(currentIndex); // re-render to show correct/wrong
+            // Show feedback
+            showFeedback(q, selectedIndex);
+            btnNext.disabled = false;
+        }
+
+        function showFeedback(q, selectedIndex) {
+            const isCorrect = selectedIndex === q.correct;
+            qFeedback.className = `feedback-box show ${isCorrect ? 'correct' : 'wrong'}`;
+            const icon = isCorrect ? '✅' : '❌';
+            const title = isCorrect ? 'Correct!' : 'Incorrect.';
+            qFeedback.innerHTML = `
+            <div class="fb-title">${icon} ${title}</div>
+            <p>${q.explanation}</p>
+          `;
+        }
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+
+        function goToQuestion(index) {
+            if (index < 0 || index >= totalQuestions) return;
+            currentIndex = index;
+            renderQuestion(index);
+            showScreen('question');
+            document.getElementById('app').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function goToNext() {
+            if (currentIndex < totalQuestions - 1) {
+                goToQuestion(currentIndex + 1);
+            } else {
+                // Check if last question is answered
+                const lastQ = QUESTIONS[totalQuestions - 1];
+                if (userAnswers[lastQ.id] === undefined) {
+                    alert('Please answer the last question before finishing.');
+                    return;
+                }
+                showResults();
+            }
+        }
+
+        function goToPrev() {
+            if (currentIndex > 0) {
+                goToQuestion(currentIndex - 1);
+            }
+        }
+
+        // ============================================================
+        //  RESULTS
+        // ============================================================
+
+        function showResults() {
+            showScreen('results');
+
+            const levelResults = {
+                level1: { correct: 0, total: 0 },
+                level2: { correct: 0, total: 0 },
+                level3: { correct: 0, total: 0 },
+            };
+
+            let totalCorrect = 0;
+            let totalAnswered = 0;
+
+            QUESTIONS.forEach(q => {
+                const selected = userAnswers[q.id];
+                if (selected !== undefined) {
+                    totalAnswered++;
+                    const isCorrect = selected === q.correct;
+                    if (isCorrect) totalCorrect++;
+                    levelResults[q.category].total++;
+                    if (isCorrect) levelResults[q.category].correct++;
+                }
+            });
+
+            const pct = (correct, total) => total > 0 ? (correct / total) * 100 : 0;
+
+            const l1Pct = pct(levelResults.level1.correct, levelResults.level1.total);
+            const l2Pct = pct(levelResults.level2.correct, levelResults.level2.total);
+            const l3Pct = pct(levelResults.level3.correct, levelResults.level3.total);
+            const overallPct = totalAnswered > 0 ? (totalCorrect / totalAnswered) * 100 : 0;
+
+            // Map overall % to level 1-5
+            let levelIdx = 0;
+            if (overallPct >= 80) levelIdx = 4;
+            else if (overallPct >= 60) levelIdx = 3;
+            else if (overallPct >= 40) levelIdx = 2;
+            else if (overallPct >= 20) levelIdx = 1;
+            else levelIdx = 0;
+
+            const levelNames = ['🌱 Beginning', '🌿 Developing', '🌳 Proficient', '🚀 Advanced', '⭐ Expert'];
+            const levelColors = ['#e74c3c', '#f39c12', '#f1c40f', '#2ecc71', '#3498db'];
+
+            const levelCircle = $('level-circle');
+            const levelNum = $('level-num');
+            const levelLbl = $('level-lbl');
+            const levelName = $('level-name');
+            const levelSub = $('level-sub');
+
+            levelCircle.style.background = levelColors[levelIdx];
+            levelNum.textContent = Math.round(overallPct) + '%';
+            levelLbl.textContent = `Score`;
+            levelName.textContent = levelNames[levelIdx];
+            levelSub.textContent = `${Math.round(overallPct)}% overall · ${totalCorrect}/${totalAnswered} correct`;
+
+            const info = `${currentStudent.name} — ${currentStudent.week} (${currentStudent.date})`;
+            $('result-student-info').textContent = info;
+
+            // Chart
+            const chartContainer = $('cat-chart');
+            chartContainer.innerHTML = '';
+            const levelData = [
+                { id: 'level1', icon: '🌟', label: 'Level 1: Foundations', pct: l1Pct },
+                { id: 'level2', icon: '🌿', label: 'Level 2: Data & Ethics', pct: l2Pct },
+                { id: 'level3', icon: '🚀', label: 'Level 3: Advanced', pct: l3Pct },
+            ];
+            levelData.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'cat-row';
+                const color = item.pct >= 70 ? '#16a34a' : item.pct >= 50 ? '#f59e0b' : '#dc2626';
+                row.innerHTML = `
+              <span class="cat-icon">${item.icon}</span>
+              <span class="cat-name">${item.label}</span>
+              <div class="bar-bg"><div class="bar-fill" style="width:${item.pct}%; background:${color};"></div></div>
+              <span class="cat-score">${Math.round(item.pct)}%</span>
+            `;
+                chartContainer.appendChild(row);
+            });
+
+            // Strengths & Weaknesses
+            const sorted = [...levelData].sort((a, b) => b.pct - a.pct);
+            const strengths = sorted.filter(s => s.pct >= 70);
+            const weaknesses = sorted.filter(s => s.pct < 50);
+
+            const strengthsList = $('strengths-list');
+            strengthsList.innerHTML = '';
+            if (strengths.length === 0) {
+                strengthsList.innerHTML =
+                    '<li><span class="sw-icon">💪</span> Keep studying — you\'re building knowledge!</li>';
+            } else {
+                strengths.forEach(s => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="sw-icon">${s.icon}</span> ${s.label} (${Math.round(s.pct)}%)`;
+                    strengthsList.appendChild(li);
+                });
+            }
+
+            const weaknessesList = $('weaknesses-list');
+            weaknessesList.innerHTML = '';
+            if (weaknesses.length === 0) {
+                weaknessesList.innerHTML =
+                '<li><span class="sw-icon">🌟</span> You\'re doing great! Keep challenging yourself.</li>';
+            } else {
+                weaknesses.forEach(s => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="sw-icon">${s.icon}</span> ${s.label} (${Math.round(s.pct)}%)`;
+                    weaknessesList.appendChild(li);
+                });
+            }
+
+            // Tips
+            const tipsContainer = $('tips-container');
+            tipsContainer.innerHTML = '';
+            const tipTargets = weaknesses.length > 0 ? weaknesses : sorted.slice(0, 2);
+            const tipMap = {
+                level1: [
+                    '🔹 Watch beginner-friendly videos on AI basics (e.g., YouTube).',
+                    '🔹 Try using a chatbot like ChatGPT to see prompts in action.',
+                    '🔹 Look for everyday AI examples (recommendations, smart assistants).'
+                ],
+                level2: [
+                    '🔹 Read about how data is used to train AI models.',
+                    '🔹 Experiment with different prompt styles to improve responses.',
+                    '🔹 Discuss ethical AI topics with classmates or online forums.'
+                ],
+                level3: [
+                    '🔹 Explore beginner coding tutorials (Python) to understand algorithms.',
+                    '🔹 Use online demos to visualize machine learning and neural networks.',
+                    '🔹 Try a small project using a free AI API (e.g., OpenAI, Hugging Face).'
+                ]
+            };
+            tipTargets.forEach(s => {
+                const tips = tipMap[s.id] || ['🔹 Keep exploring and ask for help when needed.'];
+                const box = document.createElement('div');
+                box.className = 'tip-box';
+                box.innerHTML = `
+              <p class="tip-title">${s.icon} ${s.label}</p>
+              ${tips.map(t => `<p>${t}</p>`).join('')}
+            `;
+                tipsContainer.appendChild(box);
+            });
+
+            document.getElementById('app').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ============================================================
+        //  SAVE RECORD (localStorage)
+        // ============================================================
+
+        function saveRecord() {
+            // Calculate scores again
+            const levelResults = { level1: { correct: 0, total: 0 }, level2: { correct: 0, total: 0 },
+            level3: { correct: 0, total: 0 } };
+            let totalCorrect = 0,
+                totalAnswered = 0;
+            QUESTIONS.forEach(q => {
+                const selected = userAnswers[q.id];
+                if (selected !== undefined) {
+                    totalAnswered++;
+                    const isCorrect = selected === q.correct;
+                    if (isCorrect) totalCorrect++;
+                    levelResults[q.category].total++;
+                    if (isCorrect) levelResults[q.category].correct++;
+                }
+            });
+            const pct = (c, t) => t > 0 ? (c / t) * 100 : 0;
+            const l1 = pct(levelResults.level1.correct, levelResults.level1.total);
+            const l2 = pct(levelResults.level2.correct, levelResults.level2.total);
+            const l3 = pct(levelResults.level3.correct, levelResults.level3.total);
+            const overall = totalAnswered > 0 ? (totalCorrect / totalAnswered) * 100 : 0;
+
+            const record = {
+                name: currentStudent.name,
+                week: currentStudent.week,
+                date: currentStudent.date,
+                overallPct: Math.round(overall),
+                l1Pct: Math.round(l1),
+                l2Pct: Math.round(l2),
+                l3Pct: Math.round(l3),
+                totalCorrect: totalCorrect,
+                totalQuestions: totalAnswered,
+            };
+
+            let records = JSON.parse(localStorage.getItem('aiQuizRecords') || '[]');
+            const existingIndex = records.findIndex(r => r.name === record.name && r.week === record.week);
+            if (existingIndex !== -1) {
+                if (!confirm(`You already have a record for ${record.name} in ${record.week}. Overwrite it?`)) {
+                    return;
+                }
+                records[existingIndex] = record;
+            } else {
+                records.push(record);
+            }
+
+            localStorage.setItem('aiQuizRecords', JSON.stringify(records));
+            alert('✅ Record saved successfully!');
+        }
+
+        // ============================================================
+        //  DASHBOARD
+        // ============================================================
+
+        function renderDashboard() {
+            const records = JSON.parse(localStorage.getItem('aiQuizRecords') || '[]');
+            const tbody = $('dashboard-body');
+            if (records.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">No records yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = '';
+            records.forEach((r, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'record-row';
+                tr.innerHTML = `
+              <td>${r.name}</td>
+              <td>${r.week}</td>
+              <td>${r.date}</td>
+              <td><span class="badge-level">${r.overallPct}%</span></td>
+              <td>${r.l1Pct}%</td>
+              <td>${r.l2Pct}%</td>
+              <td>${r.l3Pct}%</td>
+            `;
+                tr.addEventListener('click', () => {
+                    alert(`Details for ${r.name} (${r.week}):\nOverall: ${r.overallPct}%\nLevel 1: ${r.l1Pct}%\nLevel 2: ${r.l2Pct}%\nLevel 3: ${r.l3Pct}%\nCorrect: ${r.totalCorrect}/${r.totalQuestions}`);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        function showDashboard() {
+            renderDashboard();
+            showScreen('dashboard');
+            document.getElementById('app').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ============================================================
+        //  EXPORT / IMPORT CSV
+        // ============================================================
+
+        function exportCSV() {
+            const records = JSON.parse(localStorage.getItem('aiQuizRecords') || '[]');
+            if (records.length === 0) { alert('No records to export.'); return; }
+            const headers = ['Name', 'Week', 'Date', 'Overall%', 'L1%', 'L2%', 'L3%'];
+            const rows = records.map(r => [r.name, r.week, r.date, r.overallPct, r.l1Pct, r.l2Pct, r.l3Pct]);
+            const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'AI_Quiz_Records.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importCSV(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n').filter(line => line.trim() !== '');
+                if (lines.length < 2) { alert('CSV is empty or invalid.'); return; }
+                const records = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const cols = lines[i].split(',').map(c => c.trim());
+                    if (cols.length < 7) continue;
+                    records.push({
+                        name: cols[0],
+                        week: cols[1],
+                        date: cols[2],
+                        overallPct: parseInt(cols[3]) || 0,
+                        l1Pct: parseInt(cols[4]) || 0,
+                        l2Pct: parseInt(cols[5]) || 0,
+                        l3Pct: parseInt(cols[6]) || 0,
+                        totalCorrect: 0,
+                        totalQuestions: 0,
+                    });
+                }
+                if (records.length === 0) { alert('No valid records found.'); return; }
+                if (!confirm(`Import ${records.length} record(s) and REPLACE all current records?`)) return;
+                localStorage.setItem('aiQuizRecords', JSON.stringify(records));
+                renderDashboard();
+                alert(`✅ Imported ${records.length} record(s)!`);
+            };
+            reader.readAsText(file);
+        }
+
+        // ============================================================
+        //  LOGIN
+        // ============================================================
+
+        function handleLogin() {
+            const name = studentNameInput.value.trim();
+            if (!name) { alert('Please enter your name.'); return; }
+            const week = weekSelect.value;
+            const date = new Date().toLocaleDateString();
+            currentStudent = { name, week, date };
+            userAnswers = {};
+            currentIndex = 0;
+            goToQuestion(0);
+        }
+
+        // ============================================================
+        //  EVENT BINDING
+        // ============================================================
+
+        btnLogin.addEventListener('click', handleLogin);
+        btnBack.addEventListener('click', goToPrev);
+        btnNext.addEventListener('click', goToNext);
+        btnDashboard.addEventListener('click', showDashboard);
+        btnCloseDashboard.addEventListener('click', () => showScreen('login'));
+        btnBackFromDashboard.addEventListener('click', () => showScreen('login'));
+        btnBackToLogin.addEventListener('click', () => showScreen('login'));
+        btnSaveRecord.addEventListener('click', saveRecord);
+        btnPrintReport.addEventListener('click', () => window.print());
+        btnExportCSV.addEventListener('click', exportCSV);
+        btnImportCSV.addEventListener('click', () => csvImportInput.click());
+        csvImportInput.addEventListener('change', function(e) {
+            if (this.files && this.files.length > 0) {
+                importCSV(this.files[0]);
+                this.value = '';
+            }
+        });
+        studentNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+
+        showScreen('login');
+        console.log('📝 AI Knowledge Assessment loaded!');
+    </script>
+
+</body>
+</html>
