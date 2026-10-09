@@ -1,0 +1,1215 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Cloud Storage and Synchronisation</title>
+
+  <style>
+    /*
+      CSS controls how the HTML looks:
+      colour, spacing, layout, font and size.
+    */
+
+    :root {
+      --navy: #17324d;
+      --blue: #1769aa;
+      --light-blue: #e9f4fc;
+      --green: #176b4d;
+      --light-green: #e8f6ef;
+      --amber: #8a5700;
+      --light-amber: #fff4d6;
+      --red: #9b2c2c;
+      --light-red: #fdecec;
+      --purple: #5a3c91;
+      --light-purple: #f0eafd;
+      --ink: #17212b;
+      --muted: #536273;
+      --line: #ccd7e0;
+      --page: #f6f8fa;
+      --white: #ffffff;
+      --focus: #ffbf47;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behaviour: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: "Atkinson Hyperlegible", "Arial", "Verdana", sans-serif;
+      font-size: 1.15rem;
+      line-height: 1.65;
+    }
+
+    img,
+    svg {
+      max-width: 100%;
+    }
+
+    a {
+      color: #064f91;
+      font-weight: 700;
+    }
+
+    a:focus,
+    button:focus,
+    summary:focus,
+    input:focus {
+      outline: 4px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    header {
+      color: white;
+      background: linear-gradient(135deg, #17324d, #1769aa);
+      padding: 3rem 1rem;
+    }
+
+    .wrap {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.2;
+      margin-top: 0;
+      color: var(--navy);
+    }
+
+    header h1 {
+      color: white;
+      max-width: 850px;
+      font-size: clamp(2.1rem, 5vw, 4rem);
+      margin-bottom: 1rem;
+    }
+
+    header p {
+      max-width: 780px;
+      margin-bottom: 0;
+    }
+
+    nav {
+      background: var(--navy);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 8px #0003;
+    }
+
+    nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      list-style: none;
+      margin: 0 auto;
+      padding: 0.7rem 0;
+      width: min(1100px, 92%);
+    }
+
+    nav a {
+      display: block;
+      color: white;
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      background: #315979;
+    }
+
+    main {
+      padding: 2rem 0 4rem;
+    }
+
+    section {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin: 1.5rem 0;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      box-shadow: 0 3px 12px #17324d12;
+      scroll-margin-top: 6rem;
+    }
+
+    .intro {
+      border-left: 8px solid var(--blue);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      background: white;
+    }
+
+    .card h3 {
+      font-size: 1.35rem;
+    }
+
+    .blue {
+      background: var(--light-blue);
+      border-color: #78b8df;
+    }
+
+    .green {
+      background: var(--light-green);
+      border-color: #8cc9aa;
+    }
+
+    .amber {
+      background: var(--light-amber);
+      border-color: #e3bf68;
+    }
+
+    .red {
+      background: var(--light-red);
+      border-color: #df9999;
+    }
+
+    .purple {
+      background: var(--light-purple);
+      border-color: #b6a0e3;
+    }
+
+    .key-point {
+      border-left: 7px solid var(--blue);
+      background: var(--light-blue);
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .diagram {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      margin: 1.3rem 0;
+    }
+
+    .object {
+      min-width: 135px;
+      text-align: center;
+      padding: 1rem 0.7rem;
+      border: 2px solid var(--navy);
+      border-radius: 12px;
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .arrow {
+      font-size: 2rem;
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .icon {
+      display: block;
+      font-size: 2.3rem;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      color: white;
+      background: var(--blue);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      padding: 0.75rem 1rem;
+      margin: 0.3rem;
+    }
+
+    button:hover {
+      background: #0d4f83;
+    }
+
+    button.secondary {
+      background: var(--navy);
+    }
+
+    button.green-button {
+      background: var(--green);
+    }
+
+    button.red-button {
+      background: var(--red);
+    }
+
+    .choice-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.8rem 0;
+    }
+
+    .feedback {
+      min-height: 2rem;
+      font-weight: 700;
+      margin-top: 0.7rem;
+    }
+
+    .correct {
+      color: var(--green);
+    }
+
+    .incorrect {
+      color: var(--red);
+    }
+
+    .progress-area {
+      margin: 1rem 0;
+    }
+
+    progress {
+      width: 100%;
+      height: 1.5rem;
+      accent-color: var(--green);
+    }
+
+    .score {
+      display: inline-block;
+      background: var(--navy);
+      color: white;
+      border-radius: 999px;
+      padding: 0.4rem 0.9rem;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 1rem;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 0.8rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--navy);
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #f2f6f9;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 0.8rem 1rem;
+      margin: 0.8rem 0;
+      background: #fff;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 0.2rem;
+    }
+
+    .tag.blue-tag {
+      background: #cce8fa;
+      color: #063f67;
+    }
+
+    .tag.green-tag {
+      background: #cbeedc;
+      color: #105039;
+    }
+
+    .tag.red-tag {
+      background: #f7cccc;
+      color: #711c1c;
+    }
+
+    .answer-box {
+      display: none;
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 9px;
+      background: var(--light-green);
+      border: 2px solid #8cc9aa;
+    }
+
+    .answer-box.show {
+      display: block;
+    }
+
+    footer {
+      background: var(--navy);
+      color: white;
+      padding: 2rem 0;
+    }
+
+    footer h2 {
+      color: white;
+    }
+
+    .small {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 650px) {
+      body {
+        font-size: 1.05rem;
+      }
+
+      nav ul {
+        display: block;
+      }
+
+      nav li {
+        display: inline-block;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behaviour: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="wrap">
+      <p class="tag blue-tag">Interactive learning app</p>
+      <h1>Cloud Storage and Synchronisation</h1>
+      <p>
+        Learn what the cloud is, how devices share information, what can go
+        wrong, and how cloud storage compares with other choices.
+      </p>
+    </div>
+  </header>
+
+  <nav aria-label="Main navigation">
+    <ul>
+      <li><a href="#start">Start</a></li>
+      <li><a href="#cloud">The cloud</a></li>
+      <li><a href="#difference">Three ideas</a></li>
+      <li><a href="#activity">Activities</a></li>
+      <li><a href="#risks">Risks</a></li>
+      <li><a href="#alternatives">Alternatives</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#html">How HTML works</a></li>
+    </ul>
+  </nav>
+
+  <main class="wrap">
+
+    <section id="start" class="intro">
+      <h2>Start here</h2>
+
+      <p>
+        Imagine that you take a photograph on your Android phone. Later, you
+        want to see it on your laptop. How could that happen?
+      </p>
+
+      <div class="diagram" aria-label="A phone connected to a laptop through an online service">
+        <div class="object">
+          <span class="icon" aria-hidden="true">📱</span>
+          Android phone
+        </div>
+
+        <div class="arrow" aria-hidden="true">→</div>
+
+        <div class="object">
+          <span class="icon" aria-hidden="true">🏢</span>
+          Online service
+        </div>
+
+        <div class="arrow" aria-hidden="true">→</div>
+
+        <div class="object">
+          <span class="icon" aria-hidden="true">💻</span>
+          Laptop
+        </div>
+      </div>
+
+      <p>
+        The photograph may be copied to an online service. When you sign in
+        from another device, the service may allow you to view or download it.
+      </p>
+
+      <p class="key-point">
+        <strong>Key idea:</strong>
+        The cloud is not a literal cloud in the sky. It is a way of using
+        computers and storage operated by an online service.
+      </p>
+    </section>
+
+    <section id="cloud">
+      <h2>1. What is cloud storage?</h2>
+
+      <p>
+        Cloud storage means keeping data on computers operated by a service
+        provider and accessing that data through a network, usually the
+        internet.
+      </p>
+
+      <p>
+        The computers are usually located in data centres. A data centre is a
+        real building containing computer systems, storage equipment, power
+        systems, cooling, and security measures. Some data centres may be
+        underground or specially protected, but not all of them are.
+      </p>
+
+      <div class="diagram" aria-label="A phone connected to a data centre">
+        <div class="object">
+          <span class="icon" aria-hidden="true">📱</span>
+          Your device
+        </div>
+
+        <div class="arrow" aria-hidden="true">→</div>
+
+        <div class="object">
+          <span class="icon" aria-hidden="true">📶</span>
+          Wi-Fi or mobile network
+        </div>
+
+        <div class="arrow" aria-hidden="true">→</div>
+
+        <div class="object">
+          <span class="icon" aria-hidden="true">🏢</span>
+          Data centre
+        </div>
+      </div>
+
+      <p class="key-point">
+        <strong>Important:</strong>
+        “The cloud” does not mean one single server or one single building.
+        Online providers may use many computers and facilities.
+      </p>
+    </section>
+
+    <section id="difference">
+      <h2>2. Three ideas that people often confuse</h2>
+
+      <div class="grid">
+        <article class="card blue">
+          <h3>Cloud storage</h3>
+          <p>
+            Data is kept on computers operated by an online service.
+          </p>
+          <p>
+            <strong>Example:</strong> You upload a document and later open it
+            through the service’s website or app.
+          </p>
+        </article>
+
+        <article class="card green">
+          <h3>Synchronisation</h3>
+          <p>
+            Selected information is updated across connected devices or
+            services.
+          </p>
+          <p>
+            <strong>Example:</strong> You add a calendar appointment on your
+            phone and it appears on your laptop.
+          </p>
+        </article>
+
+        <article class="card purple">
+          <h3>Backup</h3>
+          <p>
+            A separate copy is kept so that information may be recovered if
+            something goes wrong.
+          </p>
+          <p>
+            <strong>Example:</strong> You restore photographs after losing a
+            phone.
+          </p>
+        </article>
+      </div>
+
+      <p class="key-point">
+        <strong>Remember:</strong>
+        Synchronisation is designed to keep selected information up to date.
+        Backup is designed to help you recover information. A synchronised
+        copy is not automatically a complete or independent backup.
+      </p>
+
+      <details>
+        <summary>Why can synchronisation sometimes be risky?</summary>
+        <p>
+          If you delete a file or make an unwanted change, that change may also
+          appear on other synchronised devices. A separate backup may help,
+          depending on how the service stores deleted or older versions.
+        </p>
+      </details>
+    </section>
+
+    <section id="journey">
+      <h2>3. How does the data travel?</h2>
+
+      <p>
+        Your device can use Wi-Fi, mobile data, or a network cable. The data
+        then travels through network equipment and cables to an online
+        service.
+      </p>
+
+      <div class="diagram" aria-label="The route from a phone to an online service">
+        <div class="object">
+          <span class="icon" aria-hidden="true">📱</span>
+          Phone
+        </div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="object">
+          <span class="icon" aria-hidden="true">📡</span>
+          Router or mobile network
+        </div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="object">
+          <span class="icon" aria-hidden="true">🔌</span>
+          Internet networks
+        </div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="object">
+          <span class="icon" aria-hidden="true">🏢</span>
+          Online service
+        </div>
+      </div>
+
+      <p>
+        You normally need a working internet connection to upload, download,
+        or synchronise cloud data. Some apps let you work offline and send
+        changes later when a connection becomes available.
+      </p>
+    </section>
+
+    <section id="activity">
+      <h2>4. Activity: choose the correct idea</h2>
+
+      <p>
+        Read each example. Choose whether it describes cloud storage,
+        synchronisation, or backup.
+      </p>
+
+      <div class="card">
+        <h3 id="scenario-title">Loading activity…</h3>
+        <p id="scenario-text"></p>
+
+        <div class="choice-row" role="group" aria-label="Choose an answer">
+          <button data-answer="storage">Cloud storage</button>
+          <button data-answer="sync">Synchronisation</button>
+          <button data-answer="backup">Backup</button>
+        </div>
+
+        <p id="scenario-feedback" class="feedback" aria-live="polite"></p>
+        <button id="next-scenario" class="secondary" hidden>Next example</button>
+      </div>
+    </section>
+
+    <section id="benefits">
+      <h2>5. Benefits</h2>
+
+      <div class="grid">
+        <article class="card green">
+          <h3>Access</h3>
+          <p>
+            You may be able to access supported files from different devices
+            and locations.
+          </p>
+        </article>
+
+        <article class="card green">
+          <h3>Recovery</h3>
+          <p>
+            A cloud copy may help after a device is lost, damaged, or replaced.
+          </p>
+        </article>
+
+        <article class="card green">
+          <h3>Sharing</h3>
+          <p>
+            Online services can make it easier to share selected files with
+            other people.
+          </p>
+        </article>
+
+        <article class="card green">
+          <h3>Flexible working</h3>
+          <p>
+            People may work from home, an office, or another location.
+          </p>
+        </article>
+      </div>
+
+      <p class="key-point">
+        Access depends on the service, the account, permissions, the files
+        that were uploaded, and the availability of a network connection.
+      </p>
+    </section>
+
+    <section id="risks">
+      <h2>6. Risks and limitations</h2>
+
+      <div class="grid">
+        <article class="card amber">
+          <h3>Internet or network failure</h3>
+          <p>
+            A network outage, damaged cable, router problem, or mobile-network
+            failure can delay access and synchronisation.
+          </p>
+        </article>
+
+        <article class="card red">
+          <h3>Account takeover</h3>
+          <p>
+            If someone obtains your password or access to your account, they
+            may be able to view, change, or delete data.
+          </p>
+        </article>
+
+        <article class="card red">
+          <h3>Privacy</h3>
+          <p>
+            Photos, documents, activity, and location information can be
+            sensitive. Review who can access them.
+          </p>
+        </article>
+
+        <article class="card amber">
+          <h3>Service outage</h3>
+          <p>
+            An online service can become temporarily unavailable. No online
+            system is risk-free.
+          </p>
+        </article>
+
+        <article class="card red">
+          <h3>Accidental deletion</h3>
+          <p>
+            A deletion or unwanted change may synchronise to other devices.
+            An independent backup can help.
+          </p>
+        </article>
+
+        <article class="card amber">
+          <h3>Serious disruption</h3>
+          <p>
+            Fire, flood, power failure, cyberattack, terrorism, or war could
+            affect networks or facilities. Providers use protection and
+            redundancy, but interruptions remain possible.
+          </p>
+        </article>
+      </div>
+
+      <h3>Android and Google location services</h3>
+
+      <p>
+        Some Android and Google services may use location information when the
+        relevant settings and permissions are enabled. Examples can include
+        navigation, finding a device, location sharing, and some activity
+        history features.
+      </p>
+
+      <p>
+        This does not mean that every Google service uses location in the same
+        way or that every Android user is continuously tracked in the same
+        manner. Review location, app, account, and sharing settings.
+      </p>
+
+      <p class="key-point">
+        <strong>Good security habits:</strong>
+        Use a strong, unique password, turn on two-step verification, be
+        careful with unexpected links, update devices and apps, and check
+        sharing permissions.
+      </p>
+    </section>
+
+    <section id="alternatives">
+      <h2>7. Alternatives to cloud storage</h2>
+
+      <p>
+        No single storage method is perfect. Important information should not
+        exist in only one place.
+      </p>
+
+      <table>
+        <caption>Comparing ways to store data</caption>
+        <thead>
+          <tr>
+            <th scope="col">Option</th>
+            <th scope="col">Advantages</th>
+            <th scope="col">Limitations</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Cloud storage</th>
+            <td>
+              Access from different places, sharing, and possible recovery
+              after device loss.
+            </td>
+            <td>
+              Depends on an account, provider, permissions, and usually an
+              internet connection. Privacy and cost must be considered.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Computer or phone storage</th>
+            <td>
+              Fast and usually works offline.
+            </td>
+            <td>
+              The device can be lost, damaged, stolen, or fail.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">External hard drive</th>
+            <td>
+              Large capacity and works without the internet.
+            </td>
+            <td>
+              Can fail, be lost, stolen, damaged, or infected by malware.
+              It should not be the only copy.
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">USB flash drive</th>
+            <td>
+              Small, portable, and works offline.
+            </td>
+            <td>
+              Easy to lose or damage. It is not automatically a safe backup.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="key-point">
+        A sensible plan often uses more than one method. Keep an independent
+        copy of important files and test that the copy can be opened or
+        restored.
+      </p>
+    </section>
+
+    <section id="plan">
+      <h2>8. Build a sensible plan</h2>
+
+      <ol>
+        <li>Decide which information is important.</li>
+        <li>Check what your cloud service actually stores or synchronises.</li>
+        <li>Use a strong, unique password.</li>
+        <li>Turn on two-step verification.</li>
+        <li>Review location, app, account, and sharing permissions.</li>
+        <li>Keep an independent copy of important files.</li>
+        <li>Disconnect an external backup drive when it is not being used.</li>
+        <li>Test that backups can be opened or restored.</li>
+        <li>Keep essential information available offline where practical.</li>
+        <li>Keep your phone, computer, and apps updated.</li>
+      </ol>
+    </section>
+
+    <section id="quiz">
+      <h2>9. Final knowledge check</h2>
+
+      <p>
+        Answer the questions. Your score is calculated in this browser only.
+      </p>
+
+      <div class="progress-area">
+        <span class="score" id="quiz-score">Score: 0 / 5</span>
+        <label for="quiz-progress">Quiz progress</label>
+        <progress id="quiz-progress" value="0" max="5">0%</progress>
+      </div>
+
+      <div id="quiz-container"></div>
+
+      <button id="restart-quiz" class="secondary">Restart quiz</button>
+    </section>
+
+    <section id="html">
+      <h2>10. How this webpage works</h2>
+
+      <p>
+        This app is made with HTML, CSS, and JavaScript.
+      </p>
+
+      <div class="grid">
+        <article class="card blue">
+          <h3>HTML: structure</h3>
+          <p>
+            HTML creates headings, paragraphs, links, lists, tables, buttons,
+            sections, and images.
+          </p>
+          <code>&lt;h2&gt;A heading&lt;/h2&gt;</code>
+        </article>
+
+        <article class="card purple">
+          <h3>CSS: appearance</h3>
+          <p>
+            CSS controls the colours, font, spacing, borders, layout, and
+            responsive design.
+          </p>
+          <code>body { font-size: 1.15rem; }</code>
+        </article>
+
+        <article class="card green">
+          <h3>JavaScript: interaction</h3>
+          <p>
+            JavaScript makes buttons respond, calculates scores, changes
+            messages, and updates the page.
+          </p>
+          <code>button.addEventListener(...)</code>
+        </article>
+      </div>
+
+      <details>
+        <summary>Why does the app use semantic HTML?</summary>
+        <p>
+          Elements such as <code>&lt;main&gt;</code>,
+          <code>&lt;nav&gt;</code>, <code>&lt;section&gt;</code>,
+          <code>&lt;article&gt;</code>, and <code>&lt;footer&gt;</code>
+          describe the purpose of each part of the page. This helps learners,
+          browsers, search tools, and assistive technologies understand the
+          structure.
+        </p>
+      </details>
+
+      <details>
+        <summary>Why is alternative text important?</summary>
+        <p>
+          Alternative text describes the purpose of an image for people who
+          cannot see it or who are using a screen reader. Decorative images can
+          have empty alternative text so they are not announced unnecessarily.
+        </p>
+      </details>
+    </section>
+
+    <section id="glossary">
+      <h2>Glossary</h2>
+
+      <dl>
+        <dt><strong>Cloud storage</strong></dt>
+        <dd>Keeping data on computers operated by an online service.</dd>
+
+        <dt><strong>Synchronisation</strong></dt>
+        <dd>
+          Updating selected information across connected devices or services.
+        </dd>
+
+        <dt><strong>Backup</strong></dt>
+        <dd>
+          A separate copy intended to help recover information.
+        </dd>
+
+        <dt><strong>Data centre</strong></dt>
+        <dd>
+          A building containing computer systems and storage equipment.
+        </dd>
+
+        <dt><strong>Two-step verification</strong></dt>
+        <dd>
+          An additional security check used after entering a password.
+        </dd>
+
+        <dt><strong>Location service</strong></dt>
+        <dd>
+          A feature that can estimate a device’s location using information
+          such as GPS, Wi-Fi, mobile networks, or sensors.
+        </dd>
+      </dl>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <h2>Final message</h2>
+      <p>
+        Cloud storage is useful online storage. Synchronisation keeps selected
+        information updated. Backup gives you another way to recover data.
+        A sensible plan uses the right combination for the information you
+        need to protect.
+      </p>
+      <p class="small" style="color: #e2edf5;">
+        Educational information only. Service features and settings can
+        change, so check the current settings of the service you use.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    /*
+      JavaScript controls the interactive activities.
+    */
+
+    const scenarios = [
+      {
+        title: "Example 1",
+        text: "You upload a document to an online service and later open it through the service's website.",
+        answer: "storage",
+        explanation: "This is cloud storage: the document is kept on computers operated by an online service."
+      },
+      {
+        title: "Example 2",
+        text: "You add a calendar appointment on your phone and the appointment appears on your laptop.",
+        answer: "sync",
+        explanation: "This is synchronisation: selected information is updated across connected devices."
+      },
+      {
+        title: "Example 3",
+        text: "You keep a separate copy of your important photographs so that you can try to restore them after losing your phone.",
+        answer: "backup",
+        explanation: "This is a backup: a separate copy is intended to help you recover information."
+      },
+      {
+        title: "Example 4",
+        text: "You delete a file on one synchronised device and the deletion appears on another device.",
+        answer: "sync",
+        explanation: "This is synchronisation. A deletion can also be copied to connected devices."
+      }
+    ];
+
+    let scenarioIndex = 0;
+
+    const scenarioTitle = document.getElementById("scenario-title");
+    const scenarioText = document.getElementById("scenario-text");
+    const scenarioFeedback = document.getElementById("scenario-feedback");
+    const nextScenario = document.getElementById("next-scenario");
+
+    function showScenario() {
+      const scenario = scenarios[scenarioIndex];
+
+      scenarioTitle.textContent = scenario.title;
+      scenarioText.textContent = scenario.text;
+      scenarioFeedback.textContent = "";
+      scenarioFeedback.className = "feedback";
+      nextScenario.hidden = true;
+
+      document.querySelectorAll("[data-answer]").forEach(button => {
+        button.disabled = false;
+      });
+    }
+
+    document.querySelectorAll("[data-answer]").forEach(button => {
+      button.addEventListener("click", () => {
+        const scenario = scenarios[scenarioIndex];
+        const selected = button.dataset.answer;
+
+        document.querySelectorAll("[data-answer]").forEach(choice => {
+          choice.disabled = true;
+        });
+
+        if (selected === scenario.answer) {
+          scenarioFeedback.textContent = "Correct. " + scenario.explanation;
+          scenarioFeedback.className = "feedback correct";
+        } else {
+          scenarioFeedback.textContent =
+            "Not quite. " + scenario.explanation;
+          scenarioFeedback.className = "feedback incorrect";
+        }
+
+        if (scenarioIndex < scenarios.length - 1) {
+          nextScenario.hidden = false;
+        } else {
+          nextScenario.textContent = "Activity complete";
+          nextScenario.hidden = false;
+        }
+      });
+    });
+
+    nextScenario.addEventListener("click", () => {
+      if (scenarioIndex < scenarios.length - 1) {
+        scenarioIndex++;
+        showScenario();
+      }
+    });
+
+    showScenario();
+
+    const quizQuestions = [
+      {
+        question: "What does cloud storage mean?",
+        options: [
+          "Keeping data only inside a fluffy cloud",
+          "Keeping data on computers operated by an online service",
+          "Printing every file on paper"
+        ],
+        answer: 1,
+        explanation: "Cloud storage uses computers and storage operated by an online service."
+      },
+      {
+        question: "What is synchronisation?",
+        options: [
+          "Updating selected information across connected devices",
+          "Destroying an old copy of a file",
+          "Turning off the internet"
+        ],
+        answer: 0,
+        explanation: "Synchronisation updates selected information across devices or services."
+      },
+      {
+        question: "What is the main purpose of a backup?",
+        options: [
+          "To make every device identical",
+          "To help recover information after something goes wrong",
+          "To make a password unnecessary"
+        ],
+        answer: 1,
+        explanation: "A backup is a separate copy intended to help recover information."
+      },
+      {
+        question: "Which statement about cloud services is most accurate?",
+        options: [
+          "They are always available and risk-free",
+          "They can be useful, but they depend on accounts, providers, networks, and security",
+          "They never need an internet connection"
+        ],
+        answer: 1,
+        explanation: "Cloud services are useful but have dependencies and risks."
+      },
+      {
+        question: "Which is a sensible backup habit?",
+        options: [
+          "Keep the only copy on one USB drive",
+          "Use more than one copy and test that the copies can be restored",
+          "Share your password with a friend"
+        ],
+        answer: 1,
+        explanation: "More than one copy and regular restore checks improve resilience."
+      }
+    ];
+
+    const quizContainer = document.getElementById("quiz-container");
+    const quizScore = document.getElementById("quiz-score");
+    const quizProgress = document.getElementById("quiz-progress");
+
+    let quizScoreValue = 0;
+    let quizAnswered = 0;
+
+    function buildQuiz() {
+      quizContainer.innerHTML = "";
+
+      quizQuestions.forEach((item, questionIndex) => {
+        const article = document.createElement("article");
+        article.className = "card";
+        article.style.marginBottom = "1rem";
+
+        const heading = document.createElement("h3");
+        heading.textContent =
+          `${questionIndex + 1}. ${item.question}`;
+
+        const feedback = document.createElement("p");
+        feedback.className = "feedback";
+        feedback.setAttribute("aria-live", "polite");
+
+        const choices = document.createElement("div");
+        choices.className = "choice-row";
+
+        item.options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.textContent = option;
+
+          button.addEventListener("click", () => {
+            if (article.dataset.answered === "true") {
+              return;
+            }
+
+            article.dataset.answered = "true";
+            quizAnswered++;
+            quizProgress.value = quizAnswered;
+
+            choices.querySelectorAll("button").forEach(choice => {
+              choice.disabled = true;
+            });
+
+            if (optionIndex === item.answer) {
+              quizScoreValue++;
+              feedback.textContent = "Correct. " + item.explanation;
+              feedback.className = "feedback correct";
+            } else {
+              feedback.textContent = "Not quite. " + item.explanation;
+              feedback.className = "feedback incorrect";
+            }
+
+            quizScore.textContent =
+              `Score: ${quizScoreValue} / ${quizQuestions.length}`;
+
+            if (quizAnswered === quizQuestions.length) {
+              const result = document.createElement("p");
+              result.className = "key-point";
+              result.innerHTML =
+                `<strong>Quiz complete.</strong> You scored
+                 ${quizScoreValue} out of ${quizQuestions.length}.`;
+              quizContainer.appendChild(result);
+            }
+          });
+
+          choices.appendChild(button);
+        });
+
+        article.appendChild(heading);
+        article.appendChild(choices);
+        article.appendChild(feedback);
+        quizContainer.appendChild(article);
+      });
+    }
+
+    document.getElementById("restart-quiz").addEventListener("click", () => {
+      quizScoreValue = 0;
+      quizAnswered = 0;
+      quizProgress.value = 0;
+      quizScore.textContent = `Score: 0 / ${quizQuestions.length}`;
+      buildQuiz();
+      document.getElementById("quiz").scrollIntoView({ behavior: "smooth" });
+    });
+
+    buildQuiz();
+  </script>
+
+</body>
+</html>
